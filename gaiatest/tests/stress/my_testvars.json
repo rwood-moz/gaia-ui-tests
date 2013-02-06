@@ -20,6 +20,15 @@
         "add_event": {
         	"iterations":3,
         	"checkpoint": 3
+        },
+        "camera_photo": {
+        	"iterations":100,
+        	"checkpoint":10
+        },
+        "camera_video": {
+        	"capture_duration":7,
+        	"iterations":10,
+        	"checkpoint":5
         }
     }
 }

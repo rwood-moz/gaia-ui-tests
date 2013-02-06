@@ -572,6 +572,8 @@ class GaiaStress(object):
         # Get checkpoint, if not specified just do one at start and end
         try:
             self.checkpoint_every = self.test_case.testvars['stresstests'][self.test_case.test_method.__name__]['checkpoint']
+            if self.checkpoint_every > self.iterations or self.checkpoint_every < 1:
+                self.checkpoint_every = self.iterations
         except:
             # Not specified, so just do at start and end
             self.checkpoint_every = self.iterations
@@ -589,12 +591,12 @@ class GaiaStress(object):
 
     def checkpoint(self, iteration = 0):
         self.marionette.log("checkpoint")
-        cur_time = time.strftime("%d%m%Y%H%M%S", time.localtime())        
+        cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         if iteration == 0:
             self.log_name = "checkpoint_%s_%s.log" % (self.test_case.test_method.__name__, cur_time)
             cmd_line = "echo %s Gaia Stress Test: %s > " %(cur_time, self.test_case.test_method.__name__) + self.log_name
             os.system(cmd_line)
-        cmd_line = "echo %s checkpoint after iteration %d of %d: >> " % (cur_time, iteration, self.iterations) + self.log_name
+        cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (cur_time, iteration, self.iterations) + self.log_name
         os.system(cmd_line)
-        cmd_line = "adb shell b2g-ps >> " + self.log_name 
+        cmd_line = "adb shell b2g-ps >> " + self.log_name
         os.system(cmd_line)
