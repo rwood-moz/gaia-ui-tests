@@ -29,6 +29,9 @@ class TestStressAddContact(GaiaTestCase):
     def setUp(self):
         GaiaTestCase.setUp(self)
 
+        # Name of stress test method to be repeated
+        self.test_method = self.add_contact
+
         # Launch the Contacts app
         self.app = self.apps.launch('Contacts')
         self.wait_for_element_not_displayed(*self._loading_overlay)
@@ -36,7 +39,7 @@ class TestStressAddContact(GaiaTestCase):
         self.contact = MockContact()
 
     def test_stress_add_contact(self):
-        self.gaia_stress.drive("add_contact")
+        self.gaia_stress.drive()
 
     def add_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
@@ -50,8 +53,7 @@ class TestStressAddContact(GaiaTestCase):
         self.wait_for_element_displayed(*self._given_name_field_locator)
 
         # Enter data into fields
-        #first_name = str(count) + "%dof%d" + str(self.iterations) + self.contact['givenName'], % (str(count), str(self.iterations))
-        first_name = "%07dof%d" % (count, self.iterations) + self.contact['givenName']
+        first_name = "%07dof%d" % (count, self.gaia_stress.iterations) + self.contact['givenName']
 
         self.marionette.find_element(*self._given_name_field_locator).send_keys(first_name)
         self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])

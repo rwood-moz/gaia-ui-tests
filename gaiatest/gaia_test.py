@@ -560,9 +560,10 @@ class GaiaStress(object):
         except:
             self.min_iterations = 100
 
-        # Set iterations, ensure at least at minimum
+    def drive(self):
+        # Get iterations, if not specified default to minimum
         try:
-            self.iterations = gaia_test.testvars['stresstests']['add_event_iterations']
+            self.iterations = self.test_case.testvars['stresstests'][self.test_case.test_method.__name__]['iterations']
             if (self.iterations < self.min_iterations):
                 self.iterations = self.min_iterations
         except:
@@ -570,30 +571,30 @@ class GaiaStress(object):
 
         # Get checkpoint, if not specified just do one at start and end
         try:
-            self.checkpoint_every = gaia_test.testvars['stresstests']['add_event_checkpoint']
+            self.checkpoint_every = self.test_case.testvars['stresstests'][self.test_case.test_method.__name__]['checkpoint']
         except:
             # Not specified, so just do at start and end
             self.checkpoint_every = self.iterations
 
-    def drive(self, test_name):
-        
-        self.marionette.log("TEST: " + test_name)
-    
         # Starting checkpoint
         self.checkpoint()
 
-        # Actual test case iterations        
+        # Now drive the actual test case iterations
         for count in range(1, self.iterations + 1):
-            self.marionette.log("Add event iteration %d of %d" % (count, self.iterations))
-            self.test_case.add_event(count)
+            self.marionette.log("%s iteration %d of %d" % (self.test_case.test_method.__name__, count, self.iterations))
+            self.test_case.test_method(count)
             # Checkpoint time?
             if ((count % self.checkpoint_every) == 0):
-                self.checkpoint(count)        
-        
+                self.checkpoint(count)
+
     def checkpoint(self, iteration = 0):
-        self.marionette.log("Checkpoint")
+        self.marionette.log("checkpoint")
+        cur_time = time.strftime("%d%m%Y%H%M%S", time.localtime())        
         if iteration == 0:
-            os.system("echo test_stress_add_contacts > checkpoint.log")
-        text = "echo checkpoint at iteration %d: >> checkpoint.log" % iteration
-        os.system(text)
-        os.system("adb shell b2g-ps >> checkpoint.log")
+            self.log_name = "checkpoint_%s_%s.log" % (self.test_case.test_method.__name__, cur_time)
+            cmd_line = "echo %s Gaia Stress Test: %s > " %(cur_time, self.test_case.test_method.__name__) + self.log_name
+            os.system(cmd_line)
+        cmd_line = "echo %s checkpoint after iteration %d of %d: >> " % (cur_time, iteration, self.iterations) + self.log_name
+        os.system(cmd_line)
+        cmd_line = "adb shell b2g-ps >> " + self.log_name 
+        os.system(cmd_line)

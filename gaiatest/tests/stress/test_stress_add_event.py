@@ -24,6 +24,9 @@ class TestStressAddEvent(GaiaTestCase):
     def setUp(self):
         GaiaTestCase.setUp(self)
 
+        # Set name of stress test method to be repeated
+        self.test_method = self.add_event
+
         # Setting the system time to a hardcoded datetime to avoid timezone issues
         # Jan. 1, 2013, according to http://www.epochconverter.com/
         _seconds_since_epoch = 1357043430
@@ -40,7 +43,7 @@ class TestStressAddEvent(GaiaTestCase):
         self.app = self.apps.launch('calendar')
 
     def test_stress_add_event(self):
-        self.gaia_stress.drive("add_event")       
+        self.gaia_stress.drive()
 
     def add_event(self, count):
         # Add a calendar event on the next day and verify

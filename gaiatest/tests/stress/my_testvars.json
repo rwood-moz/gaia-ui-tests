@@ -12,14 +12,14 @@
     },
     
     "stresstests": {
-        "min_iterations": 7,
+        "min_iterations": 1,
         "add_contact": {
-        	"iterations": 100,
-        	"checkpoint": 10
+        	"iterations": 2,
+        	"checkpoint": 2
         },
         "add_event": {
-        	"iterations":10,
-        	"checkpoint": 5
+        	"iterations":3,
+        	"checkpoint": 3
         }
     }
 }
