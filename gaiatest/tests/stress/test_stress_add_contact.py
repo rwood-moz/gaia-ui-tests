@@ -29,26 +29,6 @@ class TestStressAddContact(GaiaTestCase):
     def setUp(self):
         GaiaTestCase.setUp(self)
 
-        try:
-            self.min_iterations = self.testvars['stresstests']['min_iterations']
-        except:
-            self.min_iterations = 100
-
-        # Set iterations, ensure at least at minimum
-        try:
-            self.iterations = self.testvars['stresstests']['add_contact_iterations']
-            if (self.iterations < self.min_iterations):
-                self.iterations = self.min_iterations
-        except:
-            self.iterations = self.min_iterations
-
-        # Get checkpoint, if not specified just do one at start and end
-        try:
-            self.checkpoint_every = self.testvars['stresstests']['add_contact_checkpoint']
-        except:
-            # Not specified, so just do at start and end
-            self.checkpoint_every = self.iterations
-        
         # Launch the Contacts app
         self.app = self.apps.launch('Contacts')
         self.wait_for_element_not_displayed(*self._loading_overlay)
@@ -56,16 +36,7 @@ class TestStressAddContact(GaiaTestCase):
         self.contact = MockContact()
 
     def test_stress_add_contact(self):
-        # Starting checkpoint
-        self.checkpoint()
-
-        # Actual test case iterations        
-        for count in range(1, self.iterations + 1):
-            self.marionette.log("Add contact iteration %d of %d" % (count, self.iterations))
-            self.add_contact(count)
-            # Checkpoint time?
-            if ((count % self.checkpoint_every) == 0):
-                self.checkpoint(count)
+        self.gaia_stress.drive("add_contact")
 
     def add_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
@@ -110,11 +81,3 @@ class TestStressAddContact(GaiaTestCase):
 
     def create_contact_locator(self, contact):
         return ('xpath', "//a[descendant::strong[text()='%s']]" % contact)
-    
-    def checkpoint(self, iteration = 0):
-        self.marionette.log("Checkpoint")
-        if iteration == 0:
-            os.system("echo test_stress_add_contacts > checkpoint.log")
-        text = "echo checkpoint at iteration %d: >> checkpoint.log" % iteration
-        os.system(text)
-        os.system("adb shell b2g-ps >> checkpoint.log")

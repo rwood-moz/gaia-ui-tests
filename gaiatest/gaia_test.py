@@ -251,6 +251,7 @@ class GaiaTestCase(MarionetteTestCase):
         self.apps = GaiaApps(self.marionette)
         self.data_layer = GaiaData(self.marionette)
         self.keyboard = Keyboard(self.marionette)
+        self.gaia_stress = GaiaStress(self)
 
         # wifi is true if testvars includes wifi details and wifi manager is defined
         self.wifi = self.testvars and \
@@ -545,3 +546,54 @@ class Keyboard(object):
             self.marionette.long_press(key_obj, timeout)
             time.sleep(timeout / 1000 + 1)
             self.marionette.switch_to_frame()
+
+
+class GaiaStress(object):
+
+    def __init__(self, gaia_test):
+        self.marionette = gaia_test.marionette
+        self.test_case = gaia_test
+
+        # Get minimum iterations; set default if not specified
+        try:
+            self.min_iterations = gaia_test.testvars['stresstests']['min_iterations']
+        except:
+            self.min_iterations = 100
+
+        # Set iterations, ensure at least at minimum
+        try:
+            self.iterations = gaia_test.testvars['stresstests']['add_event_iterations']
+            if (self.iterations < self.min_iterations):
+                self.iterations = self.min_iterations
+        except:
+            self.iterations = self.min_iterations
+
+        # Get checkpoint, if not specified just do one at start and end
+        try:
+            self.checkpoint_every = gaia_test.testvars['stresstests']['add_event_checkpoint']
+        except:
+            # Not specified, so just do at start and end
+            self.checkpoint_every = self.iterations
+
+    def drive(self, test_name):
+        
+        self.marionette.log("TEST: " + test_name)
+    
+        # Starting checkpoint
+        self.checkpoint()
+
+        # Actual test case iterations        
+        for count in range(1, self.iterations + 1):
+            self.marionette.log("Add event iteration %d of %d" % (count, self.iterations))
+            self.test_case.add_event(count)
+            # Checkpoint time?
+            if ((count % self.checkpoint_every) == 0):
+                self.checkpoint(count)        
+        
+    def checkpoint(self, iteration = 0):
+        self.marionette.log("Checkpoint")
+        if iteration == 0:
+            os.system("echo test_stress_add_contacts > checkpoint.log")
+        text = "echo checkpoint at iteration %d: >> checkpoint.log" % iteration
+        os.system(text)
+        os.system("adb shell b2g-ps >> checkpoint.log")
