@@ -29,6 +29,14 @@
         	"capture_duration":7,
         	"iterations":10,
         	"checkpoint":5
-        }
+        },
+        "sms_send_receive": {
+        	"iterations":100,
+        	"checkpoint":10
+        },
+        "sms_conversation": {
+        	"iterations":30,
+        	"checkpoint":10
+        }        
     }
 }
