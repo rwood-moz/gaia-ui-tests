@@ -2,14 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
+from gaiatest import GaiaStressTest
 
 import os
 import datetime
 import time
 
 
-class TestStressCameraVideo(GaiaTestCase):
+class TestStressCameraVideo(GaiaStressTest):
 
     _switch_source_button_locator = ('id', 'switch-button')
     _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
@@ -19,7 +19,7 @@ class TestStressCameraVideo(GaiaTestCase):
     _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
 
     def setUp(self):
-        GaiaTestCase.setUp(self)
+        GaiaStressTest.setUp(self)
 
         # Set name of stress test method to be repeated
         self.test_method = self.camera_video
@@ -43,7 +43,7 @@ class TestStressCameraVideo(GaiaTestCase):
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
     def test_stress_camera_video(self):
-        self.gaia_stress.drive()
+        self.drive()
 
     def camera_video(self, count):
         # Start camera, capture video and verify a video was taken, close camera

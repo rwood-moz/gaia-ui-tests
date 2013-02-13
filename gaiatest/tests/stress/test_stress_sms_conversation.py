@@ -2,14 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
+from gaiatest import GaiaStressTest
 
 import os
 import datetime
 import time
 
 
-class TestStressSmsConversation(GaiaTestCase):
+class TestStressSmsConversation(GaiaStressTest):
 
     # Summary page
     _summary_header_locator = ('xpath', "//h1[text()='Messages']")
@@ -31,7 +31,7 @@ class TestStressSmsConversation(GaiaTestCase):
     _unread_icon_locator = ('css selector', 'aside.icon-unread')
 
     def setUp(self):
-        GaiaTestCase.setUp(self)
+        GaiaStressTest.setUp(self)
 
         # Set name of stress test method to be repeated
         self.test_method = self.sms_conversation
@@ -113,13 +113,13 @@ class TestStressSmsConversation(GaiaTestCase):
         self.send_first_sms()
 
         # Now stay in open message conversation and send to self
-        self.gaia_stress.drive()
+        self.drive()
 
     def sms_conversation(self, count):
         # Already in an open SMS message/discussion, so just send/receive right there
 
         # Type next message text in message field
-        _text_message_content = "SMS %d of %d (conversation stress test %s)" % (count, self.gaia_stress.iterations, str(time.time()))
+        _text_message_content = "SMS %d of %d (conversation stress test %s)" % (count, self.iterations, str(time.time()))
         message_field = self.marionette.find_element(
             *self._message_field_locator)
         message_field.send_keys(_text_message_content)

@@ -2,14 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
+from gaiatest import GaiaStressTest
 
 import os
 import datetime
 import time
 
 
-class TestStressAddEvent(GaiaTestCase):
+class TestStressAddEvent(GaiaStressTest):
 
     _add_event_button_locator = ('xpath', "//a[@href='/add/']")
     _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
@@ -22,7 +22,7 @@ class TestStressAddEvent(GaiaTestCase):
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
 
     def setUp(self):
-        GaiaTestCase.setUp(self)
+        GaiaStressTest.setUp(self)
 
         # Set name of stress test method to be repeated
         self.test_method = self.add_event
@@ -43,12 +43,12 @@ class TestStressAddEvent(GaiaTestCase):
         self.app = self.apps.launch('calendar')
 
     def test_stress_add_event(self):
-        self.gaia_stress.drive()
+        self.drive()
 
     def add_event(self, count):
         # Add a calendar event on the next day and verify
         # Borrowed some code from test_add_calendar.py
-        event_title = "Event %d of %d" % (count, self.gaia_stress.iterations)
+        event_title = "Event %d of %d" % (count, self.iterations)
         event_location = "Event Location %s" % str(time.time())
         event_start_date = self.next_event_date.strftime("%Y-%m-%d")
         event_end_date = self.next_event_date.strftime("%Y-%m-%d")
@@ -92,6 +92,6 @@ class TestStressAddEvent(GaiaTestCase):
         displayed_events = self.marionette.find_element(*month_view_time_slot_all_events_locator).text
         self.assertIn(event_title, displayed_events)
         self.assertIn(event_location, displayed_events)
-        
+
         # Increment for the next event
         self.next_event_date += datetime.timedelta(days=1)

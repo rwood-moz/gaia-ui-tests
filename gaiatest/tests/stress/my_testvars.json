@@ -14,29 +14,29 @@
     "stresstests": {
         "min_iterations": 1,
         "add_contact": {
-        	"iterations": 2,
-        	"checkpoint": 2
+        	"iterations": 5,
+        	"checkpoint": 5
         },
         "add_event": {
-        	"iterations":3,
-        	"checkpoint": 3
+        	"iterations":10,
+        	"checkpoint": 5
         },
         "camera_photo": {
-        	"iterations":100,
-        	"checkpoint":10
+        	"iterations":10,
+        	"checkpoint":5
         },
         "camera_video": {
         	"capture_duration":7,
         	"iterations":10,
-        	"checkpoint":5
+        	"checkpoint":15
         },
         "sms_send_receive": {
-        	"iterations":100,
-        	"checkpoint":10
+        	"iterations":10,
+        	"checkpoint":5
         },
         "sms_conversation": {
-        	"iterations":30,
-        	"checkpoint":10
+        	"iterations":10,
+        	"checkpoint":5
         }        
     }
 }

@@ -251,7 +251,6 @@ class GaiaTestCase(MarionetteTestCase):
         self.apps = GaiaApps(self.marionette)
         self.data_layer = GaiaData(self.marionette)
         self.keyboard = Keyboard(self.marionette)
-        self.gaia_stress = GaiaStress(self)
 
         # wifi is true if testvars includes wifi details and wifi manager is defined
         self.wifi = self.testvars and \
@@ -548,22 +547,18 @@ class Keyboard(object):
             self.marionette.switch_to_frame()
 
 
-class GaiaStress(object):
+class GaiaStressTest(GaiaTestCase):
 
-    def __init__(self, gaia_test):
-        self.marionette = gaia_test.marionette
-        self.test_case = gaia_test
-
+    def drive(self):
         # Get minimum iterations; set default if not specified
         try:
-            self.min_iterations = gaia_test.testvars['stresstests']['min_iterations']
+            self.min_iterations = self.testvars['stresstests']['min_iterations']
         except:
             self.min_iterations = 100
 
-    def drive(self):
         # Get iterations, if not specified default to minimum
         try:
-            self.iterations = self.test_case.testvars['stresstests'][self.test_case.test_method.__name__]['iterations']
+            self.iterations = self.testvars['stresstests'][self.test_method.__name__]['iterations']
             if (self.iterations < self.min_iterations):
                 self.iterations = self.min_iterations
         except:
@@ -571,7 +566,7 @@ class GaiaStress(object):
 
         # Get checkpoint, if not specified just do one at start and end
         try:
-            self.checkpoint_every = self.test_case.testvars['stresstests'][self.test_case.test_method.__name__]['checkpoint']
+            self.checkpoint_every = self.testvars['stresstests'][self.test_method.__name__]['checkpoint']
             if self.checkpoint_every > self.iterations or self.checkpoint_every < 1:
                 self.checkpoint_every = self.iterations
         except:
@@ -583,18 +578,19 @@ class GaiaStress(object):
 
         # Now drive the actual test case iterations
         for count in range(1, self.iterations + 1):
-            self.marionette.log("%s iteration %d of %d" % (self.test_case.test_method.__name__, count, self.iterations))
-            self.test_case.test_method(count)
+            self.marionette.log("%s iteration %d of %d" % (self.test_method.__name__, count, self.iterations))
+            self.test_method(count)
             # Checkpoint time?
             if ((count % self.checkpoint_every) == 0):
                 self.checkpoint(count)
 
     def checkpoint(self, iteration = 0):
+        # Dump out some memory status info
         self.marionette.log("checkpoint")
         cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         if iteration == 0:
-            self.log_name = "checkpoint_%s_%s.log" % (self.test_case.test_method.__name__, cur_time)
-            cmd_line = "echo %s Gaia Stress Test: %s > " %(cur_time, self.test_case.test_method.__name__) + self.log_name
+            self.log_name = "checkpoint_%s_%s.log" % (self.test_method.__name__, cur_time)
+            cmd_line = "echo %s Gaia Stress Test: %s > " %(cur_time, self.test_method.__name__) + self.log_name
             os.system(cmd_line)
         cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (cur_time, iteration, self.iterations) + self.log_name
         os.system(cmd_line)
