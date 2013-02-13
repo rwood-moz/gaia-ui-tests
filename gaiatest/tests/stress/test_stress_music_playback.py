@@ -45,6 +45,7 @@ class TestStressMusicPlayback(GaiaStressTest):
         self.wait_for_element_present(*self._body_list_mode_locator)
 
         # check that albums (at least one) are available
+        self.wait_for_element_present(*self._album_list_locator)
         albums = self.marionette.find_elements(*self._album_list_locator)
         self.assertGreater(len(albums), 0, 'no albums found')
 
