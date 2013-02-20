@@ -43,8 +43,12 @@
         	"checkpoint":1
         },
         "music_playback": {
-        	"iterations":25,
+        	"iterations":5,
         	"checkpoint":5
-        }
+        },
+        "airplane_mode": {
+        	"iterations":1,
+        	"checkpoint":1
+        }        
     }
 }
