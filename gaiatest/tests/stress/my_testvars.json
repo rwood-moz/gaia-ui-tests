@@ -3,7 +3,7 @@
     "this_phone_number": "+14164500969",
 
     "wifi": {
-        "ssid": "Mozilla-G",
+        "ssid": "Mozilla-G"
     },
 
     "marketplace": {
@@ -49,6 +49,14 @@
         "airplane_mode": {
         	"iterations":1,
         	"checkpoint":1
+        },
+        "set_alarm": {
+        	"iterations":10,
+        	"checkpoint":10
+        },
+        "lock_screen": {
+        	"iterations":100,
+        	"checkpoint":25
         }        
     }
 }
