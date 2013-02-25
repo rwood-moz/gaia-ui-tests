@@ -36,7 +36,7 @@
         },
         "sms_conversation": {
         	"iterations":10,
-        	"checkpoint":5
+        	"checkpoint":10
         },
         "video_playback": {
         	"iterations":1,

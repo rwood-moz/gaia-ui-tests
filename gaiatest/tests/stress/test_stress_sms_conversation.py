@@ -50,8 +50,8 @@ class TestStressSmsConversation(GaiaStressTest):
     def send_first_sms(self):
         # For the first message, write new message and wait for it to arrive.
         # Then stay inside the message discussion and send new messages from there
-        # This code taken from test_sms.py
-        _text_message_content = "First SMS to establish conversation %s" % str(time.time())
+        # This section of code taken from test_sms.py
+        _text_message_content = "SMS to establish conversation %s" % str(time.time())
         self.wait_for_element_displayed(*self._summary_header_locator)
 
         # click new message
@@ -118,6 +118,9 @@ class TestStressSmsConversation(GaiaStressTest):
     def sms_conversation(self, count):
         # Already in an open SMS message/discussion, so just send/receive right there
 
+        # Get current number of SMS messages
+        self.prev_number_of_msgs = len(self.marionette.find_elements(*self._all_messages_locator))
+
         # Type next message text in message field
         _text_message_content = "SMS %d of %d (conversation stress test %s)" % (count, self.iterations, str(time.time()))
         message_field = self.marionette.find_element(
@@ -132,10 +135,7 @@ class TestStressSmsConversation(GaiaStressTest):
         self.wait_for_element_not_present(
             *self._message_sending_spinner_locator, timeout=120)
 
-        # now wait for the return message to arrive.
-        # <TODO> HOW TO CHECK THIS??
-        # sleep for now...
-        time.sleep(60)
+        self.wait_for_condition(self.wait_for_sms_to_arrive, 180, "Did not receive SMS")
 
         # get the most recent listed and most recent received text message
         received_message = self.marionette.find_elements(
@@ -149,3 +149,14 @@ class TestStressSmsConversation(GaiaStressTest):
         # Check that most recent message is also the most recent received message
         self.assertEqual(received_message.get_attribute('id'),
                          last_message.get_attribute('id'))
+
+        # Sleep a couple of seconds to be more realistic
+        time.sleep(2)
+
+    def wait_for_sms_to_arrive(self, x):
+        # Wait for SMS count in msg list to increase by 2 (one sent, one received)
+        new_number_of_msgs = len(self.marionette.find_elements(*self._all_messages_locator))
+        if new_number_of_msgs == (self.prev_number_of_msgs + 2):
+            return True
+        else:
+            return False
