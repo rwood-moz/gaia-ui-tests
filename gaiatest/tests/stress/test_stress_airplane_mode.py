@@ -43,7 +43,7 @@ class TestStressAirplaneMode(GaiaStressTest):
                                  _network_enabled_level5_locator,
                                  _network_enabled_searching_locator]
 
-    _wifi_signal_icon_list = [_wifi_enabled_connecting_locator, 
+    _wifi_signal_icon_list = [_wifi_enabled_connecting_locator,
                               _wifi_enabled_level0_locator,
                               _wifi_enabled_level1_locator,
                               _wifi_enabled_level2_locator,
@@ -56,21 +56,21 @@ class TestStressAirplaneMode(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.airplane_mode
 
-        # Enable wifi and connect
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
-
-        # **** TODO ****** turn on mobile network
+        # Connect wifi
+        self.data_layer.enable_wifi()
+        self.data_layer.connect_to_wifi(self.testvars['wifi'])
 
     def test_stress_airplane_mode(self):
         self.drive()
 
     def airplane_mode(self, count):
+        # Must look for lots of icons so set find timeout to 1/2 a second
+        self.marionette.set_search_timeout(1000)
+
         # Verify NOT in airplane mode
         self.wait_for_element_not_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_present, 5, "Cell network signal icon not found")
-        self.wait_for_condition(self.verify_wifi_signal_present, 5, "Wifi signal icon not found")
+        self.wait_for_condition(self.verify_cell_signal_present, 1, "Cell network signal icon not found")
+        self.wait_for_condition(self.verify_wifi_signal_present, 1, "Wifi signal icon not found")
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
@@ -88,8 +88,8 @@ class TestStressAirplaneMode(GaiaStressTest):
 
         # Verify ARE in airplane mode
         self.wait_for_element_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_absent, 5, "Cell network signal icon displayed but shouldn't be")
-        self.wait_for_condition(self.verify_wifi_signal_absent, 5, "Wifi signal icon displayed but shouldn't be")
+        self.wait_for_condition(self.verify_cell_signal_absent, 1, "Cell network signal icon displayed but shouldn't be")
+        self.wait_for_condition(self.verify_wifi_signal_absent, 1, "Wifi signal icon displayed but shouldn't be")
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
