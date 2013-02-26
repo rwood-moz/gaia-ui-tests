@@ -39,8 +39,8 @@
         	"checkpoint":10
         },
         "video_playback": {
-        	"iterations":1,
-        	"checkpoint":1
+        	"iterations":25,
+        	"checkpoint":5
         },
         "music_playback": {
         	"iterations":5,
