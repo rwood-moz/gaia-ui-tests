@@ -8,7 +8,7 @@ import os
 import time
 
 
-class TestStressBrowserCell(GaiaStressTest):
+class TestStressBrowserWifi(GaiaStressTest):
 
     # Firefox/chrome locators
     _awesome_bar_locator = ("id", "url-input")
@@ -20,16 +20,17 @@ class TestStressBrowserCell(GaiaStressTest):
         GaiaStressTest.setUp(self)
 
         # Name of stress test method to be repeated
-        self.test_method = self.browser_cell
+        self.test_method = self.browser_wifi
 
-        # Want cell network only
-        self.data_layer.disable_wifi()
-        self.data_layer.enable_cell_data()
+        # Want wifi only
+        self.data_layer.disable_cell_data()
+        self.data_layer.enable_wifi()
+        self.data_layer.connect_to_wifi(self.testvars['wifi'])        
 
-    def test_stress_browser_cell(self):
+    def test_stress_browser_wifi(self):
         self.drive()
 
-    def browser_cell(self, count):
+    def browser_wifi(self, count):
         # Start browser and load page and verify, code taken from test_browser_cell_data.py
         self.app = self.apps.launch('Browser')
         self.wait_for_condition(lambda m: m.execute_script("return window.wrappedJSObject.Browser.hasLoaded;"))

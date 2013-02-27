@@ -59,7 +59,11 @@
         	"checkpoint":25
         },
         "browser_cell": {
-        	"iterations":25,
+        	"iterations":5,
+        	"checkpoint":5
+        },
+        "browser_wifi": {
+        	"iterations":5,
         	"checkpoint":5
         }
     }
