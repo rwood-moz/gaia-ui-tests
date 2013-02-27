@@ -18,53 +18,57 @@
         	"checkpoint": 5
         },
         "add_event": {
-        	"iterations":10,
+        	"iterations": 10,
         	"checkpoint": 5
         },
+        "add_delete_event": {
+        	"iterations": 100,
+        	"checkpoint": 25
+        },        
         "camera_photo": {
-        	"iterations":10,
-        	"checkpoint":5
+        	"iterations": 10,
+        	"checkpoint": 5
         },
         "camera_video": {
-        	"capture_duration":7,
-        	"iterations":10,
-        	"checkpoint":15
+        	"capture_duration": 7,
+        	"iterations": 10,
+        	"checkpoint": 15
         },
         "sms_send_receive": {
-        	"iterations":10,
-        	"checkpoint":5
+        	"iterations": 10,
+        	"checkpoint": 5
         },
         "sms_conversation": {
-        	"iterations":10,
-        	"checkpoint":10
+        	"iterations": 10,
+        	"checkpoint": 10
         },
         "video_playback": {
-        	"iterations":25,
-        	"checkpoint":5
+        	"iterations": 25,
+        	"checkpoint": 5
         },
         "music_playback": {
-        	"iterations":5,
-        	"checkpoint":5
+        	"iterations": 5,
+        	"checkpoint": 5
         },
         "airplane_mode": {
-        	"iterations":7,
-        	"checkpoint":7
+        	"iterations": 7,
+        	"checkpoint": 7
         },
         "set_alarm": {
-        	"iterations":10,
-        	"checkpoint":10
+        	"iterations": 10,
+        	"checkpoint": 10
         },
         "lock_screen": {
-        	"iterations":100,
-        	"checkpoint":25
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "browser_cell": {
-        	"iterations":5,
-        	"checkpoint":5
+        	"iterations": 5,
+        	"checkpoint": 5
         },
         "browser_wifi": {
-        	"iterations":5,
-        	"checkpoint":5
+        	"iterations": 5,
+        	"checkpoint": 5
         }
     }
 }
