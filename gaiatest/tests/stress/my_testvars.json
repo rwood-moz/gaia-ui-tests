@@ -57,6 +57,10 @@
         "lock_screen": {
         	"iterations":100,
         	"checkpoint":25
-        }        
+        },
+        "browser_cell": {
+        	"iterations":25,
+        	"checkpoint":5
+        }
     }
 }
