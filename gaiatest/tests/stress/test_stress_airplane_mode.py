@@ -69,8 +69,8 @@ class TestStressAirplaneMode(GaiaStressTest):
 
         # Verify NOT in airplane mode
         self.wait_for_element_not_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_present, 1, "Cell network signal icon not found")
-        self.wait_for_condition(self.verify_wifi_signal_present, 1, "Wifi signal icon not found")
+        self.wait_for_condition(self.verify_cell_signal_present, 5, "Cell network signal icon not found")
+        self.wait_for_condition(self.verify_wifi_signal_present, 5, "Wifi signal icon not found")
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
@@ -88,8 +88,8 @@ class TestStressAirplaneMode(GaiaStressTest):
 
         # Verify ARE in airplane mode
         self.wait_for_element_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_absent, 1, "Cell network signal icon displayed but shouldn't be")
-        self.wait_for_condition(self.verify_wifi_signal_absent, 1, "Wifi signal icon displayed but shouldn't be")
+        self.wait_for_condition(self.verify_cell_signal_absent, 5, "Cell network signal icon displayed but shouldn't be")
+        self.wait_for_condition(self.verify_wifi_signal_absent, 5, "Wifi signal icon displayed but shouldn't be")
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
