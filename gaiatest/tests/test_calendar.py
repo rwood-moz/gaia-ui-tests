@@ -28,7 +28,7 @@ class TestCalendar(GaiaTestCase):
     _day_display_button_locator = ('xpath', "//a[@href='/day/']")
     _week_view_locator = ('id', 'week-view')
     _day_view_locator = ('id', 'day-view')
-    _delete_event_button_locator = ('css selector', '#modify-event-view button[data-l10n-id=event-delete]')
+    _delete_event_button_locator = ('css selector', "#modify-event-view a[data-l10n-id='event-delete']")
 
     def setUp(self):
         GaiaTestCase.setUp(self)

@@ -15,7 +15,7 @@ class TestGallery(GaiaTestCase):
         GaiaTestCase.setUp(self)
 
         # add photo to storage
-        self.push_resource('IMG_0001.jpg', 'DCIM/100MZLLA')
+        self.push_resource('IMG_0001.jpg', destination='DCIM/100MZLLA')
 
         # launch the Gallery app
         self.app = self.apps.launch('Gallery')
@@ -33,11 +33,11 @@ class TestGallery(GaiaTestCase):
                 break
 
         self.marionette.tap(first_gallery_item)
+        self.wait_for_element_displayed(*self._current_image_locator)
 
         current_image = self.marionette.find_element(*self._current_image_locator)
         photos_toolbar = self.marionette.find_element(*self._photos_toolbar_locator)
 
-        self.wait_for_element_displayed(*self._current_image_locator)
         self.assertIsNotNone(current_image.get_attribute('src'))
         self.assertTrue(photos_toolbar.is_displayed())
 

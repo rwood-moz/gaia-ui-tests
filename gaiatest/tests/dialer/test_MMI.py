@@ -5,19 +5,19 @@
 import time
 from gaiatest import GaiaTestCase
 
+IMEI_CODE = "*#06#"
+CALL_FORWARDING_CODE = "*#21#"
 
-class TestDialer(GaiaTestCase):
+class TestMMI(GaiaTestCase):
 
     # Dialer app
     _keyboard_container_locator = ('id', 'keyboard-container')
     _phone_number_view_locator = ('id', 'phone-number-view')
     _call_bar_locator = ('id', 'keypad-callbar-call-action')
 
-    # Call Screen app
-    _calling_number_locator = ('css selector', "div.number")
-    _outgoing_call_locator = ('css selector', 'div.direction.outgoing')
-    _hangup_bar_locator = ('id', 'callbar-hang-up-action')
-    _call_screen_locator = ('css selector', "iframe[name='call_screen']")
+    # Attention frame
+    _attention_frame_locator = ('xpath', '//*[@id="attention-screen"]/iframe')
+    _message_locator = ('id', 'message')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -25,43 +25,29 @@ class TestDialer(GaiaTestCase):
         # launch the app
         self.app = self.apps.launch('Phone')
 
-    def test_dialer_make_call(self):
-        # https://moztrap.mozilla.org/manage/case/1298/
-
-        test_phone_number = self.testvars['twilio']['phone_number']
-
+    def test_MMI_code_IMEI(self):
         self.wait_for_element_displayed(*self._keyboard_container_locator)
 
-        self._dial_number(test_phone_number)
+        self._dial_number(IMEI_CODE)
 
         # Assert that the number was entered correctly.
         phone_view = self.marionette.find_element(*self._phone_number_view_locator)
-
-        self.assertEqual(phone_view.get_attribute('value'), test_phone_number)
+        self.assertEqual(phone_view.get_attribute('value'), IMEI_CODE)
 
         # Click the call button
         self.marionette.tap(self.marionette.find_element(*self._call_bar_locator))
 
-        # Switch to top level frame
         self.marionette.switch_to_frame()
 
-        # Wait for call screen then switch to it
-        self.wait_for_element_present(*self._call_screen_locator, timeout=30)
-        call_screen = self.marionette.find_element(*self._call_screen_locator)
-        self.marionette.switch_to_frame(call_screen)
+        self.wait_for_element_displayed(*self._attention_frame_locator)
+        attention_frame = self.marionette.find_element(*self._attention_frame_locator)
 
-        # Wait for call screen to be dialing
-        self.wait_for_element_displayed(*self._outgoing_call_locator)
+        # Switch to attention frame
+        self.marionette.switch_to_frame(attention_frame)
 
-        # Wait for the state to get to 'alerting' which means connection made
-        self.wait_for_condition(lambda m: self.data_layer.active_telephony_state == "alerting", timeout=30)
+        imei = self.marionette.find_element(*self._message_locator).text
 
-        # Check the number displayed is the one we dialed
-        self.assertEqual(test_phone_number,
-            self.marionette.find_element(*self._calling_number_locator).text)
-
-        # hang up before the person answers ;)
-        self.marionette.tap(self.marionette.find_element(*self._hangup_bar_locator))
+        self.assertEqual(imei, self.testvars['imei'])
 
     def _dial_number(self, phone_number):
         '''
@@ -79,4 +65,3 @@ class TestDialer(GaiaTestCase):
             else:
                 self.marionette.tap(self.marionette.find_element('css selector', 'div.keypad-key[data-value="%s"]' % i))
                 time.sleep(0.25)
-

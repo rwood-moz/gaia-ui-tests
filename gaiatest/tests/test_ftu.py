@@ -26,6 +26,8 @@ class TestFtu(GaiaTestCase):
     _section_wifi_locator = ('id', 'wifi')
     _found_wifi_networks_locator = ('css selector', 'ul#networks li')
     _network_state_locator = ('xpath', 'p[2]')
+    _password_input_locator = ('id', 'wifi_password')
+    _join_network_locator = ('id', 'wifi-join-button')
 
     # Step Date & Time
     _section_date_time_locator = ('id', 'date_and_time')
@@ -35,8 +37,8 @@ class TestFtu(GaiaTestCase):
 
     # Section Import contacts
     _section_import_contacts_locator = ('id', 'import_contacts')
-    _import_from_sim_locator = ('id', 'sim_import')
-    _sim_import_feedback_locator = ('id', 'sim_import_feedback')
+    _import_from_sim_locator = ('id', 'sim-import-button')
+    _sim_import_feedback_locator = ('css selector', '.ftu p')
 
     # Section About Your rights
     _section_ayr_locator = ('id', 'about-your-rights')
@@ -110,6 +112,15 @@ class TestFtu(GaiaTestCase):
         wifi_network = self.marionette.find_element('id', self.testvars['wifi']['ssid'])
         wifi_network.click()
 
+        # This is in the event we are using a Wifi Network that requires a password
+        # We cannot be sure of this thus need the logic
+        if self.testvars['wifi'].get('keyManagement'):
+
+            self.wait_for_element_displayed(*self._password_input_locator)
+            password = self.marionette.find_element(*self._password_input_locator)
+            password.send_keys(self.testvars['wifi'].get('psk') or self.testvars['wifi'].get('wep'))
+            self.marionette.find_element(*self._join_network_locator).click()
+
         self.wait_for_condition(
             lambda m: wifi_network.find_element(*self._network_state_locator).text == "Connected")
 
@@ -137,13 +148,13 @@ class TestFtu(GaiaTestCase):
 
         # Commenting out SIM import for now
 
-        #        # Click import from SIM
-        #        # You can do this as many times as you like without db conflict
-        #        self.marionette.find_element(*self._import_from_sim_locator).click()
-        #
-        #        # TODO What if Sim has two contacts?
-        #        self.wait_for_condition(lambda m: m.find_element(*self._sim_import_feedback_locator).text ==
-        #                        "Imported one contact", message="Contact did not import from sim before timeout")
+        # Click import from SIM
+        # You can do this as many times as you like without db conflict
+        self.marionette.find_element(*self._import_from_sim_locator).click()
+
+        # TODO What if Sim has two contacts?
+        self.wait_for_condition(lambda m: m.find_element(*self._sim_import_feedback_locator).text ==
+                                "Imported one contact", message="Contact did not import from sim before timeout")
 
         # Click next
         self.marionette.find_element(*self._next_button_locator).click()
@@ -171,6 +182,7 @@ class TestFtu(GaiaTestCase):
         # Switch back to top level now that FTU app is gone
         self.marionette.switch_to_frame()
 
+        self.assertEqual(len(self.data_layer.all_contacts), 1)
         self.assertTrue(self.data_layer.get_setting("ril.data.enabled"), "Cell data was not enabled by FTU app")
         self.assertTrue(self.data_layer.is_wifi_connected(self.testvars['wifi']), "WiFi was not connected via FTU app")
 

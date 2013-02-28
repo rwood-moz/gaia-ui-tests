@@ -16,16 +16,17 @@ class TestClockTestAllItemsPresentNewAlarm(GaiaTestCase):
         # Wait for the new alarm screen to load
         self.wait_for_element_displayed(*clock_object._alarm_create_new_locator)
         alarm_create_new = self.marionette.find_element(*clock_object._alarm_create_new_locator)
+
         self.marionette.tap(alarm_create_new)
 
-        # Ensure the picker is displayed
-        picker = self.marionette.find_element(*clock_object._picker_container)
-        self.assertTrue(picker.is_displayed(), 'Picker container not displayed.')
+        # Wait for the picker to be displayed
+        self.wait_for_element_displayed(*clock_object._picker_container)
 
         # Ensure label has the default placeholder and text
         label = self.marionette.find_element(*clock_object._alarm_name)
+
         self.assertEquals(label.get_attribute('placeholder'), 'Alarm')
-        self.assertEquals(label.text, '')
+        self.assertEquals(label.text, 'Alarm')
 
         # Ensure repeat has the default value
         repeat = self.marionette.find_element(*clock_object._repeat_menu)

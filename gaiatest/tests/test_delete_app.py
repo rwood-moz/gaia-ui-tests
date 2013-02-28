@@ -41,7 +41,7 @@ class TestDeleteApp(GaiaTestCase):
         # click YES on the installation dialog and wait for icon displayed
         self.wait_for_element_displayed(*self._yes_button_locator)
         yes = self.marionette.find_element(*self._yes_button_locator)
-        yes.click()
+        self.marionette.tap(yes)
 
         # wait for the app to be installed and the notification banner to be available
         self.wait_for_element_displayed(*self._notification_banner_locator)

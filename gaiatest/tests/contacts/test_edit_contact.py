@@ -99,6 +99,9 @@ class TestContacts(GaiaTestCase):
         # Now assert that the values have updated
         full_name = self.contact['givenName'] + " " + self.contact['familyName']
 
+        # Need an extra wait as this is failing intermittently
+        self.wait_for_condition(lambda m: m.find_element(*self._contact_name_title).text == full_name)
+
         self.assertEqual(self.marionette.find_element(*self._contact_name_title).text,
                          full_name)
         self.assertEqual(self.marionette.find_element(*self._call_phone_number_button_locator).text,

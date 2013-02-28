@@ -29,17 +29,25 @@ class TestLaunchApp(GaiaTestCase):
         # click yes on the installation dialog and wait for icon displayed
         self.wait_for_element_displayed(*self._yes_button_locator)
         yes = self.marionette.find_element(*self._yes_button_locator)
-        yes.click()
+        self.marionette.tap(yes)
 
         self.marionette.switch_to_frame(self.homescreen.frame)
-        # TODO: Should use swipe/flick once this works reliably
-        self._go_to_next_page()
 
-        self.wait_for_element_displayed(*self._icon_locator)
+        # We don't need to check it's displayed, only present(installed)
+        # We'll find the icon in the test instead
+        self.wait_for_element_present(*self._icon_locator)
 
     def test_launch_app(self):
         # click icon and wait for h1 element displayed
         icon = self.marionette.find_element(*self._icon_locator)
+
+        # We iterate through the homescreen pages until we find the icon
+        # It can be on different screens depending on what is packaged with the build
+        while self._homescreen_has_more_pages():
+            self._go_to_next_page()
+            if icon.is_displayed():
+                break
+
         self.marionette.tap(icon)
         self.marionette.switch_to_frame()
         iframe = self.marionette.find_element(*self._app_locator)
@@ -49,6 +57,12 @@ class TestLaunchApp(GaiaTestCase):
 
     def _go_to_next_page(self):
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToNextPage()')
+
+    def _homescreen_has_more_pages(self):
+        # the naming of this could be more concise when it's in an app object!
+        return self.marionette.execute_script("""
+            var pageHelper = window.wrappedJSObject.GridManager.pageHelper;
+            return pageHelper.getCurrentPageNumber() < (pageHelper.getTotalPagesNumber() - 1);""")
 
     def tearDown(self):
         self.apps.uninstall(APP_NAME)

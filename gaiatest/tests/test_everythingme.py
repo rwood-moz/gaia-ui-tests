@@ -8,7 +8,7 @@ class TestEverythingMe(GaiaTestCase):
 
     # Everything.Me locators
     _shortcut_items_locator = ('css selector', '#shortcuts-items li')
-    _facebook_icon_locator = ('xpath', "//div/b[text()='Facebook']")
+    _app_icon_locator = ('css selector', "div.evme-apps li.cloud")
 
     # Homescreen locators
     _homescreen_frame_locator = ('css selector', 'div.homescreen > iframe')
@@ -34,6 +34,9 @@ class TestEverythingMe(GaiaTestCase):
     def test_launch_everything_me_app(self):
         # https://github.com/mozilla/gaia-ui-tests/issues/69
 
+        # I have requested a HTML enhancement for more reliable testing:
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=845828
+
         # swipe to Everything.Me
         hs_frame = self.marionette.find_element(*self._homescreen_frame_locator)
         self.marionette.switch_to_frame(hs_frame)
@@ -44,16 +47,19 @@ class TestEverythingMe(GaiaTestCase):
         # check for the available shortcut categories 
         self.wait_for_element_present(*self._shortcut_items_locator)
 
+        # We can't locate by name because they are stored as images
         shortcuts = self.marionette.find_elements(*self._shortcut_items_locator)
         self.assertGreater(len(shortcuts), 0, 'No shortcut categories found')
 
-        # Tap on the first category of shortcuts
+        # Instead, we tap on the first category of shortcuts
         self.marionette.tap(shortcuts[0])
 
-        self.wait_for_element_displayed(*self._facebook_icon_locator)
+        self.wait_for_element_displayed(*self._app_icon_locator)
 
-        fb_icon = self.marionette.find_element(*self._facebook_icon_locator)
-        self.marionette.tap(fb_icon)
+        # Due to everythingme HTML we cannot locate by the text...
+        app_icons = self.marionette.find_elements(*self._app_icon_locator)
+        # ... so we'll just get the first one.
+        self.marionette.tap(app_icons[0])
 
         # Switch to top level frame then we'll look for the Facebook app
         self.marionette.switch_to_frame()

@@ -11,20 +11,18 @@ class TestVideoPlayer(GaiaTestCase):
 
     # Video list/summary view
     _video_items_locator = ('css selector', 'ul#thumbnails li[data-name]')
-    _video_name_locator = ('css selector', 'p.name')
+    _video_name_locator = ('css selector', 'div.details')
 
     # Video player fullscreen
-    _video_frame_locator = ('id', 'videoFrame')
-    _video_loaded_locator = ('css selector', 'video[style]')
+    _video_controls_locator = ('id', 'videoControls')
     _video_title_locator = ('id', 'video-title')
     _elapsed_text_locator = ('id', 'elapsed-text')
-    _video_controls_locator = ('id', 'videoControls')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
 
         # add video to storage
-        self.push_resource('VID_0001.3gp', 'DCIM/100MZLLA')
+        self.push_resource('VID_0001.3gp', destination='DCIM/100MZLLA')
 
         # launch the Video app
         self.app = self.apps.launch('Video')
@@ -39,19 +37,14 @@ class TestVideoPlayer(GaiaTestCase):
         self.assertGreater(all_videos, 0)
 
         first_video = all_videos[0]
-        first_video_name = first_video.find_element(*self._video_name_locator).text
+        first_video_name = first_video.find_element(*self._video_name_locator).get_attribute('data-raw')
 
         # click on the first video
         self.marionette.tap(first_video)
 
         # Video will play automatically
-        self.wait_for_element_displayed(*self._video_frame_locator)
-        self.wait_for_element_displayed(*self._video_loaded_locator)
-
-        # Wait for vid to have started playing
-        self.assertTrue(self.marionette.execute_script("return window.wrappedJSObject.playing;"))
-
-        # Tap to make toolbar visible
+        # Tap on the toolbar to keep it visible
+        self.wait_for_element_displayed(*self._video_controls_locator)
         self.marionette.tap(self.marionette.find_element(*self._video_controls_locator))
 
         # The elapsed time != 0:00 is the only indication of the toolbar visible

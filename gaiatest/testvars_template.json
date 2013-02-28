@@ -1,18 +1,13 @@
 {
-    "this_phone_number": "",
-
-    "twilio": {
-        "account_sid": "",
-        "auth_token": "",
-        "phone_number": ""
-    },
-
-    "wifi": {
-        "ssid": ""
-    },
-
-    "marketplace": {
-        "username": "",
-        "password": ""
-    }
+  "settings": {},
+  "this_phone_number": "",
+  "imei": "",
+  "remote_phone_number": "",
+  "wifi": {
+    "ssid": ""
+  },
+  "marketplace": {
+    "username": "",
+    "password": ""
+  }
 }

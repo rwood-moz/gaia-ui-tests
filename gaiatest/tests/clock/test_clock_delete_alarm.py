@@ -31,6 +31,9 @@ class TestClockDeleteAlarm(GaiaTestCase):
         # find the origin alarms' number
         initial_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
 
+        # wait notification not displayed
+        self.wait_for_element_not_displayed(*clock_object._banner_countdown_notification_locator)
+
         # edit alarm
         alarm_item = self.marionette.find_element(*clock_object._alarm_item)
         self.marionette.tap(alarm_item)

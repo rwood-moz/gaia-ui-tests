@@ -7,7 +7,16 @@ from gaiatest import GaiaTestCase
 
 class TestResources(GaiaTestCase):
 
+    filename = 'IMG_0001.jpg'
+
     def test_push_resource(self):
-        resource = 'IMG_0001.jpg'
-        self.data_layer.push_resource(resource)
-        self.assertTrue(resource in self.data_layer.media_files)
+        self.push_resource(self.filename)
+        self.assertTrue(self.filename in self.data_layer.media_files)
+
+    def test_push_multiple_resources(self):
+        count = 5
+        self.push_resource(self.filename, count)
+
+        for i in range(1, count + 1):
+            remote_filename = '_%s.'.join(iter(self.filename.split('.'))) % i
+            self.assertTrue(remote_filename in self.data_layer.media_files)

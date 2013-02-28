@@ -28,7 +28,7 @@ class TestDebug(GaiaTestCase):
         debug_path = os.path.join(
             xml_output and os.path.dirname(xml_output) or 'debug',
             self.__class__.__name__)
-        for file_name in ['screenshot.png']:
+        for file_name in ['screenshot.png', 'settings.json', 'source.txt']:
             file_exists = os.path.isfile(
                 os.path.join(
                     debug_path,

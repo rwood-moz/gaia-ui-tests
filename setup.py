@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 import shutil
 
-version = '0.6'
+version = '0.8'
 
 # get documentation from the README
 try:

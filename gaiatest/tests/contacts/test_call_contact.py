@@ -23,7 +23,7 @@ class TestContacts(GaiaTestCase):
     #_calling_number_locator = ('css selector', "div.number")
     _outgoing_call_locator = ('css selector', 'div.direction.outgoing')
     _hangup_bar_locator = ('id', 'callbar-hang-up-action')
-    _call_app_locator = ('css selector', "iframe[name='call_screen']")
+    _call_app_locator = ('css selector', "iframe[name='call_screen0']")
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -75,3 +75,13 @@ class TestContacts(GaiaTestCase):
         # hang up before the person answers ;)
         hangup_bar = self.marionette.find_element(*self._hangup_bar_locator)
         self.marionette.tap(hangup_bar)
+        # Switch back to main frame before Marionette loses track bug #840931
+        self.marionette.switch_to_frame()
+
+    def tearDown(self):
+
+        # In case the assertion fails this will still kill the call
+        # An open call creates problems for future tests
+        self.data_layer.kill_active_call()
+
+        GaiaTestCase.tearDown(self)
