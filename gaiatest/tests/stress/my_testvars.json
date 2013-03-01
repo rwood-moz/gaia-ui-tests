@@ -17,6 +17,14 @@
         	"iterations": 5,
         	"checkpoint": 5
         },
+        "add_edit_contact": {
+        	"iterations": 2,
+        	"checkpoint": 2
+        },
+        "add_delete_contact": {
+        	"iterations": 2,
+        	"checkpoint": 2
+        },
         "add_event": {
         	"iterations": 10,
         	"checkpoint": 5
