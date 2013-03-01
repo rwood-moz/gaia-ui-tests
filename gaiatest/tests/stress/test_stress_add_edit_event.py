@@ -21,7 +21,7 @@ class TestStressAddEditEvent(GaiaStressTest):
     _event_start_date_input_locator = ('xpath', "//input[@data-l10n-id='event-start-date']")
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
     _event_notes_input_locator = ('xpath', "//textarea[@data-l10n-id='event-description']")
-    _done_edit_button_locator = ('id', "@data-l10n-id='done'")
+    _done_edit_button_locator = ('css selector', 'span[data-l10n-id=done]')
 
     def setUp(self):
         GaiaStressTest.setUp(self)
@@ -100,20 +100,23 @@ class TestStressAddEditEvent(GaiaStressTest):
         self.marionette.tap(event_list)
         self.wait_for_element_displayed(*self._event_title_input_locator)
 
-        # Edit the existing event (add some notes)
-        self.marionette.find_element(*self._event_notes_input_locator).clear()
-        event_notes = "Added notes to event %d" % count
-        self.marionette.find_element(*self._event_notes_input_locator).send_keys(event_notes)
+        # Edit the existing event (add to title)
+        self.marionette.find_element(*self._event_title_input_locator).send_keys(" edited")
+        event_title = event_title + " edited"
 
-        # Save changes, must tap elsewhere to hide keyboard first so 'done' button appears
-        self.wait_for_element_displayed(*self._done_edit_button_locator)
+        # Click Done button to save changes
         done_edit_button = self.marionette.find_element(*self._done_edit_button_locator)
         self.marionette.tap(done_edit_button)
+
+        # wait for the default calendar display
         self.wait_for_element_displayed(*this_event_time_slot_locator)
 
-        # Open the event again and verify notes are correct
-
-        # Close the event
+        # assert that the event is displayed as expected
+        self.assertTrue(self.marionette.find_element(*this_event_time_slot_locator).is_displayed(),
+                        "Expected the time slot for the event to be present.")
+        displayed_events = self.marionette.find_element(*month_view_time_slot_all_events_locator).text
+        self.assertIn(event_title, displayed_events)
+        self.assertIn(event_location, displayed_events)
 
         # Increment for the next event
         self.next_event_date += datetime.timedelta(days=1)
