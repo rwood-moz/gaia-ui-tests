@@ -17,8 +17,12 @@ class TestStressAddDeleteContact(GaiaStressTest):
     _done_button_locator = ('id', 'save-button')
     _edit_contact_button_locator = ('id', 'edit-contact-button')
     _delete_contact_button_locator = ('id', 'delete-contact')
-    _remove_button_locator = ('css selector', '#modal-dialog-select-one ul > li > button')
+    
 
+    # Delete confirmation dialog
+    _confirm_dialog_locator = ('id', 'confirmation-message')
+    _remove_button_locator = ('css selector', 'button.danger')
+    
     # New/Edit contact fields
     _given_name_field_locator = ('id', 'givenName')
     _family_name_field_locator = ('id', 'familyName')
@@ -103,9 +107,14 @@ class TestStressAddDeleteContact(GaiaStressTest):
         self.marionette.tap(delete_contact_button)        
 
         # Click remove button to confirm the delete
+        self.wait_for_element_displayed(*self._confirm_dialog_locator)
         self.wait_for_element_displayed(*self._remove_button_locator)
-        remove_button = self.marionette.find_element(*self._remove_button_locator)
-        self.marionette.tap(remove_button)        
+        confirm_remove_button = self.marionette.find_element(*self._remove_button_locator)
+        self.marionette.tap(confirm_remove_button)
+
+        # *** The above works / doesn't time out on the waits or anything, however
+        # on the device the 'Remove' button is actually never tapped; so the confirm
+        # delete dialog still appears and the contact still exists so the next line below fails
 
         # Verify contact is no longer in the list
         self.wait_for_element_not_displayed(*contact_locator)
