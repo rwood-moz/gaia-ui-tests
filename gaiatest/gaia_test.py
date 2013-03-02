@@ -650,7 +650,7 @@ class GaiaStressTest(GaiaTestCase):
             self.marionette.log("%s iteration %d of %d" % (self.test_method.__name__, count, self.iterations))
             self.test_method(count)
             # Checkpoint time?
-            if ((count % self.checkpoint_every) == 0):
+            if ((count % self.checkpoint_every) == 0) or count == self.iterations:
                 self.checkpoint(count)
 
     def checkpoint(self, iteration = 0):

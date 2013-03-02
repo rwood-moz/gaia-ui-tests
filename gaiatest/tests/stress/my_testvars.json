@@ -12,75 +12,75 @@
     },
     
     "stresstests": {
-        "min_iterations": 1,
+        "min_iterations": 10,
         "add_contact": {
-        	"iterations": 5,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "add_edit_contact": {
-        	"iterations": 1,
-        	"checkpoint": 1
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "add_delete_contact": {
-        	"iterations": 2,
-        	"checkpoint": 2
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "add_event": {
-        	"iterations": 10,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "add_edit_event": {
-        	"iterations": 25,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "add_delete_event": {
-        	"iterations": 25,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "camera_photo": {
-        	"iterations": 10,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "camera_video": {
         	"capture_duration": 7,
-        	"iterations": 10,
-        	"checkpoint": 15
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "sms_send_receive": {
-        	"iterations": 10,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "sms_conversation": {
-        	"iterations": 10,
-        	"checkpoint": 10
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "video_playback": {
-        	"iterations": 25,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "music_playback": {
-        	"iterations": 5,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "airplane_mode": {
-        	"iterations": 7,
-        	"checkpoint": 7
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "set_alarm": {
-        	"iterations": 10,
-        	"checkpoint": 10
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "lock_screen": {
         	"iterations": 100,
         	"checkpoint": 25
         },
         "browser_cell": {
-        	"iterations": 5,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         },
         "browser_wifi": {
-        	"iterations": 5,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 25
         }
     }
 }
