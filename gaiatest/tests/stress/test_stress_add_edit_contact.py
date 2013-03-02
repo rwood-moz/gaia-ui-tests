@@ -80,6 +80,24 @@ class TestStressAddEditContact(GaiaStressTest):
 
         contact_locator = self.create_contact_locator(first_name)
         self.wait_for_element_displayed(*contact_locator)
+        
+       # Wait a couple of seconds
+        time.sleep(2)
+
+        # Open the contact
+        contact_to_delete = self.marionette.find_element(*contact_locator)
+        self.marionette.tap(contact_to_delete)
+
+        # Click edit button
+        self.wait_for_element_displayed(*self._edit_contact_button_locator)
+        edit_contact_button = self.marionette.find_element(*self._edit_contact_button_locator)
+        self.marionette.tap(edit_contact_button)
+        
+        # Edit a field
+        
+        # Save changes
+        
+        # Verify        
 
     def create_contact_locator(self, contact):
         return ('xpath', "//a[descendant::strong[text()='%s']]" % contact)

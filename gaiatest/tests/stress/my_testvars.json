@@ -18,8 +18,8 @@
         	"checkpoint": 5
         },
         "add_edit_contact": {
-        	"iterations": 2,
-        	"checkpoint": 2
+        	"iterations": 1,
+        	"checkpoint": 1
         },
         "add_delete_contact": {
         	"iterations": 2,
