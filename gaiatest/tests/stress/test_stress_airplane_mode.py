@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+# Approximate runtime per 100 iterations: 50 minutes
+
 from gaiatest import GaiaStressTest
 
 import os
@@ -69,8 +71,8 @@ class TestStressAirplaneMode(GaiaStressTest):
 
         # Verify NOT in airplane mode
         self.wait_for_element_not_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_present, 5, "Cell network signal icon not found")
-        self.wait_for_condition(self.verify_wifi_signal_present, 5, "Wifi signal icon not found")
+        self.wait_for_condition(self.verify_cell_signal_present, 10, "Cell network signal icon not found")
+        self.wait_for_condition(self.verify_wifi_signal_present, 10, "Wifi signal icon not found")
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
@@ -88,8 +90,8 @@ class TestStressAirplaneMode(GaiaStressTest):
 
         # Verify ARE in airplane mode
         self.wait_for_element_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_absent, 5, "Cell network signal icon displayed but shouldn't be")
-        self.wait_for_condition(self.verify_wifi_signal_absent, 5, "Wifi signal icon displayed but shouldn't be")
+        self.wait_for_condition(self.verify_cell_signal_absent, 10, "Cell network signal icon displayed but shouldn't be")
+        self.wait_for_condition(self.verify_wifi_signal_absent, 10, "Wifi signal icon displayed but shouldn't be")
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
