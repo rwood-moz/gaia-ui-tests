@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: xxx minutes
+# Approximate runtime per 100 iterations: 38 minutes
 
 from gaiatest import GaiaStressTest
 
@@ -29,7 +29,7 @@ class TestStressVideoPlayback(GaiaStressTest):
         self.test_method = self.video_playback
 
         # add video to storage
-        self.push_resource('VID_0001.3gp', 'DCIM/100MZLLA')
+        self.push_resource('VID_0001.3gp', destination='DCIM/100MZLLA')
      
     def test_stress_add_event(self):
         self.drive()

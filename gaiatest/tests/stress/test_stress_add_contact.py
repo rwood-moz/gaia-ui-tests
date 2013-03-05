@@ -34,6 +34,9 @@ class TestStressAddContact(GaiaStressTest):
         # Name of stress test method to be repeated
         self.test_method = self.add_contact
 
+        # Remove any existing contacts
+        self.data_layer.remove_all_contacts(60000)
+
         # Launch the Contacts app
         self.app = self.apps.launch('Contacts')
         self.wait_for_element_not_displayed(*self._loading_overlay)
@@ -42,7 +45,7 @@ class TestStressAddContact(GaiaStressTest):
 
     def test_stress_add_contact(self):
         self.drive()
-    
+
     def create_contact_locator(self, contact):
         return ('css selector', '.contact-item p[data-order^=%s]' % contact)
 
@@ -82,5 +85,5 @@ class TestStressAddContact(GaiaStressTest):
         done_button = self.marionette.find_element(*self._done_button_locator)
         self.marionette.tap(done_button)
 
-        contact_locator = self.create_contact_locator(first_name)
+        contact_locator = self.create_contact_locator(self.contact['givenName'])
         self.wait_for_element_displayed(*contact_locator)
