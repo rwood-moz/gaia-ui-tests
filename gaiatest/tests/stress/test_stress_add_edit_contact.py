@@ -2,9 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+# Approximate runtime per 100 iterations: xxx minutes
+
 from gaiatest import GaiaStressTest
 from gaiatest.mocks.mock_contact import MockContact
 import os
+import time
 
 
 class TestStressAddEditContact(GaiaStressTest):
@@ -14,6 +17,7 @@ class TestStressAddEditContact(GaiaStressTest):
     # Header buttons
     _add_new_contact_button_locator = ('id', 'add-contact-button')
     _done_button_locator = ('id', 'save-button')
+    _edit_contact_button_locator = ('id', 'edit-contact-button')
 
     # New/Edit contact fields
     _given_name_field_locator = ('id', 'givenName')
@@ -32,6 +36,9 @@ class TestStressAddEditContact(GaiaStressTest):
         # Name of stress test method to be repeated
         self.test_method = self.add_edit_contact
 
+        # Remove any existing contacts
+        self.data_layer.remove_all_contacts(60000)
+
         # Launch the Contacts app
         self.app = self.apps.launch('Contacts')
         self.wait_for_element_not_displayed(*self._loading_overlay)
@@ -41,21 +48,23 @@ class TestStressAddEditContact(GaiaStressTest):
     def test_stress_add_edit_contact(self):
         self.drive()
 
-    def add_edit_contact(self, count):
+     def create_contact_locator(self, contact):
+        return ('css selector', '.contact-item p[data-order^=%s]' % contact)
+
+    def add_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
-        # Uses data from mock contact, except adds the iteration number as name prefix
+        # Uses data from mock contact, except uses iteration for last name
 
         # Click Create new contact
         self.wait_for_element_displayed(*self._add_new_contact_button_locator)
         add_new_contact = self.marionette.find_element(*self._add_new_contact_button_locator)
         self.marionette.tap(add_new_contact)
-
         self.wait_for_element_displayed(*self._given_name_field_locator)
 
         # Enter data into fields
-        first_name = "%07dof%d" % (count, self.iterations) + self.contact['givenName']
-
-        self.marionette.find_element(*self._given_name_field_locator).send_keys(first_name)
+        extra_text = "-%dof%d" % (count, self.iterations)
+        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
+        
         self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
 
         self.marionette.find_element(
@@ -78,10 +87,10 @@ class TestStressAddEditContact(GaiaStressTest):
         done_button = self.marionette.find_element(*self._done_button_locator)
         self.marionette.tap(done_button)
 
-        contact_locator = self.create_contact_locator(first_name)
+        contact_locator = self.create_contact_locator(self.contact['givenName'] + extra_text)
         self.wait_for_element_displayed(*contact_locator)
-        
-       # Wait a couple of seconds
+
+        # Wait a couple of seconds
         time.sleep(2)
 
         # Open the contact
@@ -91,13 +100,15 @@ class TestStressAddEditContact(GaiaStressTest):
         # Click edit button
         self.wait_for_element_displayed(*self._edit_contact_button_locator)
         edit_contact_button = self.marionette.find_element(*self._edit_contact_button_locator)
-        self.marionette.tap(edit_contact_button)
-        
-        # Edit a field
-        
-        # Save changes
-        
-        # Verify        
+        self.marionette.tap(edit_contact_button)    
 
-    def create_contact_locator(self, contact):
-        return ('xpath', "//a[descendant::strong[text()='%s']]" % contact)
+        # Add 'mod' to first name
+        self.marionette.find_element(*self._given_name_field_locator).clear()
+        self.marionette.find_element(*self._given_name_field_locator).send_keys("edited")
+
+        # Click update to save
+
+        # Find contact based on edited first name        
+
+        # Wait a second before repeating
+        time.sleep(1)

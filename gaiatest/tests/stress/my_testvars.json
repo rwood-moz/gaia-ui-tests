@@ -12,7 +12,7 @@
     },
     
     "stresstests": {
-        "min_iterations": 10,
+        "min_iterations": 1,
         "add_contact": {
         	"iterations": 100,
         	"checkpoint": 25

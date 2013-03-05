@@ -49,21 +49,23 @@ class TestStressAddDeleteContact(GaiaStressTest):
     def test_stress_add_delete_contact(self):
         self.drive()
 
-    def add_delete_contact(self, count):
-        # Add a new contact, some of this code borrowed from test_add_new_contact
-        # Uses data from mock contact, except adds the iteration number as name prefix
+   def create_contact_locator(self, contact):
+        return ('css selector', '.contact-item p[data-order^=%s]' % contact)
+
+    def add_contact(self, count):
+        # Add a new contact, most of this code borrowed from test_add_new_contact
+        # Uses data from mock contact, except uses iteration for last name
 
         # Click Create new contact
         self.wait_for_element_displayed(*self._add_new_contact_button_locator)
         add_new_contact = self.marionette.find_element(*self._add_new_contact_button_locator)
         self.marionette.tap(add_new_contact)
-
         self.wait_for_element_displayed(*self._given_name_field_locator)
 
         # Enter data into fields
-        first_name = "%07dof%d" % (count, self.iterations) + self.contact['givenName']
-
-        self.marionette.find_element(*self._given_name_field_locator).send_keys(first_name)
+        extra_text = "-%dof%d" % (count, self.iterations)
+        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
+        
         self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
 
         self.marionette.find_element(
@@ -86,9 +88,9 @@ class TestStressAddDeleteContact(GaiaStressTest):
         done_button = self.marionette.find_element(*self._done_button_locator)
         self.marionette.tap(done_button)
 
-        contact_locator = self.create_contact_locator(first_name)
+        contact_locator = self.create_contact_locator(self.contact['givenName'] + extra_text)
         self.wait_for_element_displayed(*contact_locator)
-        
+      
         # Wait a couple of seconds
         time.sleep(2)
 

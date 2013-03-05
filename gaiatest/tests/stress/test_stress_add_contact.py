@@ -51,7 +51,7 @@ class TestStressAddContact(GaiaStressTest):
 
     def add_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
-        # Uses data from mock contact, except adds the iteration number as name prefix
+        # Uses data from mock contact, except uses iteration for last name
 
         # Click Create new contact
         self.wait_for_element_displayed(*self._add_new_contact_button_locator)
@@ -60,10 +60,10 @@ class TestStressAddContact(GaiaStressTest):
         self.wait_for_element_displayed(*self._given_name_field_locator)
 
         # Enter data into fields
-        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'])
-
-        family_name = "%07dof%d" % (count, self.iterations)
-        self.marionette.find_element(*self._family_name_field_locator).send_keys(family_name)
+        extra_text = "-%dof%d" % (count, self.iterations)
+        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
+        
+        self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
 
         self.marionette.find_element(
             *self._phone_field_locator).send_keys(self.contact['tel']['value'])
@@ -85,5 +85,6 @@ class TestStressAddContact(GaiaStressTest):
         done_button = self.marionette.find_element(*self._done_button_locator)
         self.marionette.tap(done_button)
 
-        contact_locator = self.create_contact_locator(self.contact['givenName'])
+        #contact_locator = self.create_contact_locator(self.contact['familyName'])
+        contact_locator = self.create_contact_locator(self.contact['givenName'] + extra_text)
         self.wait_for_element_displayed(*contact_locator)
