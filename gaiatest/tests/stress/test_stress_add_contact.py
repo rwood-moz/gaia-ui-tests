@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+# Approximate runtime per 100 iterations: xxx minutes
+
 from gaiatest import GaiaStressTest
 from gaiatest.mocks.mock_contact import MockContact
 import os
@@ -40,6 +42,9 @@ class TestStressAddContact(GaiaStressTest):
 
     def test_stress_add_contact(self):
         self.drive()
+    
+    def create_contact_locator(self, contact):
+        return ('css selector', '.contact-item p[data-order^=%s]' % contact)
 
     def add_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
@@ -49,14 +54,13 @@ class TestStressAddContact(GaiaStressTest):
         self.wait_for_element_displayed(*self._add_new_contact_button_locator)
         add_new_contact = self.marionette.find_element(*self._add_new_contact_button_locator)
         self.marionette.tap(add_new_contact)
-
         self.wait_for_element_displayed(*self._given_name_field_locator)
 
         # Enter data into fields
-        first_name = "%07dof%d" % (count, self.iterations) + self.contact['givenName']
+        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'])
 
-        self.marionette.find_element(*self._given_name_field_locator).send_keys(first_name)
-        self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
+        family_name = "%07dof%d" % (count, self.iterations)
+        self.marionette.find_element(*self._family_name_field_locator).send_keys(family_name)
 
         self.marionette.find_element(
             *self._phone_field_locator).send_keys(self.contact['tel']['value'])
@@ -80,6 +84,3 @@ class TestStressAddContact(GaiaStressTest):
 
         contact_locator = self.create_contact_locator(first_name)
         self.wait_for_element_displayed(*contact_locator)
-
-    def create_contact_locator(self, contact):
-        return ('xpath', "//a[descendant::strong[text()='%s']]" % contact)
