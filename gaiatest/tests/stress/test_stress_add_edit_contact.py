@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: xxx minutes
+# Approximate runtime per 100 iterations: 20 minutes
 
 from gaiatest import GaiaStressTest
 from gaiatest.mocks.mock_contact import MockContact
@@ -18,6 +18,7 @@ class TestStressAddEditContact(GaiaStressTest):
     _add_new_contact_button_locator = ('id', 'add-contact-button')
     _done_button_locator = ('id', 'save-button')
     _edit_contact_button_locator = ('id', 'edit-contact-button')
+    _back_button_locator = ('id', 'details-back')
 
     # New/Edit contact fields
     _given_name_field_locator = ('id', 'givenName')
@@ -48,12 +49,12 @@ class TestStressAddEditContact(GaiaStressTest):
     def test_stress_add_edit_contact(self):
         self.drive()
 
-     def create_contact_locator(self, contact):
+    def create_contact_locator(self, contact):
         return ('css selector', '.contact-item p[data-order^=%s]' % contact)
 
-    def add_contact(self, count):
+    def add_edit_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
-        # Uses data from mock contact, except uses iteration for last name
+        # Uses data from mock contact, except adds iteration to first name
 
         # Click Create new contact
         self.wait_for_element_displayed(*self._add_new_contact_button_locator)
@@ -62,9 +63,9 @@ class TestStressAddEditContact(GaiaStressTest):
         self.wait_for_element_displayed(*self._given_name_field_locator)
 
         # Enter data into fields
-        extra_text = "-%dof%d" % (count, self.iterations)
-        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
-        
+        count_text = "-%dof%d" % (count, self.iterations)
+        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + count_text)
+
         self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
 
         self.marionette.find_element(
@@ -87,7 +88,7 @@ class TestStressAddEditContact(GaiaStressTest):
         done_button = self.marionette.find_element(*self._done_button_locator)
         self.marionette.tap(done_button)
 
-        contact_locator = self.create_contact_locator(self.contact['givenName'] + extra_text)
+        contact_locator = self.create_contact_locator(self.contact['givenName'] + count_text)
         self.wait_for_element_displayed(*contact_locator)
 
         # Wait a couple of seconds
@@ -100,15 +101,25 @@ class TestStressAddEditContact(GaiaStressTest):
         # Click edit button
         self.wait_for_element_displayed(*self._edit_contact_button_locator)
         edit_contact_button = self.marionette.find_element(*self._edit_contact_button_locator)
-        self.marionette.tap(edit_contact_button)    
+        self.marionette.tap(edit_contact_button)
 
         # Add 'mod' to first name
-        self.marionette.find_element(*self._given_name_field_locator).clear()
-        self.marionette.find_element(*self._given_name_field_locator).send_keys("edited")
+        self.wait_for_element_displayed(*self._given_name_field_locator)
+        edit_text = "-edit"
+        self.marionette.find_element(*self._given_name_field_locator).send_keys(edit_text)
 
         # Click update to save
+        done_button = self.marionette.find_element(*self._done_button_locator)
+        self.marionette.tap(done_button)
 
-        # Find contact based on edited first name        
+        # Contact is still displayed, go back to main contacts list
+        self.wait_for_element_displayed(*self._back_button_locator)
+        back_button = self.marionette.find_element(*self._back_button_locator)
+        self.marionette.tap(back_button)
+
+        # Find contact based on edited first name
+        contact_locator = self.create_contact_locator(self.contact['givenName'] + count_text + edit_text)
+        self.wait_for_element_displayed(*contact_locator)
 
         # Wait a second before repeating
         time.sleep(1)

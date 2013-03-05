@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: xxx minutes
+# Approximate runtime per 100 iterations: 11 minutes
 
 from gaiatest import GaiaStressTest
 from gaiatest.mocks.mock_contact import MockContact
@@ -51,7 +51,7 @@ class TestStressAddContact(GaiaStressTest):
 
     def add_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
-        # Uses data from mock contact, except uses iteration for last name
+        # Uses data from mock contact, except adds iteration to first name
 
         # Click Create new contact
         self.wait_for_element_displayed(*self._add_new_contact_button_locator)
@@ -62,7 +62,7 @@ class TestStressAddContact(GaiaStressTest):
         # Enter data into fields
         extra_text = "-%dof%d" % (count, self.iterations)
         self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
-        
+
         self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
 
         self.marionette.find_element(

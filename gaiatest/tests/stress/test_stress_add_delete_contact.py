@@ -49,12 +49,12 @@ class TestStressAddDeleteContact(GaiaStressTest):
     def test_stress_add_delete_contact(self):
         self.drive()
 
-   def create_contact_locator(self, contact):
+    def create_contact_locator(self, contact):
         return ('css selector', '.contact-item p[data-order^=%s]' % contact)
 
-    def add_contact(self, count):
+    def add_delete_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
-        # Uses data from mock contact, except uses iteration for last name
+        # Uses data from mock contact, except adds iteration to first name
 
         # Click Create new contact
         self.wait_for_element_displayed(*self._add_new_contact_button_locator)
@@ -114,9 +114,8 @@ class TestStressAddDeleteContact(GaiaStressTest):
         confirm_remove_button = self.marionette.find_element(*self._remove_button_locator)
         self.marionette.tap(confirm_remove_button)
 
-        # *** The above works / doesn't time out on the waits or anything, however
-        # on the device the 'Remove' button is actually never tapped; so the confirm
-        # delete dialog still appears and the contact still exists so the next line below fails
+       # Bug 779284 is blocking this test; modalu pop-up dialog (delete confirmation) is not
+       # supported by Marionette yet so cannot click the 'Remove' button to confirm the delete
 
         # Verify contact is no longer in the list
         self.wait_for_element_not_displayed(*contact_locator)
