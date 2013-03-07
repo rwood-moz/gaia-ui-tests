@@ -16,6 +16,7 @@ class TestStressBrowserWifi(GaiaStressTest):
     _url_button_locator = ("id", "url-button")
     _throbber_locator = ("id", "throbber")
     _browser_frame_locator = ('css selector', 'iframe[mozbrowser]')
+    _close_button_locator = ('css selector', '#cards-view li.card[data-origin*="browser"] .close-card')
 
     def setUp(self):
         GaiaStressTest.setUp(self)
@@ -26,7 +27,7 @@ class TestStressBrowserWifi(GaiaStressTest):
         # Want wifi only
         self.data_layer.disable_cell_data()
         self.data_layer.enable_wifi()
-        self.data_layer.connect_to_wifi(self.testvars['wifi'])        
+        self.data_layer.connect_to_wifi(self.testvars['wifi'])
 
     def test_stress_browser_wifi(self):
         self.drive()
@@ -60,8 +61,8 @@ class TestStressBrowserWifi(GaiaStressTest):
         # Wait a couple of seconds with page displayed
         time.sleep(2)
 
-        # Close the browser
-        self.apps.kill(self.app)
+        # Close the browser using home button
+        self.close_app()
 
         # Wait a couple of seconds between iterations
         time.sleep(2)

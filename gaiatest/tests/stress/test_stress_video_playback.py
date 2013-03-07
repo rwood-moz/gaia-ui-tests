@@ -69,8 +69,8 @@ class TestStressVideoPlayback(GaiaStressTest):
         self.wait_for_element_not_displayed(*self._video_controls_locator)
         time.sleep(1)
 
-        # Kill the app
-        self.apps.kill(self.app)
+        # Close the app via home screen
+        self.close_app()
 
         # Wait a couple of seconds before repeating
         time.sleep(2)

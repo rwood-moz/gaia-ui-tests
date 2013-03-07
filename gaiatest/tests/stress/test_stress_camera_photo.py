@@ -49,8 +49,11 @@ class TestStressCameraPhoto(GaiaStressTest):
         # Find the new picture in the film strip
         self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
 
-        # Close the app
-        self.apps.kill(self.app)
+        # Close the app using home button
+        self.close_app()
+
+        # Wait a couple of seconds before repeating
+        time.sleep(2)
 
     def wait_for_capture_ready(self):
         self.marionette.set_script_timeout(10000)

@@ -44,7 +44,9 @@ class TestStressSmsConversation(GaiaStressTest):
         # temporary workaround for bug 837029: launch and then kill messages
         # app, to clear any left-over sms msg notifications
         self.app = self.apps.launch('Messages', False)
+        time.sleep(2)
         self.apps.kill(self.app)
+        time.sleep(2)
 
         # launch the app
         self.app = self.apps.launch('Messages')

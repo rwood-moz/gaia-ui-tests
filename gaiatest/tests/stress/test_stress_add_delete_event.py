@@ -13,12 +13,13 @@ import time
 
 class TestStressAddDeleteEvent(GaiaStressTest):
 
-    _add_event_button_locator = ('xpath', "//a[@href='/add/']")
+    _add_event_button_locator = ('xpath', "//a[@href='/event/add/']")
     _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
     _event_location_input_locator = ('xpath', "//input[@data-l10n-id='event-location']")
     _event_start_time_input_locator = ('xpath', "//input[@data-l10n-id='event-start-time']")
     _event_end_time_input_locator = ('xpath', "//input[@data-l10n-id='event-end-time']")
     _save_event_button_locator = ('css selector', 'button.save')
+    _edit_event_button_locator = ('css selector', 'button.edit')
     _delete_event_button_locator = ('css selector', 'button.delete-cancel')
     _event_start_date_input_locator = ('xpath', "//input[@data-l10n-id='event-start-date']")
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
@@ -98,7 +99,10 @@ class TestStressAddDeleteEvent(GaiaStressTest):
         # Now tap on the event to open it
         event_list = self.marionette.find_element(*month_view_time_slot_all_events_locator)
         self.marionette.tap(event_list)
-        self.wait_for_element_displayed(*self._event_title_input_locator)
+
+        # Click edit button
+        self.wait_for_element_displayed(*self._edit_event_button_locator)
+        self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))
 
         # Then delete it
         self.wait_for_element_present(*self._delete_event_button_locator)

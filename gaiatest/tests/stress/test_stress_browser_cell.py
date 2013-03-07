@@ -60,8 +60,8 @@ class TestStressBrowserCell(GaiaStressTest):
         # Wait a couple of seconds with page displayed
         time.sleep(2)
 
-        # Close the browser
-        self.apps.kill(self.app)
+        # Close the browser using home button
+        self.close_app()
 
         # Wait a couple of seconds between iterations
         time.sleep(2)

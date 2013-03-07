@@ -26,7 +26,7 @@
         	"checkpoint": 25
         },
         "add_event": {
-        	"iterations": 100,
+        	"iterations": 500,
         	"checkpoint": 25
         },
         "add_edit_event": {

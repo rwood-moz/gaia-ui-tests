@@ -13,19 +13,21 @@ import time
 
 class TestStressAddEditEvent(GaiaStressTest):
 
-    _add_event_button_locator = ('xpath', "//a[@href='/add/']")
+    _add_event_button_locator = ('xpath', "//a[@href='/event/add/']")
     _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
     _event_location_input_locator = ('xpath', "//input[@data-l10n-id='event-location']")
     _event_start_time_input_locator = ('xpath', "//input[@data-l10n-id='event-start-time']")
     _event_end_time_input_locator = ('xpath', "//input[@data-l10n-id='event-end-time']")
     _save_event_button_locator = ('css selector', 'button.save')
+    _edit_event_button_locator = ('css selector', 'button.edit')
+    _done_edit_button_locator = ('css selector', 'span[data-l10n-id=done]')
+    _event_view_back_button_locator = ('css selector', 'span[data-l10n-id="cancel"]')
     _delete_event_button_locator = ('css selector', 'button.delete-cancel')
     _event_start_date_input_locator = ('xpath', "//input[@data-l10n-id='event-start-date']")
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
     _event_notes_input_locator = ('xpath', "//textarea[@data-l10n-id='event-description']")
-    _done_edit_button_locator = ('css selector', 'span[data-l10n-id=done]')
 
-    def setUp(self):
+    def setUp(self):  
         GaiaStressTest.setUp(self)
 
         # Set name of stress test method to be repeated
@@ -100,15 +102,24 @@ class TestStressAddEditEvent(GaiaStressTest):
         # Now tap on the event to open it
         event_list = self.marionette.find_element(*month_view_time_slot_all_events_locator)
         self.marionette.tap(event_list)
-        self.wait_for_element_displayed(*self._event_title_input_locator)
+        
+        # Click edit button
+        self.wait_for_element_displayed(*self._edit_event_button_locator)
+        self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))        
 
         # Edit the existing event (add to title)
+        self.wait_for_element_displayed(*self._event_title_input_locator)
         self.marionette.find_element(*self._event_title_input_locator).send_keys(" edited")
         event_title = event_title + " edited"
 
         # Click Done button to save changes
         done_edit_button = self.marionette.find_element(*self._done_edit_button_locator)
         self.marionette.tap(done_edit_button)
+
+        # Click back to close the event and return to main calendar display
+        self.wait_for_element_displayed(*self._event_view_back_button_locator)
+        back_button = self.marionette.find_element(*self._event_view_back_button_locator)
+        self.marionette.tap(back_button)
 
         # wait for the default calendar display
         self.wait_for_element_displayed(*this_event_time_slot_locator)

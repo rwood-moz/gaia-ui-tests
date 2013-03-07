@@ -665,3 +665,19 @@ class GaiaStressTest(GaiaTestCase):
         os.system(cmd_line)
         cmd_line = "adb shell b2g-ps >> " + self.log_name
         os.system(cmd_line)
+
+    def close_app(self):
+        # Close the current app (self.app) by using the home button
+        self.marionette.switch_to_frame()
+        self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('home'));")
+
+        # Bring up the cards view
+        _cards_view_locator = ('id', 'cards-view')
+        self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('holdhome'));")
+        self.wait_for_element_displayed(*_cards_view_locator)
+
+        # Tap the close icon for the current app
+        locator_part_two = '#cards-view li.card[data-origin*="%s"] .close-card' % self.app.name.lower()
+        _close_button_locator = ('css selector', locator_part_two)
+        close_card_app_button = self.marionette.find_element(*_close_button_locator)
+        self.marionette.tap(close_card_app_button)

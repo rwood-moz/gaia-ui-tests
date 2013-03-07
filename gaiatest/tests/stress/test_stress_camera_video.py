@@ -73,14 +73,20 @@ class TestStressCameraVideo(GaiaStressTest):
         self.marionette.tap(capture_button)
         self.wait_for_element_not_displayed(*self._video_timer_locator)
 
+        # Wait a couple of seconds
+        time.sleep(2)
+
         # Wait for image to be added in to filmstrip
         self.wait_for_element_displayed(*self._film_strip_image_locator)
 
         # Find the new film thumbnail in the film strip
         self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
 
-        # Close the app
-        self.apps.kill(self.app)        
+        # Close the app via home button
+        self.close_app()
+
+        # Wait a couple of seconds between iterations
+        time.sleep(2)
 
     def wait_for_capture_ready(self):
         self.marionette.set_script_timeout(10000)
