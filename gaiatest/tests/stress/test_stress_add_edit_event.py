@@ -21,7 +21,7 @@ class TestStressAddEditEvent(GaiaStressTest):
     _save_event_button_locator = ('css selector', 'button.save')
     _edit_event_button_locator = ('css selector', 'button.edit')
     _done_edit_button_locator = ('css selector', 'span[data-l10n-id=done]')
-    _event_view_back_button_locator = ('css selector', 'span[data-l10n-id="cancel"]')
+    _event_view_back_button_locator = ('css selector', '#event-view button.cancel')
     _delete_event_button_locator = ('css selector', 'button.delete-cancel')
     _event_start_date_input_locator = ('xpath', "//input[@data-l10n-id='event-start-date']")
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
