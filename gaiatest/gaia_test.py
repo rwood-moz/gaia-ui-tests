@@ -619,11 +619,8 @@ class Keyboard(object):
 class GaiaStressTest(GaiaTestCase):
 
     def drive(self):
-        # Get minimum iterations; set default if not specified
-        try:
-            self.min_iterations = self.testvars['stresstests']['min_iterations']
-        except:
-            self.min_iterations = 100
+        # Minimum iterations (default if iterations not specified for individual tests)
+        self.min_iterations = 1
 
         # Get iterations, if not specified default to minimum
         try:
