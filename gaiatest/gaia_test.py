@@ -624,7 +624,7 @@ class GaiaStressTest(GaiaTestCase):
 
         # Get iterations, if not specified default to minimum
         try:
-            self.iterations = self.testvars['stresstests'][self.test_method.__name__]['iterations']
+            self.iterations = self.testvars['gaia_ui_stress'][self.test_method.__name__]['iterations']
             if (self.iterations < self.min_iterations):
                 self.iterations = self.min_iterations
         except:
@@ -632,7 +632,7 @@ class GaiaStressTest(GaiaTestCase):
 
         # Get checkpoint, if not specified just do one at start and end
         try:
-            self.checkpoint_every = self.testvars['stresstests'][self.test_method.__name__]['checkpoint']
+            self.checkpoint_every = self.testvars['gaia_ui_stress'][self.test_method.__name__]['checkpoint']
             if self.checkpoint_every > self.iterations or self.checkpoint_every < 1:
                 self.checkpoint_every = self.iterations
         except:
@@ -650,15 +650,18 @@ class GaiaStressTest(GaiaTestCase):
             if ((count % self.checkpoint_every) == 0) or count == self.iterations:
                 self.checkpoint(count)
 
+        # Finished, now process checkpoint data into .json output
+        self.process_checkpoint_data()
+
     def checkpoint(self, iteration = 0):
         # Dump out some memory status info
         self.marionette.log("checkpoint")
-        cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
+        self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         if iteration == 0:
-            self.log_name = "checkpoint_%s_%s.log" % (self.test_method.__name__, cur_time)
-            cmd_line = "echo %s Gaia Stress Test: %s > " %(cur_time, self.test_method.__name__) + self.log_name
+            self.log_name = "checkpoint_%s_%s.log" % (self.test_method.__name__, self.cur_time)
+            cmd_line = "echo %s Gaia Stress Test: %s > " %(self.cur_time, self.test_method.__name__) + self.log_name
             os.system(cmd_line)
-        cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (cur_time, iteration, self.iterations) + self.log_name
+        cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (self.cur_time, iteration, self.iterations) + self.log_name
         os.system(cmd_line)
         cmd_line = "adb shell b2g-ps >> " + self.log_name
         os.system(cmd_line)
@@ -678,3 +681,39 @@ class GaiaStressTest(GaiaTestCase):
         _close_button_locator = ('css selector', locator_part_two)
         close_card_app_button = self.marionette.find_element(*_close_button_locator)
         self.marionette.tap(close_card_app_button)
+
+    def process_checkpoint_data(self):
+        # Process checkpoint data into .json      
+        self.marionette.log("Processing checkpoint data from %s" % self.log_name)
+        
+        # Open the checkpoint file
+        checkpoint_file = open(self.log_name, 'r')
+
+        # Grab the starting b2g process vsize
+
+        # Grab the ending b2g process vsize
+
+        # Close the checkpoint file
+        checkpoint_file.close()
+
+        # Open the .json
+        json_name = "checkpoint_summary.json"        
+        if not os.path.exists(json_name):
+            # File is new, create
+            json_file = open(json_name, 'w')
+        else:
+            # File exists, just append
+            json_file = open(json_name, 'a')
+
+        # Add block for this test's data
+        json_file.write('"gaia_ui_stress": {\n')
+        json_file.write('\t"%s": {\n' % self.test_method.__name__)
+        json_file.write('\t\t"iterations": %d,\n' % self.iterations)
+        json_file.write('\t\t"finished": %s,\n' % self.cur_time)
+        json_file.write('\t\t"b2g_vsize_iteration_0": %d,\n' % 777)
+        json_file.write('\t\t"b2g_vsize_iteration_%d": %d\n' % (self.iterations, 999))
+        json_file.write('\t}\n')
+        json_file.write('}\n')
+
+        # Close the .json file
+        json_file.close()
