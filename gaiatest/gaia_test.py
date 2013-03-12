@@ -658,7 +658,11 @@ class GaiaStressTest(GaiaTestCase):
         self.marionette.log("checkpoint")
         self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         if iteration == 0:
-            self.log_name = "checkpoint_%s_%s.log" % (self.test_method.__name__, self.cur_time)
+            #self.checkpoint_path = os.path.join("checkpoints")
+            self.checkpoint_path = "checkpoints"
+            if not os.path.exists(self.checkpoint_path):
+                os.makedirs(self.checkpoint_path, 0755)
+            self.log_name = "%s/checkpoint_%s_%s.log" % (self.checkpoint_path, self.test_method.__name__, self.cur_time)
             cmd_line = "echo %s Gaia Stress Test: %s > " %(self.cur_time, self.test_method.__name__) + self.log_name
             os.system(cmd_line)
         cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (self.cur_time, iteration, self.iterations) + self.log_name
@@ -683,35 +687,44 @@ class GaiaStressTest(GaiaTestCase):
         self.marionette.tap(close_card_app_button)
 
     def process_checkpoint_data(self):
-        # Process checkpoint data into .json      
+        # Process checkpoint data into .json
         self.marionette.log("Processing checkpoint data from %s" % self.log_name)
-        
+
         # Open the checkpoint file
         checkpoint_file = open(self.log_name, 'r')
 
-        # Grab the starting b2g process vsize
+        # Grab the starting and ending b2g process vsize
+        found_start_vsize = False
+        start_b2g_vsize = "0"
+        end_b2g_vsize = "0"
+        end_string = "iteration %d of %d" % (self.iterations, self.iterations)
+        grab_final_value = False
 
-        # Grab the ending b2g process vsize
+        for next_line in checkpoint_file:
+            if next_line.startswith("b2g") and not found_start_vsize:
+                start_b2g_vsize = next_line.split()[4]
+                found_start_vsize = True
+            elif next_line.startswith("b2g") and grab_final_value:
+                end_b2g_vsize = next_line.split()[4]
+                break
+            else:
+                if end_string in(next_line):
+                    grab_final_value = True
 
         # Close the checkpoint file
         checkpoint_file.close()
 
-        # Open the .json
-        json_name = "checkpoint_summary.json"        
-        if not os.path.exists(json_name):
-            # File is new, create
-            json_file = open(json_name, 'w')
-        else:
-            # File exists, just append
-            json_file = open(json_name, 'a')
+        # Open the .json, if it already exists just append
+        json_name = "%s/checkpoint_summary.json" % self.checkpoint_path
+        json_file = open(json_name, 'a')
 
         # Add block for this test's data
         json_file.write('"gaia_ui_stress": {\n')
         json_file.write('\t"%s": {\n' % self.test_method.__name__)
         json_file.write('\t\t"iterations": %d,\n' % self.iterations)
         json_file.write('\t\t"finished": %s,\n' % self.cur_time)
-        json_file.write('\t\t"b2g_vsize_iteration_0": %d,\n' % 777)
-        json_file.write('\t\t"b2g_vsize_iteration_%d": %d\n' % (self.iterations, 999))
+        json_file.write('\t\t"b2g_vsize_iteration_0": %s,\n' % start_b2g_vsize)
+        json_file.write('\t\t"b2g_vsize_iteration_%d": %s\n' % (self.iterations, end_b2g_vsize))
         json_file.write('\t}\n')
         json_file.write('}\n')
 
