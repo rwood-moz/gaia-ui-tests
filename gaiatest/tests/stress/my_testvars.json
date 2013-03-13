@@ -13,73 +13,73 @@
     
     "gaia_ui_stress": {
         "add_contact": {
-        	"iterations": 10,
-        	"checkpoint": 1
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "add_edit_contact": {
-        	"iterations": 10,
-        	"checkpoint": 1
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "add_delete_contact": {
-        	"iterations": 10,
-        	"checkpoint": 1
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "add_event": {
-        	"iterations": 10,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "add_edit_event": {
-        	"iterations": 10,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "add_delete_event": {
-        	"iterations": 10,
-        	"checkpoint": 3
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "camera_photo": {
-        	"iterations": 10,
-        	"checkpoint": 1
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "camera_video": {
         	"capture_duration": 7,
-        	"iterations": 10,
+        	"iterations": 100,
         	"checkpoint": 10
         },
         "sms_send_receive": {
-        	"iterations": 10,
+        	"iterations": 100,
         	"checkpoint": 10
         },
         "sms_conversation": {
-        	"iterations": 10,
-        	"checkpoint": 2
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "video_playback": {
-        	"iterations": 10,
+        	"iterations": 100,
         	"checkpoint": 10
         },
         "music_playback": {
-        	"iterations": 10,
-        	"checkpoint": 1
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "airplane_mode": {
-        	"iterations": 10,
-        	"checkpoint": 5
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "set_alarm": {
-        	"iterations": 10,
-        	"checkpoint": 2
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "lock_screen": {
-        	"iterations": 10,
+        	"iterations": 100,
         	"checkpoint": 10
         },
         "browser_cell": {
-        	"iterations": 10,
-        	"checkpoint": 3
+        	"iterations": 100,
+        	"checkpoint": 10
         },
         "browser_wifi": {
-        	"iterations": 10,
-        	"checkpoint": 0
+        	"iterations": 100,
+        	"checkpoint": 10
         }
     }
 }

@@ -20,7 +20,6 @@ class TestStressAddDeleteEvent(GaiaStressTest):
     _event_end_time_input_locator = ('xpath', "//input[@data-l10n-id='event-end-time']")
     _save_event_button_locator = ('css selector', 'button.save')
     _edit_event_button_locator = ('css selector', 'button.edit')
-    #_delete_event_button_locator = ('css selector', 'button.delete-cancel')
     _delete_event_button_locator = ('css selector', "#modify-event-view a[data-l10n-id='event-delete']")
     _event_start_date_input_locator = ('xpath', "//input[@data-l10n-id='event-start-date']")
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
