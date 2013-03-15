@@ -680,6 +680,9 @@ class GaiaStressTest(GaiaTestCase):
         self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('holdhome'));")
         self.wait_for_element_displayed(*_cards_view_locator)
 
+        # Sleep a bit
+        time.sleep(5)
+
         # Tap the close icon for the current app
         locator_part_two = '#cards-view li.card[data-origin*="%s"] .close-card' % self.app.name.lower()
         _close_button_locator = ('css selector', locator_part_two)

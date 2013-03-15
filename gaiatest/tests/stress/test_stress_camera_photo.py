@@ -43,17 +43,19 @@ class TestStressCameraPhoto(GaiaStressTest):
             message="Camera failed to focus")
 
         # Wait for image to be added in to filmstrip
-        # TODO investigate lowering this timeout in the future
-        self.wait_for_element_displayed(*self._film_strip_image_locator, timeout=20)
+        self.wait_for_element_displayed(*self._film_strip_image_locator, timeout=30)
 
         # Find the new picture in the film strip
         self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
 
+        # Sleep a bit
+        time.sleep(5)
+
         # Close the app using home button
         self.close_app()
 
-        # Wait a couple of seconds before repeating
-        time.sleep(2)
+        # Wait between iterations
+        time.sleep(15)
 
     def wait_for_capture_ready(self):
         self.marionette.set_script_timeout(10000)

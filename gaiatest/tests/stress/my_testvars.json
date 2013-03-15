@@ -13,7 +13,7 @@
     
     "gaia_ui_stress": {
         "add_contact": {
-        	"iterations": 100,
+        	"iterations": 10,
         	"checkpoint": 10
         },
         "add_edit_contact": {
@@ -37,12 +37,12 @@
         	"checkpoint": 10
         },
         "camera_photo": {
-        	"iterations": 100,
+        	"iterations": 10,
         	"checkpoint": 10
         },
         "camera_video": {
         	"capture_duration": 7,
-        	"iterations": 100,
+        	"iterations": 10,
         	"checkpoint": 10
         },
         "sms_send_receive": {
@@ -62,8 +62,8 @@
         	"checkpoint": 10
         },
         "airplane_mode": {
-        	"iterations": 100,
-        	"checkpoint": 10
+        	"iterations": 10,
+        	"checkpoint": 1
         },
         "set_alarm": {
         	"iterations": 100,

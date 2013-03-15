@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 50 minutes
+# Approximate runtime per 100 iterations: XXX minutes
 
 from gaiatest import GaiaStressTest
 
@@ -13,44 +13,12 @@ import time
 
 class TestStressAirplaneMode(GaiaStressTest):
 
+    _cell_data_menu_item_locator = ('id', 'menuItem-cellularAndData')
+    _carrier_name_locator = ('id', 'dataNetwork-desc')
     _utility_tray_locator = ('css selector', '#utility-tray')
     _airplane_mode_button_locator = ('css selector', '#quick-settings-airplane-mode')
     _airplane_mode_enabled_button_locator = ('css selector', '#quick-settings-airplane-mode[data-enabled]')
     _airplane_mode_enabled_status_locator =  ('css selector', '.sb-icon-flight-mode')
-
-    # Cell data strength signal status icons
-    _network_enabled_negative_locator = ('css selector', '.sb-icon-signal[data-level="-1"]')
-    _network_enabled_level0_locator = ('css selector', '.sb-icon-signal[data-level="0"]')
-    _network_enabled_level1_locator = ('css selector', '.sb-icon-signal[data-level="1"]')
-    _network_enabled_level2_locator = ('css selector', '.sb-icon-signal[data-level="2"]')
-    _network_enabled_level3_locator = ('css selector', '.sb-icon-signal[data-level="3"]')
-    _network_enabled_level4_locator = ('css selector', '.sb-icon-signal[data-level="4"]')
-    _network_enabled_level5_locator = ('css selector', '.sb-icon-signal[data-level="5"]')
-    _network_enabled_searching_locator = ('css selector', 'sb-icon-signal[data-level="-1"][data-searching="true"]')
-
-    # Wifi status icons
-    _wifi_enabled_connecting_locator = ('css selector', '.sb-icon-wifi[data-level="0"][data-connecting="true"]')
-    _wifi_enabled_level0_locator = ('css selector', '.sb-icon-wifi[data-level="0"]')
-    _wifi_enabled_level1_locator = ('css selector', '.sb-icon-wifi[data-level="1"]')
-    _wifi_enabled_level2_locator = ('css selector', '.sb-icon-wifi[data-level="2"]')
-    _wifi_enabled_level3_locator = ('css selector', '.sb-icon-wifi[data-level="3"]')
-    _wifi_enabled_level4_locator = ('css selector', '.sb-icon-wifi[data-level="4"]')
-
-    _network_signal_icon_list = [_network_enabled_negative_locator, 
-                                 _network_enabled_level0_locator,
-                                 _network_enabled_level1_locator,
-                                 _network_enabled_level2_locator,
-                                 _network_enabled_level3_locator,
-                                 _network_enabled_level4_locator,
-                                 _network_enabled_level5_locator,
-                                 _network_enabled_searching_locator]
-
-    _wifi_signal_icon_list = [_wifi_enabled_connecting_locator,
-                              _wifi_enabled_level0_locator,
-                              _wifi_enabled_level1_locator,
-                              _wifi_enabled_level2_locator,
-                              _wifi_enabled_level3_locator,
-                              _wifi_enabled_level4_locator]
 
     def setUp(self):
         GaiaStressTest.setUp(self)
@@ -66,13 +34,14 @@ class TestStressAirplaneMode(GaiaStressTest):
         self.drive()
 
     def airplane_mode(self, count):
-        # Must look for lots of icons so set find timeout to 1/2 a second
-        self.marionette.set_search_timeout(1000)
+        # Verify airplane mode icon NOT displayed
+        self.wait_for_element_not_displayed(*self._airplane_mode_enabled_status_locator, timeout=30)
 
-        # Verify NOT in airplane mode
-        self.wait_for_element_not_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_present, 10, "Cell network signal icon not found")
-        self.wait_for_condition(self.verify_wifi_signal_present, 10, "Wifi signal icon not found")
+        # Verify wifi is enabled (from test_settings_wifi)
+        self.assertTrue(self.data_layer.is_wifi_connected(self.testvars['wifi']), "WiFi not connected but should be")
+
+        # Verify cell network is enabled
+        self.verify_cell(True)
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
@@ -82,16 +51,22 @@ class TestStressAirplaneMode(GaiaStressTest):
         self.wait_for_element_displayed(*self._airplane_mode_button_locator)
         airplane_mode_button = self.marionette.find_element(*self._airplane_mode_button_locator)
         self.marionette.tap(airplane_mode_button)
-        time.sleep(3)
+
+        # Sleep 30 seconds
+        time.sleep(30)
 
         # Close the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.hide()")
         self.wait_for_element_not_displayed(*self._utility_tray_locator)
 
-        # Verify ARE in airplane mode
-        self.wait_for_element_displayed(*self._airplane_mode_enabled_status_locator)
-        self.wait_for_condition(self.verify_cell_signal_absent, 10, "Cell network signal icon displayed but shouldn't be")
-        self.wait_for_condition(self.verify_wifi_signal_absent, 10, "Wifi signal icon displayed but shouldn't be")
+        # Verify ARE in airplane mode - check for icon
+        self.wait_for_element_displayed(*self._airplane_mode_enabled_status_locator, timeout=30)
+
+        # Ensure wifi is NOT connected now
+        self.assertFalse(self.data_layer.is_wifi_connected(self.testvars['wifi']), "WiFi is connected but should not be")
+
+        # Verify cell network is not enabled
+        self.verify_cell(False)
 
         # Open the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.show()")
@@ -101,40 +76,33 @@ class TestStressAirplaneMode(GaiaStressTest):
         self.wait_for_element_displayed(*self._airplane_mode_enabled_button_locator)
         airplane_mode_button = self.marionette.find_element(*self._airplane_mode_enabled_button_locator)
         self.marionette.tap(airplane_mode_button)
-        time.sleep(3)
+
+        # Sleep 30 seconds
+        time.sleep(30)
 
         # Close the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.hide()")
         self.wait_for_element_not_displayed(*self._utility_tray_locator)
 
-    def verify_cell_signal_present(self, x):
-        # Verify the network cell signal icon is displayed; can be various signal strengths
-        for net_icon in self._network_signal_icon_list:
-            if self.is_element_present(*net_icon):
-                if self.marionette.find_element(*net_icon).is_displayed():
-                    return True
-        return False
+    def verify_cell(self, expect_enabled):
+        # Verify cell network enabled/disabled bvia settings menu (some code from test_settings_cell)
+        self.app = self.apps.launch('Settings')
+        self.wait_for_element_displayed(*self._cell_data_menu_item_locator)
+        cell_data_menu_item = self.marionette.find_element(*self._cell_data_menu_item_locator)
+        self.marionette.tap(cell_data_menu_item)
+        time.sleep(2)
 
-    def verify_cell_signal_absent(self, x):
-        # Verify cell signal status icon is not displayed; can be various network strengths
-        for net_icon in self._network_signal_icon_list:
-            if self.is_element_present(*net_icon):
-                if self.marionette.find_element(*net_icon).is_displayed():
-                    return False
-        return True
+        if expect_enabled:
+            # Verify that a carrier is displayed
+            self.wait_for_element_displayed(*self._carrier_name_locator)
+            self.assertTrue(len(self.marionette.find_element(*self._carrier_name_locator).text) > 0, "Cell network not enabled but should be")
+        else:
+            # Cellular and Data menu item should be grayed out because airplane mode,
+            # so tapping shouldn't open new screen; should be on same screen
+            self.wait_for_element_not_displayed(*self._carrier_name_locator)
+            self.wait_for_element_displayed(*self._cell_data_menu_item_locator)
 
-    def verify_wifi_signal_present(self, x):
-        # Verify the network cell signal icon is displayed; can be various signal strengths
-        for wifi_icon in self._wifi_signal_icon_list:
-            if self.is_element_present(*wifi_icon):
-                if self.marionette.find_element(*wifi_icon).is_displayed():
-                    return True
-        return False
-
-    def verify_wifi_signal_absent(self, x):
-        # Verify cell signal status icon is not displayed; can be various network strengths
-        for wifi_icon in self._wifi_signal_icon_list:
-            if self.is_element_present(*wifi_icon):
-                if self.marionette.find_element(*wifi_icon).is_displayed():
-                    return False
-        return True
+        # Close settings
+        self.close_app()
+        self.marionette.switch_to_frame()
+        time.sleep(2)
