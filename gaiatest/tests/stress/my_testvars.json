@@ -80,6 +80,10 @@
         "browser_wifi": {
         	"iterations": 100,
         	"checkpoint": 10
+        },
+        "open_close_email": {
+        	"iterations": 10,
+        	"checkpoint": 10
         }
     }
 }
