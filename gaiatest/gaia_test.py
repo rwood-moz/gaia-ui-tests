@@ -630,7 +630,7 @@ class GaiaStressTest(GaiaTestCase):
         except:
             self.iterations = self.min_iterations
 
-        # Get checkpoint, if not specified just do one at start and end
+        # Get checkpoint, if not specified just do one at end
         try:
             self.checkpoint_every = self.testvars['gaia_ui_stress'][self.test_method.__name__]['checkpoint']
             if self.checkpoint_every > self.iterations or self.checkpoint_every < 1:
@@ -639,8 +639,8 @@ class GaiaStressTest(GaiaTestCase):
             # Not specified, so just do at start and end
             self.checkpoint_every = self.iterations
 
-        # Starting checkpoint
-        self.checkpoint()
+        # If want a checkpoint before any iterations do it here; decided not
+        # self.checkpoint()
 
         # Now drive the actual test case iterations
         for count in range(1, self.iterations + 1):
@@ -657,8 +657,8 @@ class GaiaStressTest(GaiaTestCase):
         # Dump out some memory status info
         self.marionette.log("checkpoint")
         self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
-        if iteration == 0:
-            #self.checkpoint_path = os.path.join("checkpoints")
+        # If first checkpoint, create the file if it doesn't exist already
+        if (iteration == 0 or iteration == self.checkpoint_every):
             self.checkpoint_path = "checkpoints"
             if not os.path.exists(self.checkpoint_path):
                 os.makedirs(self.checkpoint_path, 0755)
@@ -696,40 +696,34 @@ class GaiaStressTest(GaiaTestCase):
         # Open the checkpoint file
         checkpoint_file = open(self.log_name, 'r')
 
-        # Grab the starting and ending b2g process vsize
-        found_start_vsize = False
-        start_b2g_vsize = "0"
-        end_b2g_vsize = "0"
-        end_string = "iteration %d of %d" % (self.iterations, self.iterations)
-        grab_final_value = False
-
+        # Grab every b2g_vsize reading for each checkpoint
+        b2g_vsize_list = []
         for next_line in checkpoint_file:
-            if next_line.startswith("b2g") and not found_start_vsize:
-                start_b2g_vsize = next_line.split()[4]
-                found_start_vsize = True
-            elif next_line.startswith("b2g") and grab_final_value:
-                end_b2g_vsize = next_line.split()[4]
-                break
-            else:
-                if end_string in(next_line):
-                    grab_final_value = True
+            if next_line.startswith("b2g"):
+                b2g_vsize_list.append(int(next_line.split()[4]))
 
         # Close the checkpoint file
         checkpoint_file.close()
 
-        # Open the .json, if it already exists just append
-        json_name = "%s/checkpoint_summary.json" % self.checkpoint_path
-        json_file = open(json_name, 'a')
+        # Create new .json; use same name as checkpoint except .json
+        json_name = self.log_name.replace('log', 'json')
+        json_file = open(json_name, 'w')
 
-        # Add block for this test's data
-        json_file.write('"gaia_ui_stress": {\n')
+        # Write the summarized checkpoint data
+        json_file.write('{\n')
         json_file.write('\t"%s": {\n' % self.test_method.__name__)
-        json_file.write('\t\t"iterations": %d,\n' % self.iterations)
         json_file.write('\t\t"finished": %s,\n' % self.cur_time)
-        json_file.write('\t\t"b2g_vsize_iteration_0": %s,\n' % start_b2g_vsize)
-        json_file.write('\t\t"b2g_vsize_iteration_%d": %s\n' % (self.iterations, end_b2g_vsize))
+        json_file.write('\t\t"iterations": %d,\n' % self.iterations)      
+        json_file.write('\t\t"checkpoint_every": %d,\n' % self.checkpoint_every)
+        json_file.write('\t\t"b2g_vsize": [\n')
+        for index, metric in enumerate(b2g_vsize_list):
+            if index != (len(b2g_vsize_list)-1):
+                json_file.write('\t\t\t%d,\n' % metric)
+            else:
+                json_file.write('\t\t\t%d\n' % metric)
+        json_file.write('\t\t]\n')
         json_file.write('\t}\n')
-        json_file.write('}\n')
+        json_file.write('}')
 
         # Close the .json file
         json_file.close()
