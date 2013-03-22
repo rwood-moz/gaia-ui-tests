@@ -7,7 +7,7 @@ from gaiatest.mocks.mock_contact import MockContact
 import os
 import time
 
-# Approximate runtime per 100 iterations: 30 minutes
+# Approximate runtime per 100 iterations: 31 minutes
 
 class TestStressBrowserWifi(GaiaStressTest):
 
