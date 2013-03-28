@@ -1,26 +1,24 @@
 #!/usr/bin/env python
 #
-# Before running this:
-# 1) Install a B2G build with Marionette enabled
-# 2) adb forward tcp:2828 tcp:2828
+# How to submit gaia-ui stress test results to Datazilla:
+# 1) Attach a b2g device with an engineering build
+# 2) Issue 'adb forward tcp:2828 tcp:2828' cmd
+# 3) Run a gaia-ui stress test, resulting in a checkpoint_*_summary.log results file
+# 4) Keep the device connected, and turn on wifi (so device can get a macAddress), then
+# 5) Run this script and provide the command line options/values, including '--print'
+# 6) Review the results as displayed in the console, verify
+# 7) To submit the results, repeat the cmd but use '--submit' instead of '--print'
 
 from optparse import OptionParser
 from StringIO import StringIO
 import os
-#import pkg_resources
-#import sys
-#import time
 from urlparse import urlparse
 import xml.dom.minidom
 import zipfile
 
-#from progressbar import Counter
-#from progressbar import ProgressBar
-
 import dzclient
 import gaiatest
 from marionette import Marionette
-#from marionette import MarionetteTouchMixin
 import mozdevice
 
 
@@ -32,8 +30,7 @@ class DatazillaPerfPoster(object):
         settings = gaiatest.GaiaData(self.marionette).all_settings  # get all settings
         mac_address = self.marionette.execute_script('return navigator.mozWifiManager && navigator.mozWifiManager.macAddress;')
 
-        #self.submit_report = True
-        self.submit_report = False
+        self.submit_report = True
         self.ancillary_data = {}
 
         if gaiatest.GaiaDevice(self.marionette).is_android_build:
@@ -109,9 +106,9 @@ class DatazillaPerfPoster(object):
         req.add_datazilla_result(res)
         for dataset in req.datasets():
             dataset['test_build'].update(self.ancillary_data)
-            print 'Submitting results to DataZilla: %s' % dataset
+            print '\nSubmitting results to DataZilla: %s' % dataset
             response = req.send(dataset)
-            print 'Response: %s' % response.read()
+            print 'Response: %s\n' % response.read()
 
 
 class dzOptionParser(OptionParser):
@@ -152,7 +149,17 @@ class dzOptionParser(OptionParser):
                         action='store',
                         dest='sources',
                         metavar='str',
-                        help='path to sources.xml containing project revisions')
+                        help='Optional path to sources.xml containing project revisions')
+        self.add_option('--submit',
+                        action='store_true',
+                        dest='send_to_datazilla',
+                        metavar='bool',
+                        help='Send results to datazilla')
+        self.add_option('--print',
+                        action='store_false',
+                        dest='send_to_datazilla',
+                        metavar='bool',
+                        help='Print results only, do NOT submit to datazilla')
 
     def datazilla_config(self, options):
         if options.sources:
@@ -175,18 +182,66 @@ def cli():
     options, args = parser.parse_args()
 
     # Ensure have all required options
-    if not options.results_file:
+    if (not options.results_file or not options.datazilla_project or not options.datazilla_branch
+        or not options.datazilla_key or not options.datazilla_secret):
         parser.print_help()
         parser.exit()
-        
-    print 'CONTINUE CHECK OTHER OPTS EXIST!'
 
-    # Ensure results file exists
+    # Ensure results file actually exists
     if not os.path.exists(options.results_file):
         raise Exception('%s file does not exist' %options.results_file)
 
+    # Parse config options
     datazilla_config = parser.datazilla_config(options)
-   
-        
+
+    # Start marionette session
+    marionette = Marionette(host='localhost', port=2828)  # TODO command line option for address
+    marionette.start_session()
+
+    # Create dataziller post object
+    poster = DatazillaPerfPoster(marionette, datazilla_config=datazilla_config, sources=options.sources)
+
+    # Submitting report or just printing it
+    poster.submit_report = options.send_to_datazilla
+
+    # Parse checkpoint results from provided summary log file
+    checkpoint_summary = {}
+    results = {}
+
+    print "\nProcessing results in '%s'\n" % options.results_file
+
+    summary_file = open(options.results_file, 'r')
+    read_in = summary_file.read().split("\n")
+    summary_file.close()
+
+    for x in read_in:
+        k, v = x.split(': ')
+        if k in "total_iterations" or k in "checkpoint_every":
+            checkpoint_summary[k] = int(v)
+        elif k in "b2g_vsize":
+            checkpoint_summary[k] = v.split(',') # list of strings
+            checkpoint_summary[k] = map(int, checkpoint_summary[k]) # list of ints
+        else:
+            checkpoint_summary[k] = v
+
+    # Results dictionary required format example
+    # {'test_name': [180892, 180892, 181980, 181852, 180828, 182012, 183652, 182972, 183052, 183052]}
+    results[checkpoint_summary['test_name']] = checkpoint_summary['b2g_vsize']
+
+    # Display the Datazilla configuration
+    print 'Datazilla configuration:'
+    for key, value in poster.required.items():
+        print key, value
+
+    # Submit or print the results
+    if poster.submit_report:
+        poster.post_to_datazilla(results, checkpoint_summary['test_name'])
+    else:
+        print "\nCheckpoint summary for test '%s':\n" % checkpoint_summary['test_name']
+        print checkpoint_summary
+        print '\nResults to be submitted to Datazilla:\n'
+        print results
+        print "\nTo submit results, repeat the same command but use '--submit' (instead of '--print').\n"
+
 if __name__ == '__main__':
     cli()

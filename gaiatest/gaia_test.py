@@ -705,25 +705,21 @@ class GaiaStressTest(GaiaTestCase):
         # Close the checkpoint file
         checkpoint_file.close()
 
-        # Create new .json; use same name as checkpoint except .json
-        json_name = self.log_name.replace('log', 'json')
-        json_file = open(json_name, 'w')
+        # Create a summary text file
+        summary_name = self.log_name.replace('.log', '_summary.log')
+        summary_file = open(summary_name, 'w')
 
         # Write the summarized checkpoint data
-        json_file.write('{\n')
-        json_file.write('\t"%s": {\n' % self.test_method.__name__)
-        json_file.write('\t\t"finished": %s,\n' % self.cur_time)
-        json_file.write('\t\t"iterations": %d,\n' % self.iterations)      
-        json_file.write('\t\t"checkpoint_every": %d,\n' % self.checkpoint_every)
-        json_file.write('\t\t"b2g_vsize": [\n')
+        summary_file.write('test_name: %s\n' % self.test_method.__name__)
+        summary_file.write('completed: %s\n' % self.cur_time)
+        summary_file.write('total_iterations: %d\n' % self.iterations)      
+        summary_file.write('checkpoint_every: %d\n' % self.checkpoint_every)
+        summary_file.write('b2g_vsize: ')
         for index, metric in enumerate(b2g_vsize_list):
             if index != (len(b2g_vsize_list)-1):
-                json_file.write('\t\t\t%d,\n' % metric)
+                summary_file.write('%d, ' % metric)
             else:
-                json_file.write('\t\t\t%d\n' % metric)
-        json_file.write('\t\t]\n')
-        json_file.write('\t}\n')
-        json_file.write('}')
+                summary_file.write('%d' % metric)
 
-        # Close the .json file
-        json_file.close()
+        # Close the summary file
+        summary_file.close()
