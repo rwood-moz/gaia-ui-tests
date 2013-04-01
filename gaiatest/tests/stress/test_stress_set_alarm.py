@@ -46,6 +46,9 @@ class TestStressSetAlarm(GaiaStressTest):
         text = "%d of %d" %(count, self.iterations)
         alarm_label.send_keys(text)
 
+        # Sleep a couple of seconds before saving
+        time.sleep(2)
+
         self.wait_for_element_displayed(*clock_object._alarm_save_locator)
         alarm_save = self.marionette.find_element(*clock_object._alarm_save_locator)
         self.marionette.tap(alarm_save)
@@ -64,3 +67,6 @@ class TestStressSetAlarm(GaiaStressTest):
         # Ensure the new alarm has been added and is displayed
         self.assertTrue(initial_alarms_count < new_alarms_count,
                         'Alarms count did not increment')
+
+        # Sleep between reps to allow for GC
+        time.sleep(5)
