@@ -67,3 +67,6 @@ class TestStressSetAlarm(GaiaStressTest):
         # Ensure the new alarm has been added and is displayed
         self.assertTrue(initial_alarms_count < new_alarms_count,
                         'Alarms count did not increment')
+
+        # Extreme (temp) sleep to allow gc and see if that fixes bug 850803
+        time.sleep(60)
