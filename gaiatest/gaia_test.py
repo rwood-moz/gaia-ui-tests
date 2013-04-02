@@ -630,6 +630,14 @@ class GaiaStressTest(GaiaTestCase):
         except:
             self.iterations = self.min_iterations
 
+        # Get garbage collection sleep time (seconds)
+        try:
+            self.gc_sleep_time = self.testvars['gaia_ui_stress']['gc_sleep_time']
+            if (self.gc_sleep_time < 1 or self.gc_sleep_time > 600):
+                self.gc_sleep_time = 60
+        except:
+            self.gc_sleep_time = 60
+
         # Get checkpoint, if not specified just do one at end
         try:
             self.checkpoint_every = self.testvars['gaia_ui_stress'][self.test_method.__name__]['checkpoint']
@@ -656,6 +664,10 @@ class GaiaStressTest(GaiaTestCase):
     def checkpoint(self, iteration = 0):
         # Dump out some memory status info
         self.marionette.log("checkpoint")
+        # Before do checkpoint, sleep first to allow for GC
+        self.marionette.log("sleeping %d seconds to allow for device gc" %self.gc_sleep_time)
+        time.sleep(self.gc_sleep_time)
+
         self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         # If first checkpoint, create the file if it doesn't exist already
         if (iteration == 0 or iteration == self.checkpoint_every):
