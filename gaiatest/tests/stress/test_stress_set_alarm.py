@@ -32,8 +32,9 @@ class TestStressSetAlarm(GaiaStressTest):
     def set_alarm(self, count):
         # Set a new alarm and verify; code taken from existing clock tests
 
+        # Temporarily removed because of bug 850803
         # Get the number of alarms set, before adding the new alarm
-        #initial_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
+        # initial_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
 
         # create a new alarm, default values except label
         alarm_create_new = self.marionette.find_element(*clock_object._alarm_create_new_locator)
@@ -61,12 +62,13 @@ class TestStressSetAlarm(GaiaStressTest):
         # Wait for banner-countdown to disappear
         self.wait_for_element_not_displayed(*clock_object._banner_countdown_notification_locator)
 
+        # Temporarily removed because of bug 850803
         # Get the number of alarms set after the new alarm was added
-        #new_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
+        # new_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
 
         # Ensure the new alarm has been added and is displayed
-        #self.assertTrue(initial_alarms_count < new_alarms_count,
+        # self.assertTrue(initial_alarms_count < new_alarms_count,
         #                'Alarms count did not increment')
 
-        # Seep to allow gc and see if that fixes bug 850803
-        time.sleep(1)
+        # A bit of sleep between reps
+        time.sleep(5)
