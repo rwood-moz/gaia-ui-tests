@@ -13,12 +13,12 @@ import time
 
 class TestStressSmsConversation(GaiaStressTest):
 
-    # Summary page
+    # summary page
     _summary_header_locator = ('xpath', "//h1[text()='Messages']")
     _create_new_message_locator = ('id', 'icon-add')
     _unread_message_locator = ('css selector', 'li > a.unread')
 
-    # Message composition
+    # message composition
     _receiver_input_locator = ('id', 'receiver-input')
     _message_field_locator = ('id', 'message-to-send')
     _send_message_button_locator = ('id', 'send-message')
@@ -27,7 +27,7 @@ class TestStressSmsConversation(GaiaStressTest):
         'css selector',
         "img[src='style/images/spinningwheel_small_animation.gif']")
 
-    # Conversation view
+    # conversation
     _all_messages_locator = ('css selector', 'li.bubble')
     _received_message_content_locator = ('xpath', "//li[@class='bubble'][a[@class='received']]")
     _unread_icon_locator = ('css selector', 'aside.icon-unread')
@@ -35,7 +35,7 @@ class TestStressSmsConversation(GaiaStressTest):
     def setUp(self):
         GaiaStressTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # set name of stress test method to be repeated
         self.test_method = self.sms_conversation
 
         # delete any existing SMS messages to start clean
@@ -50,117 +50,77 @@ class TestStressSmsConversation(GaiaStressTest):
 
         # launch the app
         self.app = self.apps.launch('Messages')
-
-    def send_first_sms(self):
-        # For the first message, write new message and wait for it to arrive.
-        # Then stay inside the message discussion and send new messages from there
-        # This section of code taken from test_sms.py
-        _text_message_content = "SMS to establish conversation %s" % str(time.time())
         self.wait_for_element_displayed(*self._summary_header_locator)
 
-        # click new message
+    def test_stress_sms_conversation(self):
+        self.drive()
+
+    def sms_conversation(self, count):
+        # setup received sms callback
+        self.marionette.execute_async_script("""
+        SpecialPowers.setBoolPref("dom.sms.enabled", true);
+        SpecialPowers.addPermission("sms", true, document);
+        window.wrappedJSObject.gotEvent = false;
+        window.navigator.mozSms.onreceived = function onreceived(event) {
+            log("Received 'onreceived' smsmanager event");
+            window.wrappedJSObject.gotEvent = true;
+        };
+        marionetteScriptFinished(1);
+        """, special_powers=True)
+
+        # while still in conversation view, create new message
+        _text_message_content = "SMS %d of %d (sms conversation stress test %s)" % (count, self.iterations, str(time.time()))
         create_new_message = self.marionette.find_element(*self._create_new_message_locator)
         self.marionette.tap(create_new_message)
         self.wait_for_element_present(*self._receiver_input_locator)
 
-        # type phone number
+        # type phone number and message text
         contact_field = self.marionette.find_element(
             *self._receiver_input_locator)
         contact_field.send_keys(self.testvars['this_phone_number'])
-
         message_field = self.marionette.find_element(
             *self._message_field_locator)
         message_field.send_keys(_text_message_content)
+        time.sleep(1)
 
         # click send
         send_message_button = self.marionette.find_element(
             *self._send_message_button_locator)
         self.marionette.tap(send_message_button)
+        time.sleep(1)
 
-        self.wait_for_element_not_present(
-            *self._message_sending_spinner_locator, timeout=120)
+        # sleep a bit
+        time.sleep(10)
 
-        # go back
-        back_header_button = self.marionette.find_element(*self._back_header_link_locator)
-        self.marionette.tap(back_header_button)
+        # verify/wait for the webapi new message callback, give 5 minutes; probably
+        # received the new sms message by now anyway
+        self.marionette.set_script_timeout(300000);
+        self.marionette.execute_async_script("""
+        function ready() {
+            window.navigator.mozSms.onreceived = null;
+            SpecialPowers.removePermission("sms", document);
+            SpecialPowers.setBoolPref("dom.sms.enabled", false);
+            marionetteScriptFinished(1);
+        };
+        waitFor(ready, function() {
+            return(window.wrappedJSObject.gotEvent);
+        });
+        """, special_powers = True)
 
-        # now wait for the return message to arrive.
-        self.wait_for_element_displayed(*self._unread_message_locator, timeout=180)
+        # sleep with list of messages displayed; user would be here a bit to read messages
+        # need sleep here anyway as with large number of messages can sometimes take awhile
+        time.sleep(20)
 
-        # go into the new message
-        unread_message = self.marionette.find_element(*self._unread_message_locator)
-        self.marionette.tap(unread_message)
-        self.wait_for_element_not_displayed(*self._unread_icon_locator)
+        # TEMP: put back in after bug 850803 is fixed
+        # verify sms count in msg list has increased by 2 (one sent, one received)
+        #new_number_of_msgs = len(self.marionette.find_elements(*self._all_messages_locator))
+        #self.assertEqual(new_number_of_msgs, (self.prev_number_of_msgs + 2))
 
-        self.wait_for_element_displayed(*self._received_message_content_locator)
+        # TEMP: put back in after bug 850803 is fixed
+        # verify received message text is correct
+        #received_message = self.marionette.find_elements(
+        #    *self._received_message_content_locator)[-1]
+        #self.assertEqual(_text_message_content, received_message.text)
 
-        # let new message notification bar disappear
-        time.sleep(3)
-
-        # get the most recent listed and most recent received text message
-        received_message = self.marionette.find_elements(
-            *self._received_message_content_locator)[-1]
-
-        last_message = self.marionette.find_elements(*self._all_messages_locator)[-1]
-
-        # Check the most recent received message has the same text content
-        self.assertEqual(_text_message_content, received_message.text)
-
-        # Check that most recent message is also the most recent received message
-        self.assertEqual(received_message.get_attribute('id'),
-                         last_message.get_attribute('id'))
-
-        # Note: Stay in the already open SMS message/discussion
-
-    def test_stress_add_event(self):
-        # Send first message, then stay in SMS message/conversation
-        self.send_first_sms()
-
-        # Now stay in open message conversation and send to self
-        self.drive()
-
-    def sms_conversation(self, count):
-        # Already in an open SMS message/discussion, so just send/receive right there
-
-        # Get current number of SMS messages
-        self.prev_number_of_msgs = len(self.marionette.find_elements(*self._all_messages_locator))
-
-        # Type next message text in message field
-        _text_message_content = "SMS %d of %d (conversation stress test %s)" % (count, self.iterations, str(time.time()))
-        message_field = self.marionette.find_element(
-            *self._message_field_locator)
-        message_field.send_keys(_text_message_content)
-
-        # click send
-        send_message_button = self.marionette.find_element(
-            *self._send_message_button_locator)
-        self.marionette.tap(send_message_button)
-
-        self.wait_for_element_not_present(
-            *self._message_sending_spinner_locator, timeout=120)
-
-        self.wait_for_condition(self.wait_for_sms_to_arrive, 180, "Did not receive SMS")
-
-        # get the most recent listed and most recent received text message
-        received_message = self.marionette.find_elements(
-            *self._received_message_content_locator)[-1]
-
-        last_message = self.marionette.find_elements(*self._all_messages_locator)[-1]
-
-        # Check the most recent received message has the same text content
-        self.assertEqual(_text_message_content, received_message.text)
-
-        # Check that most recent message is also the most recent received message
-        self.assertEqual(received_message.get_attribute('id'),
-                         last_message.get_attribute('id'))
-
-        # Sleep a couple of seconds to be more realistic
-        time.sleep(2)
-
-    def wait_for_sms_to_arrive(self, x):
-        # Wait for SMS count in msg list to increase by 2 (one sent, one received)
-        new_number_of_msgs = len(self.marionette.find_elements(*self._all_messages_locator))
-        if new_number_of_msgs == (self.prev_number_of_msgs + 2):
-            return True
-        else:
-            return False
+        # sleep between reps
+        time.sleep(10)

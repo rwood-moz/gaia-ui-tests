@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 62 minutes
+# Approximate runtime per 100 iterations: xxx minutes
 
 from gaiatest import GaiaStressTest
 
@@ -13,12 +13,12 @@ import time
 
 class TestStressSmsSendReceive(GaiaStressTest):
 
-    # Summary page
+    # summary page
     _summary_header_locator = ('xpath', "//h1[text()='Messages']")
     _create_new_message_locator = ('id', 'icon-add')
-    _unread_message_locator = ('css selector', 'li > a.unread')
+    _thread_list_locator = ('css selector', '#thread-list li > a')
 
-    # Message composition
+    # message composition
     _receiver_input_locator = ('id', 'receiver-input')
     _message_field_locator = ('id', 'message-to-send')
     _send_message_button_locator = ('id', 'send-message')
@@ -27,15 +27,13 @@ class TestStressSmsSendReceive(GaiaStressTest):
         'css selector',
         "img[src='style/images/spinningwheel_small_animation.gif']")
 
-    # Conversation view
-    _all_messages_locator = ('css selector', 'li.bubble')
+    # conversation
     _received_message_content_locator = ('xpath', "//li[@class='bubble'][a[@class='received']]")
-    _unread_icon_locator = ('css selector', 'aside.icon-unread')
 
     def setUp(self):
         GaiaStressTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # set name of stress test method to be repeated
         self.test_method = self.sms_send_receive
 
         # delete any existing SMS messages to start clean
@@ -55,66 +53,79 @@ class TestStressSmsSendReceive(GaiaStressTest):
         self.drive()
 
     def sms_send_receive(self, count):
-        # Send a message to self, wait for it to arrive, verify
-        # Go back to main message list in between messages
-        # This code taken from test_sms.py
+        # send a message to self, wait for it to arrive, verify. Back to main message list in between.
+        # setup received sms callback
+        self.marionette.execute_async_script("""
+        SpecialPowers.setBoolPref("dom.sms.enabled", true);
+        SpecialPowers.addPermission("sms", true, document);
+        window.wrappedJSObject.gotEvent = false;
+        window.navigator.mozSms.onreceived = function onreceived(event) {
+            log("Received 'onreceived' smsmanager event");
+            window.wrappedJSObject.gotEvent = true;
+        };
+        marionetteScriptFinished(1);
+        """, special_powers=True)
 
-        _text_message_content = "SMS %d of %d (send receive stress test %s)" % (count, self.iterations, str(time.time()))
+        # create new message
         self.wait_for_element_displayed(*self._summary_header_locator)
-
-        # click new message
+        _text_message_content = "SMS %d of %d (send receive stress test %s)" % (count, self.iterations, str(time.time()))
         create_new_message = self.marionette.find_element(*self._create_new_message_locator)
         self.marionette.tap(create_new_message)
         self.wait_for_element_present(*self._receiver_input_locator)
 
-        # type phone number
+        # type phone number and message text
         contact_field = self.marionette.find_element(
             *self._receiver_input_locator)
         contact_field.send_keys(self.testvars['this_phone_number'])
-
         message_field = self.marionette.find_element(
             *self._message_field_locator)
         message_field.send_keys(_text_message_content)
+        time.sleep(1)
 
         # click send
         send_message_button = self.marionette.find_element(
             *self._send_message_button_locator)
         self.marionette.tap(send_message_button)
+        time.sleep(1)
 
-        self.wait_for_element_not_present(
-            *self._message_sending_spinner_locator, timeout=120)
-
-        # go back
+        # sleep a bit then go back to main message list
         back_header_button = self.marionette.find_element(*self._back_header_link_locator)
         self.marionette.tap(back_header_button)
-
-        # now wait for the return message to arrive.
-        self.wait_for_element_displayed(*self._unread_message_locator, timeout=180)
-
-        # go into the new message
-        unread_message = self.marionette.find_element(*self._unread_message_locator)
-        self.marionette.tap(unread_message)
-        self.wait_for_element_not_displayed(*self._unread_icon_locator)
-
-        self.wait_for_element_displayed(*self._received_message_content_locator)
-
-        # need sleep here as it takes awhile to display all of the messages from the same number,
-        # when have larger amounts of messages - what is acceptable here and what is performance issue?
+        self.wait_for_element_displayed(*self._summary_header_locator)
         time.sleep(10)
 
-        # get the most recent listed and most recent received text message
-        received_message = self.marionette.find_elements(
-            *self._received_message_content_locator)[-1]
+        # verify/wait for the webapi new message callback, give 5 minutes; probably
+        # received the new sms message by now anyway
+        self.marionette.set_script_timeout(300000);
+        self.marionette.execute_async_script("""
+        function ready() {
+            window.navigator.mozSms.onreceived = null;
+            SpecialPowers.removePermission("sms", document);
+            SpecialPowers.setBoolPref("dom.sms.enabled", false);
+            marionetteScriptFinished(1);
+        };
+        waitFor(ready, function() {
+            return(window.wrappedJSObject.gotEvent);
+        });
+        """, special_powers = True)
 
-        last_message = self.marionette.find_elements(*self._all_messages_locator)[-1]
+        # click on the sms conversation in the message list i.e. user checking the new message
+        sms_thread = self.marionette.find_element(*self._thread_list_locator)
+        self.marionette.tap(sms_thread)
 
-        # Check the most recent received message has the same text content
-        self.assertEqual(_text_message_content, received_message.text)
+        # sleep with list of messages displayed; user would be here a bit to read messages
+        # need sleep here anyway as with large number of messages can sometimes take awhile
+        time.sleep(20)
 
-        # Check that most recent message is also the most recent received message
-        self.assertEqual(received_message.get_attribute('id'),
-                         last_message.get_attribute('id'))
+        # TEMP: put back in after bug 850803 is fixed
+        # verify received message text is correct
+        #received_message = self.marionette.find_elements(
+        #    *self._received_message_content_locator)[-1]
+        #self.assertEqual(_text_message_content, received_message.text)
 
-        # go back to main message list, so ready for next iteration
+        # now go back to main message list, so ready for next iteration
         back_header_button = self.marionette.find_element(*self._back_header_link_locator)
         self.marionette.tap(back_header_button)
+
+        # sleep between reps
+        time.sleep(10)
