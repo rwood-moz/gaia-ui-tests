@@ -26,6 +26,9 @@ class TestStressSetAlarm(GaiaStressTest):
         self.app = self.apps.launch('Clock')
         self.wait_for_element_displayed(*clock_object._alarm_create_new_locator)
 
+        # Delete any existing alarms
+        self.data_layer.delete_all_alarms()
+
     def test_stress_add_event(self):
         self.drive()
 
