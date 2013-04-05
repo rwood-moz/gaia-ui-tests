@@ -4,6 +4,7 @@
 
 from gaiatest import GaiaTestCase
 
+
 class TestSettingsWifi(GaiaTestCase):
 
     # Wifi Settings locators

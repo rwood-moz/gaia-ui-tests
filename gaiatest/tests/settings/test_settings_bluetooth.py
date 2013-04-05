@@ -4,6 +4,7 @@
 
 from gaiatest import GaiaTestCase
 
+
 class TestBluetoothSettings(GaiaTestCase):
 
     # Bluetooth settings locators

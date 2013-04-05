@@ -3,42 +3,34 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from gaiatest import GaiaTestCase
-from gaiatest.tests.clock import clock_object
+from gaiatest.apps.clock.app import Clock
 
 
 class TestClockTestAllItemsPresentNewAlarm(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-        self.app = self.apps.launch('Clock')
+
+        self.clock = Clock(self.marionette)
+        self.clock.launch()
 
     def test_all_items_present_new_alarm(self):
         # Wait for the new alarm screen to load
-        self.wait_for_element_displayed(*clock_object._alarm_create_new_locator)
-        alarm_create_new = self.marionette.find_element(*clock_object._alarm_create_new_locator)
 
-        self.marionette.tap(alarm_create_new)
-
-        # Wait for the picker to be displayed
-        self.wait_for_element_displayed(*clock_object._picker_container)
+        new_alarm = self.clock.tap_new_alarm()
 
         # Ensure label has the default placeholder and text
-        label = self.marionette.find_element(*clock_object._alarm_name)
-
-        self.assertEquals(label.get_attribute('placeholder'), 'Alarm')
-        self.assertEquals(label.text, 'Alarm')
+        self.assertEquals(new_alarm.alarm_label_placeholder, 'Alarm')
+        self.assertEquals(new_alarm.alarm_label, 'Alarm')
 
         # Ensure repeat has the default value
-        repeat = self.marionette.find_element(*clock_object._repeat_menu)
-        self.assertEquals(repeat.text, 'Never')
+        self.assertEquals(new_alarm.alarm_repeat, 'Never')
 
         # Ensure sound has the default value
-        sound = self.marionette.find_element(*clock_object._sound_menu)
-        self.assertEquals(sound.text, 'Classic Buzz')
+        self.assertEquals(new_alarm.alarm_sound, 'Classic Buzz')
 
         # Ensure snooze has the default value
-        snooze = self.marionette.find_element(*clock_object._snooze_menu)
-        self.assertEquals(snooze.text, '5 minutes')
+        self.assertEquals(new_alarm.alarm_snooze, '5 minutes')
 
     def tearDown(self):
         # delete any existing alarms

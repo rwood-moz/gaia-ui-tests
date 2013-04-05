@@ -17,7 +17,7 @@ class TestCardsView(GaiaTestCase):
     # app://clock.gaiamobile.org
     _app_card_locator = ('css selector', '#cards-view li[data-origin*="%s"]' % _app_under_test.lower())
     _close_button_locator = ('css selector', '#cards-view li[data-origin*="%s"] .close-card' % _app_under_test.lower())
-    _clock_frame_locator = ('css selector', "iframe[mozapp='app://clock.gaiamobile.org/manifest.webapp']")
+    _clock_frame_locator = ('css selector', "iframe[mozapp^='app://clock'][mozapp$='manifest.webapp']")
 
     def setUp(self):
         GaiaTestCase.setUp(self)

@@ -1,9 +1,9 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 from gaiatest import GaiaTestCase
-from gaiatest.tests.clock import clock_object
-import time
+from gaiatest.apps.clock.app import Clock
 
 
 class TestClockDeleteAlarm(GaiaTestCase):
@@ -11,46 +11,33 @@ class TestClockDeleteAlarm(GaiaTestCase):
     def setUp(self):
         GaiaTestCase.setUp(self)
 
-        # unlock the lockscreen if it's locked
-        self.lockscreen.unlock()
+        self.clock = Clock(self.marionette)
+        self.clock.launch()
 
-        # launch the Clock app
-        self.app = self.apps.launch('Clock')
-
-        # create a new alarm for test
-        clock_object.create_alarm(self)
+        # create a new alarm with the default values that are available
+        new_alarm = self.clock.tap_new_alarm()
+        self.clock = new_alarm.tap_done()
+        self.clock.wait_for_banner_not_visible()
 
     def test_clock_delete_alarm(self):
         """ Delete alarm
-
         https://moztrap.mozilla.org/manage/case/1783/
-
         """
-        self.wait_for_element_displayed(*clock_object._alarm_create_new_locator)
 
         # find the origin alarms' number
-        initial_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
-
-        # wait notification not displayed
-        self.wait_for_element_not_displayed(*clock_object._banner_countdown_notification_locator)
+        initial_alarms_count = len(self.clock.alarms)
 
         # edit alarm
-        alarm_item = self.marionette.find_element(*clock_object._alarm_item)
-        self.marionette.tap(alarm_item)
+        edit_alarm = self.clock.alarms[0].tap()
 
         # delete alarm
-        self.wait_for_element_displayed(*clock_object._alarm_delete_button)
-        alarm_delete = self.marionette.find_element(*clock_object._alarm_delete_button)
-        self.marionette.tap(alarm_delete)
+        self.clock = edit_alarm.tap_delete()
 
         # wait alarm item not displayed
-        self.wait_for_element_displayed(*clock_object._alarm_create_new_locator)
-        self.wait_for_condition(lambda m: len(m.find_elements(*clock_object._all_alarms)) != initial_alarms_count)
+        self.clock.wait_for_new_alarm_button()
+        self.wait_for_condition(lambda m: len(self.clock.alarms) != initial_alarms_count)
 
-        # find the new alarms' number
-        new_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
-
-        self.assertEqual(initial_alarms_count, new_alarms_count + 1, "delete alarm failed.")
+        self.assertEqual(len(self.clock.alarms), initial_alarms_count - 1, "delete alarm failed.")
 
     def tearDown(self):
         # delete any existing alarms

@@ -17,16 +17,16 @@ class TestDialer(GaiaTestCase):
         phone = Phone(self.marionette)
         phone.launch()
 
-        phone.keypad.call_number(test_phone_number)
+        call_screen = phone.keypad.call_number(test_phone_number)
 
         # Wait for call screen to be dialing
-        phone.call_screen.wait_for_outgoing_call()
+        call_screen.wait_for_outgoing_call()
 
         # Wait for the state to get to 'alerting' which means connection made
-        phone.call_screen.wait_for_condition(lambda m: self.data_layer.active_telephony_state == "alerting", timeout=30)
+        call_screen.wait_for_condition(lambda m: self.data_layer.active_telephony_state == "alerting", timeout=30)
 
         # Check the number displayed is the one we dialed
-        self.assertEqual(test_phone_number, phone.call_screen.outgoing_calling_number)
+        self.assertEqual(test_phone_number, call_screen.outgoing_calling_contact)
 
     def tearDown(self):
         # Switch back to main frame before Marionette loses track bug #840931

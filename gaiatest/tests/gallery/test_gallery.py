@@ -3,13 +3,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from gaiatest import GaiaTestCase
+from gaiatest.apps.gallery.app import Gallery
 
 
 class TestGallery(GaiaTestCase):
-
-    _gallery_items_locator = ('css selector', 'li.thumbnail')
-    _current_image_locator = ('css selector', '#frame2 > img')
-    _photos_toolbar_locator = ('id', 'fullscreen-toolbar')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -17,29 +14,17 @@ class TestGallery(GaiaTestCase):
         # add photo to storage
         self.push_resource('IMG_0001.jpg', destination='DCIM/100MZLLA')
 
-        # launch the Gallery app
-        self.app = self.apps.launch('Gallery')
-
     def test_gallery_view(self):
         # https://moztrap.mozilla.org/manage/case/1326/
 
-        self.wait_for_element_displayed(*self._gallery_items_locator)
+        gallery = Gallery(self.marionette)
+        gallery.launch()
+        gallery.wait_for_files_to_load(1)
 
-        gallery_items = self.marionette.execute_script("return window.wrappedJSObject.files;")
-        for index, item in enumerate(gallery_items):
-            # If the current item is not a video, set it as the gallery item to tap.
-            if 'video' not in item['metadata']:
-                first_gallery_item = self.marionette.find_elements(*self._gallery_items_locator)[index]
-                break
+        image = gallery.tap_first_gallery_item()
 
-        self.marionette.tap(first_gallery_item)
-        self.wait_for_element_displayed(*self._current_image_locator)
-
-        current_image = self.marionette.find_element(*self._current_image_locator)
-        photos_toolbar = self.marionette.find_element(*self._photos_toolbar_locator)
-
-        self.assertIsNotNone(current_image.get_attribute('src'))
-        self.assertTrue(photos_toolbar.is_displayed())
+        self.assertIsNotNone(image.current_image_source)
+        self.assertTrue(image.is_photo_toolbar_displayed)
 
         # TODO
         # Add steps to view picture full screen

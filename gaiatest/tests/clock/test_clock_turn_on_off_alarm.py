@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from gaiatest import GaiaTestCase
-from gaiatest.tests.clock import clock_object
+from gaiatest.apps.clock.app import Clock
 import time
 
 
@@ -12,38 +12,34 @@ class TestClockTurnOnOffAlarm(GaiaTestCase):
     def setUp(self):
         GaiaTestCase.setUp(self)
 
-        # unlock the lockscreen if it's locked
-        self.lockscreen.unlock()
+        self.clock = Clock(self.marionette)
+        self.clock.launch()
 
-        # launch the Clock app
-        self.app = self.apps.launch('Clock')
-
-        # create a new alarm for test
-        clock_object.create_alarm(self)
+        # create a new alarm with the default values that are available
+        new_alarm = self.clock.tap_new_alarm()
+        self.clock = new_alarm.tap_done()
+        self.clock.wait_for_banner_not_visible()
 
     def test_clock_turn_on_off_alarm(self):
         """ Turn on/off the alarm
-
         https://moztrap.mozilla.org/manage/case/1779/
-
         """
-        self.wait_for_element_displayed(*clock_object._alarm_create_new_locator)
+
+        alarm = self.clock.alarms[0]
 
         # turn on the alarm
-        origin_alarm_checked = self.marionette.find_element(*clock_object._alarm_checked_status).get_attribute('checked')
-        alarm_checked_status = self.marionette.find_element(*clock_object._alarm_checked_status_button)
-        self.marionette.tap(alarm_checked_status)
-        time.sleep(2)
-        new_alarm_checked = self.marionette.find_element(*clock_object._alarm_checked_status).get_attribute('checked')
-        self.assertTrue(origin_alarm_checked != new_alarm_checked, 'user should be able to turn on the alarm.')
+        origin_alarm_checked = alarm.is_alarm_active
 
-        # turn off the alarm
-        origin_alarm_checked = self.marionette.find_element(*clock_object._alarm_checked_status).get_attribute('checked')
-        alarm_checked_status = self.marionette.find_element(*clock_object._alarm_checked_status_button)
-        self.marionette.tap(alarm_checked_status)
-        time.sleep(2)
-        new_alarm_checked = self.marionette.find_element(*clock_object._alarm_checked_status).get_attribute('checked')
-        self.assertTrue(origin_alarm_checked != new_alarm_checked, 'user should be able to turn off the alarm.')
+        alarm.tap_checkbox()
+        time.sleep(2)  # TODO: Remove the sleep and add a wait_for_checkbox_state_to_change (one day)
+        self.assertTrue(origin_alarm_checked != alarm.is_alarm_active, 'user should be able to turn on the alarm.')
+
+        origin_alarm_checked = alarm.is_alarm_active
+
+        alarm.tap_checkbox()
+        time.sleep(2)  # TODO: Remove the sleep and add a wait_for_checkbox_state_to_change (one day)
+
+        self.assertTrue(origin_alarm_checked != alarm.is_alarm_active, 'user should be able to turn off the alarm.')
 
     def tearDown(self):
         # delete any existing alarms

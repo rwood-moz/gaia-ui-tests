@@ -3,7 +3,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import datetime
-import calendar
 import time
 
 from gaiatest import GaiaTestCase
@@ -15,54 +14,35 @@ DAYS_OF_WEEK = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY',
 
 class TestCalendar(GaiaTestCase):
 
-    _current_month_year_locator = ('id', 'current-month-year')
-    _selected_day_title_locator = ('id', 'selected-day-title')
-    _add_event_button_locator = ('xpath', "//a[@href='/add/']")
+    _add_event_button_locator = ('xpath', "//a[@href='/event/add/']")
     _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
     _event_location_input_locator = ('xpath', "//input[@data-l10n-id='event-location']")
     _event_start_time_input_locator = ('xpath', "//input[@data-l10n-id='event-start-time']")
     _event_end_time_input_locator = ('xpath', "//input[@data-l10n-id='event-end-time']")
+    _edit_event_button_locator = ('css selector', 'button.edit')
     _save_event_button_locator = ('css selector', 'button.save')
-    _event_list_locator = ('id', 'event-list')
     _week_display_button_locator = ('xpath', "//a[@href='/week/']")
     _day_display_button_locator = ('xpath', "//a[@href='/day/']")
-    _week_view_locator = ('id', 'week-view')
     _day_view_locator = ('id', 'day-view')
     _delete_event_button_locator = ('css selector', "#modify-event-view a[data-l10n-id='event-delete']")
 
     def setUp(self):
         GaiaTestCase.setUp(self)
 
-        # Setting the system time to a hardcoded datetime to avoid timezone issues
-        # Jan. 1, 2013, according to http://www.epochconverter.com/
-        _seconds_since_epoch = 1357043430
-        self.today = datetime.datetime.utcfromtimestamp(_seconds_since_epoch)
+        if self.device.is_android_build:
+            # Setting the system time to a hardcoded datetime to avoid timezone issues
+            # Jan. 1, 2013, according to http://www.epochconverter.com/
+            _seconds_since_epoch = 1357043430
+            self.today = datetime.date.fromtimestamp(_seconds_since_epoch)
 
-        # set the system date to an expected date, and timezone to UTC
-        self.data_layer.set_time(_seconds_since_epoch * 1000)
-        self.data_layer.set_setting('time.timezone', 'Atlantic/Reykjavik')
+            # set the system date to an expected date, and timezone to UTC
+            self.data_layer.set_time(_seconds_since_epoch * 1000)
+            self.data_layer.set_setting('time.timezone', 'Atlantic/Reykjavik')
+        else:
+            self.today = datetime.date.today()
 
         # launch the Calendar app
         self.app = self.apps.launch('calendar')
-
-    def test_check_today_date(self):
-        # https://moztrap.mozilla.org/manage/case/3751/
-
-        # wait for the selected day and month title to render
-        self.wait_for_element_displayed(
-            *self._current_month_year_locator)
-        self.wait_for_element_displayed(
-            *self._selected_day_title_locator)
-
-        # find the default selected day and month title
-        selected_day = self.marionette.find_element(
-            *self._selected_day_title_locator)
-        month_title = self.marionette.find_element(
-            *self._current_month_year_locator)
-
-        # validate month title and selected day aligns with today's date
-        self.assertEquals(month_title.text, self.today.strftime('%B %Y'))
-        self.assertEquals(selected_day.text, self.today.strftime('%A %-d %B %Y').upper())
 
     def test_that_new_event_appears_on_all_calendar_views(self):
         # https://github.com/mozilla/gaia-ui-tests/issues/102
@@ -137,6 +117,10 @@ class TestCalendar(GaiaTestCase):
         all_events = self.marionette.find_elements(*day_view_time_slot_individual_events_locator)
         while len(all_events) > 0:
             self.marionette.tap(all_events[0])
+
+            self.wait_for_element_displayed(*self._edit_event_button_locator)
+            self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))
+
             self.wait_for_element_displayed(*self._event_title_input_locator)
             delete_event_button = self.marionette.find_element(*self._delete_event_button_locator)
             self.marionette.tap(delete_event_button)

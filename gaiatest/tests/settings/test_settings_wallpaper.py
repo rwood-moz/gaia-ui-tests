@@ -16,17 +16,14 @@ class TestWallpaper(GaiaTestCase):
     _wallpaper_button_locator = ('css selector', "a[data-value='0']")
     _wallpaper_title_locator = ('css selector', "h1[data-l10n-id='select-wallpaper']")
     _pick_wallpapers_locator = ('css selector', "div[class='wallpaper']")
-    _wallpaper_frame_locator = ('css selector', "iframe[src='app://wallpaper.gaiamobile.org/pick.html']")
-    _settings_frame_locator = ('css selector', "iframe[src='app://settings.gaiamobile.org/index.html#root']")
+    _wallpaper_frame_locator = ('css selector', "iframe[src^='app://wallpaper'][src$='pick.html']")
+    _settings_frame_locator = ('css selector', "iframe[src^='app://settings'][src$='index.html#root']")
 
     # default wallpaper
     _default_wallpaper_src = None
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        # unlock the lockscreen if it's locked
-        self.lockscreen.unlock()
 
     def test_change_wallpaper(self):
         # https://moztrap.mozilla.org/manage/case/3449/
@@ -36,6 +33,9 @@ class TestWallpaper(GaiaTestCase):
 
         self.wait_for_element_displayed(*self._display_locator)
         display_item = self.marionette.find_element(*self._display_locator)
+
+        # TODO Bug 847946 - scrollIntoView() or scrollIntoView(true) scrolls to the element next to the giving one
+        self.marionette.execute_script("arguments[0].scrollIntoView(false);", [display_item])
         self.marionette.tap(display_item)
 
         #  Wait for the display menu to be visible

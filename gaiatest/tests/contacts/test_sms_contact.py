@@ -5,17 +5,12 @@
 from gaiatest import GaiaTestCase
 from gaiatest.mocks.mock_contact import MockContact
 
-from marionette.errors import NoSuchElementException
+from gaiatest.apps.contacts.app import Contacts
 
 
 class TestContacts(GaiaTestCase):
 
-    _loading_overlay = ('id', 'loading-overlay')
-
-    _sms_app_iframe_locator = ('css selector', 'iframe[src="app://sms.gaiamobile.org/index.html"]')
-
-    # Contact details panel
-    _send_sms_button_locator = ('id', 'send-sms-button-0')
+    _sms_app_iframe_locator = ('css selector', 'iframe[src^="app://sms"][src$="index.html"]')
 
     #SMS app locators
     _sms_app_header_locator = ('id', 'header-text')
@@ -27,26 +22,17 @@ class TestContacts(GaiaTestCase):
         self.contact = MockContact()
         self.data_layer.insert_contact(self.contact)
 
-        # launch the Contacts app
-        self.app = self.apps.launch('Contacts')
-        self.wait_for_element_not_displayed(*self._loading_overlay)
-
-    def create_contact_locator(self, contact):
-        return ('xpath', "//a[descendant::strong[text()='%s']]" % contact)
-
     def test_sms_contact(self):
         # https://moztrap.mozilla.org/manage/case/1314/
         # Setup a text message from a contact
 
-        contact_locator = self.create_contact_locator(self.contact['givenName'])
-        self.wait_for_element_displayed(*contact_locator)
+        contacts = Contacts(self.marionette)
+        contacts.launch()
 
-        contact_listing = self.marionette.find_element(*contact_locator)
-        self.marionette.tap(contact_listing)
+        # tap on the created contact
+        contact_details = contacts.contact(self.contact['givenName']).tap()
 
-        self.wait_for_element_present(*self._send_sms_button_locator)
-        send_sms_button = self.marionette.find_element(*self._send_sms_button_locator)
-        self.marionette.tap(send_sms_button)
+        contact_details.tap_send_sms()
 
         self.marionette.switch_to_frame()
 

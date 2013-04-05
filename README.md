@@ -29,7 +29,7 @@ depending on what device you're using.  The general format is:
 
 Options:
 
-    --emulator arm --homedir /path/to/emulator:  use these options to 
+    --emulator arm --homedir /path/to/emulator:  use these options to
         let Marionette launch an emulator for you in which to run a test
     --address <host>:<port>  use this option to run a test on an emulator
         which you've manually launched yourself, a real device, or a b2g
@@ -37,15 +37,57 @@ Options:
         you'd specify --address localhost:2828
     --testvars= (see section below)
 
-If you are running the tests on a device connected via ADB (Android Debug 
-Bridge), you must additionally setup port forwarding from the device to your 
+Testing on a Device
+===================
+
+You must run a build of B2G on the device that has Marionette enabled.
+The easiest way to do that is to grab a nightly `eng` build, like
+[this one for Unagi](https://pvtbuilds.mozilla.org/pub/mozilla.org/b2g/nightly/mozilla-b2g18-unagi-eng/latest/)
+(currently it requires a Mozilla LDAP login). Flash that to your device.
+
+You should not enable Remote Debugging manually on the device because
+there will be competing debuggers. See
+[bug 764913](https://bugzilla.mozilla.org/show_bug.cgi?id=764913).
+
+If you are running the tests on a device connected via ADB (Android Debug
+Bridge), you must additionally set up port forwarding from the device to your
 local machine. You can do this by running the command:
 
     adb forward tcp:2828 tcp:2828
 
-ADB is available in emulator packages under out/host/linux_x86/bin. 
-Alternatively, it may be downloaded as part of the 
+ADB is available in emulator packages under out/host/linux_x86/bin.
+Alternatively, it may be downloaded as part of the
 [Android SDK](http://developer.android.com/sdk/index.html).
+
+Testing on Desktop build
+========================
+
+You can download the latest build of the desktop client from [this location](http://ftp.mozilla.org/pub/mozilla.org/b2g/nightly/latest-mozilla-b2g18/), 
+but make sure you download the appropriate file for your operating system.
+
+Note : Unfortunately, due to [Bug 832469](https://bugzilla.mozilla.org/show_bug.cgi?id=832469) the nightly desktop builds do not currently work on Windows, so you will 
+need either Mac or Linux to continue :
+
+  * **Mac**: b2g-[VERSION].multi.mac64.dmg
+  * **Linux (32bit)**: b2g-[VERSION].multi.linux-i686.tar.bz2
+  * **Linux (64bit)**: b2g-[VERSION].multi.linux-x86_64.tar.bz2
+
+Note : If you do not have the operating systems installed on your machine, a virtual machine is fine as well.
+
+Once downloaded, you will need to extract the contents to a local folder. For the purposes of the rest 
+of this guide, I’ll refer to this location as `$B2G_HOME`.
+
+
+Add the line `user_pref('marionette.force-local', true);` to your gaia/profile/user.js file, which on :
+
+  * **Mac** is located in $B2G_HOME/B2G.app/Contents/MacOS 
+  * **Linux** is located in $B2G_HOME/b2g
+ 
+Because we’re running against the desktop client we must filter out all tests that are unsuitable. To run the tests, use the following command:
+
+`gaiatest --address=localhost:2828 --type=b2g-antenna-bluetooth-carrier-camera-sdcard-wifi-xfail gaiatest/tests/manifest.ini`
+
+You should then start to see the tests running.
 
 Testvars
 ========
@@ -113,3 +155,5 @@ prevailing style of the existing tests. Use them as a template for writing
 your tests.
 We follow [PEP8](http://www.python.org/dev/peps/pep-0008/) for formatting, although we're pretty lenient on the
 80-character line length.
+
+

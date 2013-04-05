@@ -46,6 +46,7 @@ class TestVideoPlayer(GaiaTestCase):
         # Tap on the toolbar to keep it visible
         self.wait_for_element_displayed(*self._video_controls_locator)
         self.marionette.tap(self.marionette.find_element(*self._video_controls_locator))
+        self.wait_for_element_displayed(*self._elapsed_text_locator)
 
         # The elapsed time != 0:00 is the only indication of the toolbar visible
         self.assertNotEqual(self.marionette.find_element(*self._elapsed_text_locator).text, "00:00")

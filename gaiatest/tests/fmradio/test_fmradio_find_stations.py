@@ -30,21 +30,21 @@ class TestFMRadioFindStations(GaiaTestCase):
         self.wait_for_condition(lambda m: self.data_layer.is_fm_radio_enabled)
 
         # save the current frequency
-        current_frequency = self.marionette.find_element(*self._frequency_display_locator).text
+        current_frequency = float(self.marionette.find_element(*self._frequency_display_locator).text)
 
         # check the ui value and the system value
-        self.assertEqual(current_frequency, str(self.data_layer.fm_radio_frequency))
+        self.assertEqual(current_frequency, float(self.data_layer.fm_radio_frequency))
 
         # search next station
         next_button = self.marionette.find_element(*self._next_button_locator)
         self.marionette.tap(next_button)
 
-        self.wait_for_condition(lambda m: m.find_element(*self._frequency_display_locator).text != current_frequency)
+        self.wait_for_condition(lambda m: float(m.find_element(*self._frequency_display_locator).text) != current_frequency)
 
-        next_frequency = self.marionette.find_element(*self._frequency_display_locator).text
+        next_frequency = float(self.marionette.find_element(*self._frequency_display_locator).text)
 
         # check the ui value and the system value
-        self.assertEqual(next_frequency, str(self.data_layer.fm_radio_frequency))
+        self.assertEqual(next_frequency, float(self.data_layer.fm_radio_frequency))
 
         # check the change of the frequency
         self.assertNotEqual(current_frequency, next_frequency)
@@ -62,20 +62,20 @@ class TestFMRadioFindStations(GaiaTestCase):
         self.wait_for_condition(lambda m: self.data_layer.is_fm_radio_enabled)
 
         # save the current frequency
-        current_frequency = self.marionette.find_element(*self._frequency_display_locator).text
+        current_frequency = float(self.marionette.find_element(*self._frequency_display_locator).text)
 
         # check the ui value and the system value
-        self.assertEqual(current_frequency, str(self.data_layer.fm_radio_frequency))
+        self.assertEqual(current_frequency, float(self.data_layer.fm_radio_frequency))
 
         # search next station
         prev_button = self.marionette.find_element(*self._prev_button_locator)
         self.marionette.tap(prev_button)
 
-        self.wait_for_condition(lambda m: m.find_element(*self._frequency_display_locator).text != current_frequency)
-        prev_frequency = self.marionette.find_element(*self._frequency_display_locator).text
+        self.wait_for_condition(lambda m: float(m.find_element(*self._frequency_display_locator).text) != current_frequency)
+        prev_frequency = float(self.marionette.find_element(*self._frequency_display_locator).text)
 
         # check the ui value and the system value
-        self.assertEqual(prev_frequency, str(self.data_layer.fm_radio_frequency))
+        self.assertEqual(prev_frequency, float(self.data_layer.fm_radio_frequency))
 
         # check the change of the frequency
         self.assertNotEqual(current_frequency, prev_frequency)

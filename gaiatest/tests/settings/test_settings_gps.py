@@ -4,6 +4,7 @@
 
 from gaiatest import GaiaTestCase
 
+
 class TestSettingsGPS(GaiaTestCase):
 
     # GPS Settings locators

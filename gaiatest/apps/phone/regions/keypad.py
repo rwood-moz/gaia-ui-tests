@@ -4,6 +4,7 @@
 
 import time
 from gaiatest.apps.phone.app import Phone
+from gaiatest.apps.phone.regions.call_screen import CallScreen
 
 
 class Keypad(Phone):
@@ -36,8 +37,9 @@ class Keypad(Phone):
 
     def call_number(self, value):
         self.phone_number = value
-        self.tap_call_button()
+        return self.tap_call_button()
 
     def tap_call_button(self):
         call_button = self.marionette.find_element(*self._call_bar_locator)
         self.marionette.tap(call_button)
+        return CallScreen(self.marionette)

@@ -8,6 +8,7 @@ from gaiatest import GaiaTestCase
 IMEI_CODE = "*#06#"
 CALL_FORWARDING_CODE = "*#21#"
 
+
 class TestMMI(GaiaTestCase):
 
     # Dialer app
@@ -18,6 +19,7 @@ class TestMMI(GaiaTestCase):
     # Attention frame
     _attention_frame_locator = ('xpath', '//*[@id="attention-screen"]/iframe')
     _message_locator = ('id', 'message')
+    _loading_overlay_locator = ('id', 'loading-overlay')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -44,6 +46,8 @@ class TestMMI(GaiaTestCase):
 
         # Switch to attention frame
         self.marionette.switch_to_frame(attention_frame)
+
+        self.wait_for_element_not_displayed(*self._loading_overlay_locator)
 
         imei = self.marionette.find_element(*self._message_locator).text
 

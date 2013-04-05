@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from gaiatest import GaiaTestCase
+import time
 
 class TestSettingsCellData(GaiaTestCase):
 
@@ -17,9 +18,6 @@ class TestSettingsCellData(GaiaTestCase):
     def setUp(self):
 
         GaiaTestCase.setUp(self)
-
-        # make sure cell data is off for the beginning of the test
-        self.data_layer.disable_cell_data()
 
         # launch the Settings app
         self.app = self.apps.launch('Settings')
@@ -42,18 +40,20 @@ class TestSettingsCellData(GaiaTestCase):
         # enable cell data
         enabled_checkbox = self.marionette.find_element(*self._cell_data_enabled_input_locator)
         self.assertFalse(enabled_checkbox.get_attribute('checked'))
+
         # we have to tap on the label rather than the input
         enabled_label = self.marionette.find_element(*self._cell_data_enabled_label_locator)
         self.marionette.tap(enabled_label)
 
+        # Sleep a little after the tap. It's cleaner than an if/waiting/except block
+        time.sleep(1)
+
         # deal with prompt that sometimes appears (on first setting)
-        turn_on_prompt_button = self.marionette.find_element(*self._cell_data_prompt_turn_on_button_locator)
-        if turn_on_prompt_button.is_displayed and \
-           'current' in self.marionette.find_element(*self._cell_data_prompt_container_locator).get_attribute('class'):
-            # the following two asserts will currently fail due to bug 837664, so xfailing the test for now
-            # https://bugzilla.mozilla.org/show_bug.cgi?id=837664
+        # The prompt container and its contents return True is_displayed erroneously
+        if 'current' in self.marionette.find_element(*self._cell_data_prompt_container_locator).get_attribute('class'):
             self.assertFalse(enabled_checkbox.get_attribute('checked'))
             self.assertFalse(self.data_layer.get_setting('ril.data.enabled'), "Cell data was enabled before responding to the prompt")
+            turn_on_prompt_button = self.marionette.find_element(*self._cell_data_prompt_turn_on_button_locator)
             self.marionette.tap(turn_on_prompt_button)
 
         self.wait_for_condition(lambda m: enabled_checkbox.get_attribute('checked') == 'true')
