@@ -73,15 +73,21 @@ class TestStressAddEvent(GaiaStressTest):
 
         # create a new event
         self.marionette.find_element(*self._event_title_input_locator).send_keys(event_title)
+        time.sleep(1)
         self.marionette.find_element(*self._event_location_input_locator).send_keys(event_location)
+        time.sleep(1)
         self.marionette.find_element(*self._event_start_date_input_locator).clear()
         self.marionette.find_element(*self._event_start_date_input_locator).send_keys(event_start_date)
+        time.sleep(1)
         self.marionette.find_element(*self._event_end_date_input_locator).clear()
         self.marionette.find_element(*self._event_end_date_input_locator).send_keys(event_end_date)
+        time.sleep(1)
         self.marionette.find_element(*self._event_start_time_input_locator).clear()
         self.marionette.find_element(*self._event_start_time_input_locator).send_keys(event_start_time)
+        time.sleep(1)
         self.marionette.find_element(*self._event_end_time_input_locator).clear()
         self.marionette.find_element(*self._event_end_time_input_locator).send_keys(event_end_time)
+        time.sleep(1)
         save_event_button = self.marionette.find_element(*self._save_event_button_locator)
         self.marionette.tap(save_event_button)
 
@@ -89,6 +95,7 @@ class TestStressAddEvent(GaiaStressTest):
         self.wait_for_element_displayed(*this_event_time_slot_locator)
 
         # assert that the event is displayed as expected
+        time.sleep(1)
         self.assertTrue(self.marionette.find_element(*this_event_time_slot_locator).is_displayed(),
                         "Expected the time slot for the event to be present.")
         displayed_events = self.marionette.find_element(*month_view_time_slot_all_events_locator).text
@@ -97,3 +104,6 @@ class TestStressAddEvent(GaiaStressTest):
 
         # Increment for the next event
         self.next_event_date += datetime.timedelta(days=1)
+
+        # sleep between reps
+        time.sleep(3)

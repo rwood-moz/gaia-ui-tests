@@ -52,8 +52,8 @@ class TestStressAirplaneMode(GaiaStressTest):
         airplane_mode_button = self.marionette.find_element(*self._airplane_mode_button_locator)
         self.marionette.tap(airplane_mode_button)
 
-        # Sleep 30 seconds
-        time.sleep(30)
+        # Sleep
+        time.sleep(20)
 
         # Close the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.hide()")
@@ -77,15 +77,18 @@ class TestStressAirplaneMode(GaiaStressTest):
         airplane_mode_button = self.marionette.find_element(*self._airplane_mode_enabled_button_locator)
         self.marionette.tap(airplane_mode_button)
 
-        # Sleep 30 seconds
-        time.sleep(30)
+        # Sleep
+        time.sleep(20)
 
         # Close the utility tray
         self.marionette.execute_script("window.wrappedJSObject.UtilityTray.hide()")
         self.wait_for_element_not_displayed(*self._utility_tray_locator)
 
+        # Sleep between reps
+        time.sleep(3)
+
     def verify_cell(self, expect_enabled):
-        # Verify cell network enabled/disabled bvia settings menu (some code from test_settings_cell)
+        # Verify cell network enabled/disabled via settings menu (some code from test_settings_cell)
         self.app = self.apps.launch('Settings')
         self.wait_for_element_displayed(*self._cell_data_menu_item_locator)
         cell_data_menu_item = self.marionette.find_element(*self._cell_data_menu_item_locator)

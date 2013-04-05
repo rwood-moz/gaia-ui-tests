@@ -654,9 +654,13 @@ class GaiaStressTest(GaiaTestCase):
         self.process_checkpoint_data()
 
     def checkpoint(self, iteration = 0):
+        # Sleep to give device idle time (for gc)
+        idle_time = 60
+        self.marionette.log("sleeping %d seconds to give the device some idle time" % idle_time)
+        time.sleep(idle_time)
+
         # Dump out some memory status info
         self.marionette.log("checkpoint")
-
         self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         # If first checkpoint, create the file if it doesn't exist already
         if (iteration == 0 or iteration == self.checkpoint_every):
@@ -692,7 +696,7 @@ class GaiaStressTest(GaiaTestCase):
 
     def process_checkpoint_data(self):
         # Process checkpoint data into .json
-        self.marionette.log("Processing checkpoint data from %s" % self.log_name)
+        self.marionette.log("processing checkpoint data from %s" % self.log_name)
 
         # Open the checkpoint file
         checkpoint_file = open(self.log_name, 'r')

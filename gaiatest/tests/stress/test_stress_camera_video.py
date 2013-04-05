@@ -51,14 +51,13 @@ class TestStressCameraVideo(GaiaStressTest):
         # Start camera, capture video and verify a video was taken, close camera
         # Most of the code borrowed from test_camera.py
         self.app = self.apps.launch('camera')
-        self.wait_for_capture_ready()
-
-        switch_source_button = self.marionette.find_element(*self._switch_source_button_locator)
-
-        self.marionette.tap(switch_source_button)
-        time.sleep(2)
         self.wait_for_element_present(*self._capture_button_enabled_locator)
 
+        switch_source_button = self.marionette.find_element(*self._switch_source_button_locator)
+        self.marionette.tap(switch_source_button)
+        self.wait_for_element_present(*self._capture_button_enabled_locator)
+
+        time.sleep(2)
         capture_button = self.marionette.find_element(*self._capture_button_locator)
         self.marionette.tap(capture_button)
 
@@ -77,23 +76,14 @@ class TestStressCameraVideo(GaiaStressTest):
         # Wait for image to be added in to filmstrip
         self.wait_for_element_displayed(*self._film_strip_image_locator, timeout=30)
 
-        # Find the new film thumbnail in the film strip
+        # Find new video in the film strip
         self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
         
         # Sleep a bit
-        time.sleep(5)
+        time.sleep(2)
 
         # Close the app via home button
         self.close_app()
 
         # Wait between iterations
-        time.sleep(15)
-
-    def wait_for_capture_ready(self):
-        self.marionette.set_script_timeout(10000)
-        self.marionette.execute_async_script("""
-            waitFor(
-                function () { marionetteScriptFinished(); },
-                function () { return document.getElementById('viewfinder').readyState > 1; }
-            );
-        """)
+        time.sleep(3)

@@ -88,11 +88,11 @@ class TestStressSmsSendReceive(GaiaStressTest):
         self.marionette.tap(send_message_button)
         time.sleep(1)
 
-        # sleep a bit then go back to main message list
+        # go back to main message list
         back_header_button = self.marionette.find_element(*self._back_header_link_locator)
         self.marionette.tap(back_header_button)
         self.wait_for_element_displayed(*self._summary_header_locator)
-        time.sleep(10)
+        time.sleep(5)
 
         # verify/wait for the webapi new message callback, give 5 minutes; probably
         # received the new sms message by now anyway
@@ -128,4 +128,4 @@ class TestStressSmsSendReceive(GaiaStressTest):
         self.marionette.tap(back_header_button)
 
         # sleep between reps
-        time.sleep(10)
+        time.sleep(3)

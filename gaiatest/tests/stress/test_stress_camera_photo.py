@@ -13,6 +13,7 @@ import time
 
 class TestStressCameraPhoto(GaiaStressTest):
 
+    _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
     _capture_button_locator = ('id', 'capture-button')
     _focus_ring = ('id', 'focus-ring')
     _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
@@ -33,8 +34,9 @@ class TestStressCameraPhoto(GaiaStressTest):
         # Start camera, take photo and verify a photo was taken, close camera
         # Code borrowed from test_camera.py
         self.app = self.apps.launch('camera')
-        self.wait_for_capture_ready()
+        self.wait_for_element_present(*self._capture_button_enabled_locator)        
 
+        time.sleep(2)
         capture_button = self.marionette.find_element(*self._capture_button_locator)
         self.marionette.tap(capture_button)
 
@@ -49,19 +51,10 @@ class TestStressCameraPhoto(GaiaStressTest):
         self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
 
         # Sleep a bit
-        time.sleep(5)
+        time.sleep(2)
 
         # Close the app using home button
         self.close_app()
 
-        # Wait between iterations
-        time.sleep(15)
-
-    def wait_for_capture_ready(self):
-        self.marionette.set_script_timeout(10000)
-        self.marionette.execute_async_script("""
-            waitFor(
-                function () { marionetteScriptFinished(); },
-                function () { return document.getElementById('viewfinder').readyState > 1; }
-            );
-        """)
+        # Sleep between iterations
+        time.sleep(5)

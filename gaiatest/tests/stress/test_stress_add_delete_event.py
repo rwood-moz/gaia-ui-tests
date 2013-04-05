@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 16.5 minutes
+# Approximate runtime per 100 iterations: xxx minutes
 
 from gaiatest import GaiaStressTest
 
@@ -68,23 +68,31 @@ class TestStressAddDeleteEvent(GaiaStressTest):
         self.wait_for_element_displayed(*self._add_event_button_locator)
 
         # click the add event button
+        time.sleep(1)
         add_event_button = self.marionette.find_element(*self._add_event_button_locator)
         self.marionette.tap(add_event_button)
         self.wait_for_element_displayed(*self._event_title_input_locator)
 
         # create a new event
         self.marionette.find_element(*self._event_title_input_locator).send_keys(event_title)
+        time.sleep(1)
         self.marionette.find_element(*self._event_location_input_locator).send_keys(event_location)
+        time.sleep(1)
         self.marionette.find_element(*self._event_start_date_input_locator).clear()
         self.marionette.find_element(*self._event_start_date_input_locator).send_keys(event_start_date)
+        time.sleep(1)
         self.marionette.find_element(*self._event_end_date_input_locator).clear()
         self.marionette.find_element(*self._event_end_date_input_locator).send_keys(event_end_date)
+        time.sleep(1)        
         self.marionette.find_element(*self._event_start_time_input_locator).clear()
         self.marionette.find_element(*self._event_start_time_input_locator).send_keys(event_start_time)
+        time.sleep(1)
         self.marionette.find_element(*self._event_end_time_input_locator).clear()
         self.marionette.find_element(*self._event_end_time_input_locator).send_keys(event_end_time)
+        time.sleep(1)
         save_event_button = self.marionette.find_element(*self._save_event_button_locator)
         self.marionette.tap(save_event_button)
+        time.sleep(5)
 
         # wait for the default calendar display
         self.wait_for_element_displayed(*this_event_time_slot_locator)
@@ -101,11 +109,13 @@ class TestStressAddDeleteEvent(GaiaStressTest):
         self.marionette.tap(event_list)
 
         # Click edit button
+        time.sleep(1)
         self.wait_for_element_displayed(*self._edit_event_button_locator)
         self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))
 
         # Then delete it
-        self.wait_for_element_present(*self._delete_event_button_locator)
+        time.sleep(1)
+        self.wait_for_element_displayed(*self._delete_event_button_locator)
         delete_event_button = self.marionette.find_element(*self._delete_event_button_locator)
         self.marionette.tap(delete_event_button)
         self.wait_for_element_displayed(*this_event_time_slot_locator)
@@ -113,5 +123,5 @@ class TestStressAddDeleteEvent(GaiaStressTest):
         # Increment for the next event
         self.next_event_date += datetime.timedelta(days=1)
 
-        # Wait a couple of seconds between iterations
-        time.sleep(2)
+        # Wait between reps
+        time.sleep(3)

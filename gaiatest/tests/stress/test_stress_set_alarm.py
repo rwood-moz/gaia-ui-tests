@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 26 minutes
+# Approximate runtime per 100 iterations: xxx minutes
 
 from gaiatest import GaiaStressTest
 from gaiatest.tests.clock import clock_object
@@ -41,16 +41,15 @@ class TestStressSetAlarm(GaiaStressTest):
 
         # create a new alarm, default values except label
         alarm_create_new = self.marionette.find_element(*clock_object._alarm_create_new_locator)
-        self.marionette.tap(alarm_create_new)
+        self.marionette.tap(alarm_create_new)        
         self.wait_for_element_displayed(*clock_object._new_alarm_label)
+        time.sleep(1)
 
         # Set label
         alarm_label = self.marionette.find_element(*clock_object._new_alarm_label)
         alarm_label.clear()
         text = "%d of %d" %(count, self.iterations)
         alarm_label.send_keys(text)
-
-        # Sleep a second
         time.sleep(1)
 
         self.wait_for_element_displayed(*clock_object._alarm_save_locator)
@@ -74,4 +73,4 @@ class TestStressSetAlarm(GaiaStressTest):
         #                'Alarms count did not increment')
 
         # A bit of sleep between reps
-        time.sleep(5)
+        time.sleep(3)

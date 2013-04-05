@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 9 minutes
+# Approximate runtime per 100 iterations: xxx minutes
 
 from gaiatest import GaiaStressTest
 
@@ -33,7 +33,7 @@ class TestStressLockScreen(GaiaStressTest):
 
         # Lock screen
         self.lockscreen.lock()
-        time.sleep(1)
+        time.sleep(2)
 
         # verify screen is locked
         self.wait_for_element_displayed(*self._lockscreen_locator)
@@ -41,4 +41,4 @@ class TestStressLockScreen(GaiaStressTest):
 
         # Unlock screen
         self.lockscreen.unlock()
-        time.sleep(1)
+        time.sleep(2)

@@ -2,11 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 8.5 minutes
+# Approximate runtime per 100 iterations: xxx minutes
 
 from gaiatest import GaiaStressTest
 from gaiatest.mocks.mock_contact import MockContact
 import os
+import time
 
 
 class TestStressAddContact(GaiaStressTest):
@@ -58,33 +59,41 @@ class TestStressAddContact(GaiaStressTest):
         add_new_contact = self.marionette.find_element(*self._add_new_contact_button_locator)
         self.marionette.tap(add_new_contact)
         self.wait_for_element_displayed(*self._given_name_field_locator)
+        time.sleep(1)
 
         # Enter data into fields
         extra_text = "-%dof%d" % (count, self.iterations)
         self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
-
+        time.sleep(1)
         self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
-
+        time.sleep(1)
         self.marionette.find_element(
             *self._phone_field_locator).send_keys(self.contact['tel']['value'])
+        time.sleep(1)
         self.marionette.find_element(
             *self._email_field_locator).send_keys(self.contact['email'])
-
+        time.sleep(1)
         self.marionette.find_element(
             *self._street_field_locator).send_keys(self.contact['street'])
+        time.sleep(1)
         self.marionette.find_element(
             *self._zip_code_field_locator).send_keys(self.contact['zip'])
+        time.sleep(1)            
         self.marionette.find_element(
             *self._city_field_locator).send_keys(self.contact['city'])
+        time.sleep(1)            
         self.marionette.find_element(
             *self._country_field_locator).send_keys(self.contact['country'])
-
+        time.sleep(1)
         self.marionette.find_element(
             *self._comment_field_locator).send_keys(self.contact['comment'])
-
+        time.sleep(1)
         done_button = self.marionette.find_element(*self._done_button_locator)
         self.marionette.tap(done_button)
+        time.sleep(5)
 
-        #contact_locator = self.create_contact_locator(self.contact['familyName'])
         contact_locator = self.create_contact_locator(self.contact['givenName'] + extra_text)
         self.wait_for_element_displayed(*contact_locator)
+
+        # sleep between reps
+        time.sleep(3)

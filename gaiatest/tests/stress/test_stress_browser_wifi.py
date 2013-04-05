@@ -39,6 +39,7 @@ class TestStressBrowserWifi(GaiaStressTest):
 
         awesome_bar = self.marionette.find_element(*self._awesome_bar_locator)
         awesome_bar.send_keys('http://mozqa.com/data/firefox/layout/mozilla.html')
+        time.sleep(1)
 
         url_button = self.marionette.find_element(*self._url_button_locator)
         self.marionette.tap(url_button)
@@ -64,8 +65,8 @@ class TestStressBrowserWifi(GaiaStressTest):
         # Close the browser using home button
         self.close_app()
 
-        # Wait a couple of seconds between iterations
-        time.sleep(2)
+        # Sleep between reps
+        time.sleep(3)
 
     def is_throbber_visible(self):
         return self.marionette.find_element(*self._throbber_locator).get_attribute('class') == 'loading'

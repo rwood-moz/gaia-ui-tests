@@ -87,10 +87,9 @@ class TestStressSmsConversation(GaiaStressTest):
         send_message_button = self.marionette.find_element(
             *self._send_message_button_locator)
         self.marionette.tap(send_message_button)
-        time.sleep(1)
 
         # sleep a bit
-        time.sleep(10)
+        time.sleep(5)
 
         # verify/wait for the webapi new message callback, give 5 minutes; probably
         # received the new sms message by now anyway
@@ -109,7 +108,7 @@ class TestStressSmsConversation(GaiaStressTest):
 
         # sleep with list of messages displayed; user would be here a bit to read messages
         # need sleep here anyway as with large number of messages can sometimes take awhile
-        time.sleep(20)
+        time.sleep(15)
 
         # TEMP: put back in after bug 850803 is fixed
         # verify sms count in msg list has increased by 2 (one sent, one received)
@@ -123,4 +122,4 @@ class TestStressSmsConversation(GaiaStressTest):
         #self.assertEqual(_text_message_content, received_message.text)
 
         # sleep between reps
-        time.sleep(10)
+        time.sleep(3)

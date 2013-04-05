@@ -77,15 +77,21 @@ class TestStressAddEditEvent(GaiaStressTest):
 
         # create a new event
         self.marionette.find_element(*self._event_title_input_locator).send_keys(event_title)
+        time.sleep(1)
         self.marionette.find_element(*self._event_location_input_locator).send_keys(event_location)
+        time.sleep(1)
         self.marionette.find_element(*self._event_start_date_input_locator).clear()
         self.marionette.find_element(*self._event_start_date_input_locator).send_keys(event_start_date)
+        time.sleep(1)
         self.marionette.find_element(*self._event_end_date_input_locator).clear()
         self.marionette.find_element(*self._event_end_date_input_locator).send_keys(event_end_date)
+        time.sleep(1)
         self.marionette.find_element(*self._event_start_time_input_locator).clear()
         self.marionette.find_element(*self._event_start_time_input_locator).send_keys(event_start_time)
+        time.sleep(1)
         self.marionette.find_element(*self._event_end_time_input_locator).clear()
         self.marionette.find_element(*self._event_end_time_input_locator).send_keys(event_end_time)
+        time.sleep(1)
         save_event_button = self.marionette.find_element(*self._save_event_button_locator)
         self.marionette.tap(save_event_button)
 
@@ -104,6 +110,7 @@ class TestStressAddEditEvent(GaiaStressTest):
         self.marionette.tap(event_list)
         
         # Click edit button
+        time.sleep(1)
         self.wait_for_element_displayed(*self._edit_event_button_locator)
         self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))        
 
@@ -111,12 +118,14 @@ class TestStressAddEditEvent(GaiaStressTest):
         self.wait_for_element_displayed(*self._event_title_input_locator)
         self.marionette.find_element(*self._event_title_input_locator).send_keys(" edited")
         event_title = event_title + " edited"
+        time.sleep(1)
 
         # Click Done button to save changes
         done_edit_button = self.marionette.find_element(*self._done_edit_button_locator)
         self.marionette.tap(done_edit_button)
 
         # Click back to close the event and return to main calendar display
+        time.sleep(1)
         self.wait_for_element_displayed(*self._event_view_back_button_locator)
         back_button = self.marionette.find_element(*self._event_view_back_button_locator)
         self.marionette.tap(back_button)
@@ -134,5 +143,5 @@ class TestStressAddEditEvent(GaiaStressTest):
         # Increment for the next event
         self.next_event_date += datetime.timedelta(days=1)
 
-        # Wait a couple of seconds between iterations
-        time.sleep(2)
+        # Wait a bit between iterations
+        time.sleep(3)
