@@ -37,8 +37,8 @@
         	"checkpoint": 10
         },
         "camera_photo": {
-        	"iterations": 10,
-        	"checkpoint": 10
+        	"iterations": 2,
+        	"checkpoint": 2
         },
         "camera_video": {
         	"capture_duration": 7,
@@ -82,6 +82,10 @@
         	"checkpoint": 10
         },
         "open_close_email": {
+        	"iterations": 10,
+        	"checkpoint": 10
+        },
+        "gallery_camera": {
         	"iterations": 10,
         	"checkpoint": 10
         }
