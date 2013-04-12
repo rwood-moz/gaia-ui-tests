@@ -10,8 +10,7 @@ class TestChangeLanguage(GaiaTestCase):
     # Language settings locators
     _settings_header_text_locator = ('css selector', '#root > header > h1')
     _language_settings_locator = ('id', 'menuItem-languageAndRegion')
-    _select_language_locator = ('css selector', 'li:nth-child(1) .fake-select > select')
-    _option_language_locator = ('css selector', 'option')
+    _select_language_locator = ('css selector', '#languages li:nth-child(1) .fake-select button')
     _back_button_locator = ('css selector', ".current header > a")
 
     def setUp(self):
@@ -28,14 +27,12 @@ class TestChangeLanguage(GaiaTestCase):
         language_item = self.marionette.find_element(*self._language_settings_locator)
 
         # Select Language
-        self.marionette.execute_script("arguments[0].scrollIntoView(false);", [language_item])
         self.marionette.tap(language_item)
 
-        self.wait_for_element_present(*self._select_language_locator)
+        self.wait_for_element_displayed(*self._select_language_locator)
 
-        # TODO Bug 833061 - tapping on a select box (or fake-select box) in the Settings app
-        select_language_option = self.marionette.find_element(*self._option_language_locator)
-        select_language_option.click()
+        select_box = self.marionette.find_element(*self._select_language_locator)
+        select_box.click()
 
         self._select(u'Fran\u00E7ais')
 

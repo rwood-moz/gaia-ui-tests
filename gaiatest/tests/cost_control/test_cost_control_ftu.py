@@ -13,7 +13,7 @@ class TestCostControlFTU(GaiaTestCase):
 
     # 2nd step screen locators
     _data_report_title_locator = ('css selector', 'h1[data-l10n-id="fte-onlydata2-title"]')
-    _rest_report_period_select_locator = ('css selector', '#non-vivo-step-1 select')
+    _reset_report_period_select_locator = ('css selector', '#non-vivo-step-1 ul li:nth-child(1) span')
     _next_button_locator_2 = ('css selector', '#non-vivo-step-1 span[data-l10n-id="next"]')
 
     # 3rd step screen locators
@@ -21,7 +21,7 @@ class TestCostControlFTU(GaiaTestCase):
     _ftu_usage_locator = ('css selector', '#non-vivo-step-2 span.tag')
     _ftu_data_alert_switch_locator = ('css selector', '#non-vivo-step-2 label.end input')
     _ftu_data_alert_label_locator = ('css selector', '#non-vivo-step-2 label.end')
-    _capacity_button_locator = ('css selector', '#data-limit-dialog form button')
+    _capacity_button_locator = ('css selector', '#data-limit-dialog form button span')
     _size_input_locator = ('css selector', '#data-limit-dialog form input')
     _usage_done_button_locator = ('id', 'data-usage-done-button')
     _go_button_locator = ('css selector', '#non-vivo-step-2 button.recommend')
@@ -51,7 +51,7 @@ class TestCostControlFTU(GaiaTestCase):
 
         # change the reset report to weekly
         self.wait_for_element_displayed(*self._data_report_title_locator)
-        reset_time = self.marionette.find_element(*self._rest_report_period_select_locator)
+        reset_time = self.marionette.find_element(*self._reset_report_period_select_locator)
         # tap() not working here, switch to use click() - see bug #850819
         reset_time.click()
         self._select('Weekly')
@@ -71,13 +71,15 @@ class TestCostControlFTU(GaiaTestCase):
         self.wait_for_element_displayed(*self._ftu_usage_locator)
         usage = self.marionette.find_element(*self._ftu_usage_locator)
         self.marionette.tap(usage)
+
         # try to get what's the capacity now
         capacity = self.marionette.find_element(*self._capacity_button_locator)
+
         # there are two choice in this switch u'GB' or u'MB'. if it is u'GB', try to switch to u'MB'
         if capacity.text == u'GB':
             self.marionette.tap(capacity)
-        # make sure it is u'MB'
-        self.assertEqual(capacity.text, u'MB')
+            # We need to wait for the javascript to do its stuff
+            self.wait_for_condition(lambda m: capacity.text == u'MB')
 
         # clear the original assigned value and set it to 0.1
         size = self.marionette.find_element(*self._size_input_locator)

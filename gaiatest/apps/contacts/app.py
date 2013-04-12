@@ -2,7 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import time
 from gaiatest.apps.base import Base
 from gaiatest.apps.base import PageRegion
 
@@ -14,6 +13,7 @@ class Contacts(Base):
     _loading_overlay_locator = ('id', 'loading-overlay')
     _new_contact_button_locator = ('id', 'add-contact-button')
     _settings_button_locator = ('id', 'settings-button')
+    _favorites_list_locator = ('id', 'contacts-list-favorites')
 
     #  contacts
     _contact_locator = ('css selector', 'li.contact-item')
@@ -42,6 +42,10 @@ class Contacts(Base):
         self.marionette.tap(self.marionette.find_element(*self._settings_button_locator))
         from gaiatest.apps.contacts.regions.settings_form import SettingsForm
         return SettingsForm(self.marionette)
+
+    @property
+    def is_favorites_list_displayed(self):
+        return self.marionette.find_element(*self._favorites_list_locator).is_displayed()
 
     class Contact(PageRegion):
 

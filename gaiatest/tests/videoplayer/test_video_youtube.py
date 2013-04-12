@@ -21,7 +21,7 @@ class TestYouTube(GaiaTestCase):
     _video_loaded_locator = ('css selector', 'video[style]')
 
     # YouTube
-    _video_container_locator = ('id', 'koya_elem_12_4')
+    _video_container_locator = ('id', 'koya_elem_0_6')
     _video_URL = 'http://m.youtube.com/watch?v=5MzuGWFIfio'
 
     def setUp(self):

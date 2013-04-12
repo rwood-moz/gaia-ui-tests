@@ -8,7 +8,7 @@ from gaiatest import GaiaTestCase
 from gaiatest.apps.browser.app import Browser
 
 
-class TestCostControlDataAlertWifi(GaiaTestCase):
+class TestCostControlDataAlertMobile(GaiaTestCase):
 
     # fte locators (can be removed once javascript starts to work)
     _welcome_title_locator = ('css selector', 'h1[data-l10n-id="fte-welcome-title"]')
@@ -62,7 +62,7 @@ class TestCostControlDataAlertWifi(GaiaTestCase):
         # launch the cost control app
         self.app = self.apps.launch('Usage')
 
-    def test_cost_control_data_alert_wifi(self):
+    def test_cost_control_data_alert_mobile(self):
         # go through ftu if there is any, otherwise pass it
         try:
             # if there is fte coming up
@@ -113,8 +113,9 @@ class TestCostControlDataAlertWifi(GaiaTestCase):
         # there is a bug that marionette 0.5.20 can't detect if some elements are displayed or not
         self.wait_for_element_displayed(*self._settings_title_locator)
         switch = self.marionette.find_element(*self._data_alert_switch_locator)
+
         if not switch.is_selected():
-            switch.click()
+            self.marionette.tap(switch)
 
         # make sure the data alert is 0.1MB, or we would set it to 0.1MB
         detail_section = self.marionette.find_element('css selector', 'ul.settings button span')

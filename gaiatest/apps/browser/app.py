@@ -36,6 +36,7 @@ class Browser(Base):
         self.wait_for_condition(lambda m: m.execute_script("return window.wrappedJSObject.Browser.hasLoaded;"))
 
     def go_to_url(self, url):
+        self.wait_for_element_displayed(*self._awesome_bar_locator)
         awesome_bar = self.marionette.find_element(*self._awesome_bar_locator)
         awesome_bar.clear()
         awesome_bar.send_keys(url)

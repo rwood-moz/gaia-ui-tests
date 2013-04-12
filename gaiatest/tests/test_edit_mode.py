@@ -4,11 +4,12 @@
 
 from gaiatest import GaiaTestCase
 
-from marionette.errors import NoSuchElementException
+from marionette.marionette import Actions
 
 
 class TestEditMode(GaiaTestCase):
 
+    _visible_apps_locator = ('css selector', 'div.page[style*="transform: translateX(0px);"] > ol > .icon')
     _edit_mode_locator = ('css selector', 'body[data-mode="edit"]')
 
     def setUp(self):
@@ -20,9 +21,13 @@ class TestEditMode(GaiaTestCase):
 
         self._go_to_next_page()
 
-        # go to edit mode.
-        # TODO: activate edit mode using javascript, instead of long_press due to https://bugzilla.mozilla.org/show_bug.cgi?id=814425
-        self._activate_edit_mode()
+        # go to edit mode
+        app = self.marionette.find_element(*self._visible_apps_locator)
+        Actions(self.marionette).\
+            press(app).\
+            wait(3).\
+            release().\
+            perform()
 
         #verify that the delete app icons appear
         self.assertTrue(self.is_element_present(*self._edit_mode_locator))
@@ -38,6 +43,3 @@ class TestEditMode(GaiaTestCase):
 
     def _go_to_next_page(self):
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToNextPage()')
-
-    def _activate_edit_mode(self):
-        self.marionette.execute_script("window.wrappedJSObject.Homescreen.setMode('edit')")

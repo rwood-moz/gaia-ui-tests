@@ -13,6 +13,7 @@ class ContactDetails(Base):
     _send_sms_button_locator = ('id', 'send-sms-button-0')
     _edit_contact_button_locator = ('id', 'edit-contact-button')
     _back_button_locator = ('id', 'details-back')
+    _add_remove_favorite_button_locator = ('id', 'toggle-favorite')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)
@@ -51,3 +52,11 @@ class ContactDetails(Base):
         self.marionette.tap(self.marionette.find_element(*self._back_button_locator))
         from gaiatest.apps.contacts.app import Contacts
         return Contacts(self.marionette)
+
+    def tap_add_remove_favorite(self):
+        self.marionette.tap(self.marionette.find_element(*self._add_remove_favorite_button_locator))
+        self.wait_for_element_displayed(*self._add_remove_favorite_button_locator)
+
+    @property
+    def add_remove_text(self):
+        return self.marionette.find_element(*self._add_remove_favorite_button_locator).text
