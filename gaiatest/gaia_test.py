@@ -665,6 +665,7 @@ class GaiaStressTest(GaiaTestCase):
     def drive(self):
         # Minimum iterations (default if iterations not specified for individual tests)
         self.min_iterations = 1
+        self.app_under_test = "none"
 
         # Get iterations, if not specified default to minimum
         try:
@@ -699,9 +700,13 @@ class GaiaStressTest(GaiaTestCase):
 
     def checkpoint(self, iteration = 0):
         # Sleep to give device idle time (for gc)
-        idle_time = 60
+        idle_time = 30
         self.marionette.log("sleeping %d seconds to give the device some idle time" % idle_time)
         time.sleep(idle_time)
+
+        # Record name of app under test if haven't already
+        if (self.app_under_test == "none"):
+            self.app_under_test = self.app.name
 
         # Dump out some memory status info
         self.marionette.log("checkpoint")
@@ -761,6 +766,7 @@ class GaiaStressTest(GaiaTestCase):
         # Write the summarized checkpoint data
         summary_file.write('test_name: %s\n' % self.test_method.__name__)
         summary_file.write('completed: %s\n' % self.cur_time)
+        summary_file.write('app_under_test: %s\n' % self.app_under_test.lower())
         summary_file.write('total_iterations: %d\n' % self.iterations)      
         summary_file.write('checkpoint_every: %d\n' % self.checkpoint_every)
         summary_file.write('b2g_vsize: ')

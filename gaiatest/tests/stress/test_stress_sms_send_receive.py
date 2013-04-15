@@ -115,7 +115,7 @@ class TestStressSmsSendReceive(GaiaStressTest):
 
         # sleep with list of messages displayed; user would be here a bit to read messages
         # need sleep here anyway as with large number of messages can sometimes take awhile
-        time.sleep(20)
+        time.sleep(15)
 
         # TEMP: put back in after bug 850803 is fixed
         # verify received message text is correct

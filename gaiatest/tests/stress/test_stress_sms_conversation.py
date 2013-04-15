@@ -89,7 +89,7 @@ class TestStressSmsConversation(GaiaStressTest):
         self.marionette.tap(send_message_button)
 
         # sleep a bit
-        time.sleep(5)
+        time.sleep(3)
 
         # verify/wait for the webapi new message callback, give 5 minutes; probably
         # received the new sms message by now anyway

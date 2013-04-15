@@ -75,24 +75,19 @@ class TestStressAddDeleteEvent(GaiaStressTest):
 
         # create a new event
         self.marionette.find_element(*self._event_title_input_locator).send_keys(event_title)
-        time.sleep(1)
         self.marionette.find_element(*self._event_location_input_locator).send_keys(event_location)
-        time.sleep(1)
         self.marionette.find_element(*self._event_start_date_input_locator).clear()
         self.marionette.find_element(*self._event_start_date_input_locator).send_keys(event_start_date)
-        time.sleep(1)
         self.marionette.find_element(*self._event_end_date_input_locator).clear()
-        self.marionette.find_element(*self._event_end_date_input_locator).send_keys(event_end_date)
-        time.sleep(1)        
+        self.marionette.find_element(*self._event_end_date_input_locator).send_keys(event_end_date)       
         self.marionette.find_element(*self._event_start_time_input_locator).clear()
         self.marionette.find_element(*self._event_start_time_input_locator).send_keys(event_start_time)
-        time.sleep(1)
         self.marionette.find_element(*self._event_end_time_input_locator).clear()
         self.marionette.find_element(*self._event_end_time_input_locator).send_keys(event_end_time)
         time.sleep(1)
         save_event_button = self.marionette.find_element(*self._save_event_button_locator)
         self.marionette.tap(save_event_button)
-        time.sleep(5)
+        time.sleep(2)
 
         # wait for the default calendar display
         self.wait_for_element_displayed(*this_event_time_slot_locator)
@@ -109,12 +104,10 @@ class TestStressAddDeleteEvent(GaiaStressTest):
         self.marionette.tap(event_list)
 
         # Click edit button
-        time.sleep(1)
         self.wait_for_element_displayed(*self._edit_event_button_locator)
         self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))
 
         # Then delete it
-        time.sleep(1)
         self.wait_for_element_displayed(*self._delete_event_button_locator)
         delete_event_button = self.marionette.find_element(*self._delete_event_button_locator)
         self.marionette.tap(delete_event_button)

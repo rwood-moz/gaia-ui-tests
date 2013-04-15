@@ -198,7 +198,7 @@ def cli():
     marionette = Marionette(host='localhost', port=2828)  # TODO command line option for address
     marionette.start_session()
 
-    # Create dataziller post object
+    # Create datazilla post object
     poster = DatazillaPerfPoster(marionette, datazilla_config=datazilla_config, sources=options.sources)
 
     # Submitting report or just printing it
@@ -221,21 +221,30 @@ def cli():
         elif k in "b2g_vsize":
             checkpoint_summary[k] = v.split(',') # list of strings
             checkpoint_summary[k] = map(int, checkpoint_summary[k]) # list of ints
+        elif k in "test_name":
+            # Prefix test name so all tests are grouped together in datazilla
+            checkpoint_summary[k] = "endurance_" + v
         else:
             checkpoint_summary[k] = v
 
+    # Make sure we have app_under_test
+    if (checkpoint_summary['app_under_test'] == "none"):
+        raise Exception("Checkpoint summary file is missing value for 'app_under_test'. Cannot proceed.")
+    
     # Results dictionary required format example
     # {'test_name': [180892, 180892, 181980, 181852, 180828, 182012, 183652, 182972, 183052, 183052]}
     results[checkpoint_summary['test_name']] = checkpoint_summary['b2g_vsize']
 
     # Display the Datazilla configuration
     print 'Datazilla configuration:'
+    print "\napplication (datazilla 'suite'): %s" % checkpoint_summary['app_under_test']
     for key, value in poster.required.items():
-        print key, value
+        print key + ":", value
 
     # Submit or print the results
     if poster.submit_report:
-        poster.post_to_datazilla(results, checkpoint_summary['test_name'])
+        #poster.post_to_datazilla(results, checkpoint_summary['test_name'])
+        poster.post_to_datazilla(results, checkpoint_summary['app_under_test'])
     else:
         print "\nCheckpoint summary for test '%s':\n" % checkpoint_summary['test_name']
         print checkpoint_summary

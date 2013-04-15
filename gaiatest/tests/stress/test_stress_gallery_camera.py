@@ -29,7 +29,7 @@ class TestStressGalleryCamera(GaiaStressTest):
 
         # Start gallery app
         self.app = self.apps.launch('Gallery')
-        time.sleep(10)
+        time.sleep(5)
 
     def test_stress_gallery_camera(self):
         self.drive()
@@ -45,7 +45,7 @@ class TestStressGalleryCamera(GaiaStressTest):
         self.wait_for_element_displayed(*self._switch_to_camera_button_locator)
         switch_to_camera_button = self.marionette.find_element(*self._switch_to_camera_button_locator)
         self.marionette.tap(switch_to_camera_button)
-        time.sleep(10)
+        time.sleep(5)
 
         # Switch to top level then camera frame
         self.marionette.switch_to_frame()
@@ -59,4 +59,4 @@ class TestStressGalleryCamera(GaiaStressTest):
         # Switch to top level then gallery
         self.marionette.switch_to_frame()
         self.marionette.switch_to_frame(self.app.frame)
-        time.sleep(10)
+        time.sleep(5)

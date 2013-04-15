@@ -64,33 +64,25 @@ class TestStressAddContact(GaiaStressTest):
         # Enter data into fields
         extra_text = "-%dof%d" % (count, self.iterations)
         self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
-        time.sleep(1)
         self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
-        time.sleep(1)
         self.marionette.find_element(
             *self._phone_field_locator).send_keys(self.contact['tel']['value'])
-        time.sleep(1)
         self.marionette.find_element(
             *self._email_field_locator).send_keys(self.contact['email'])
-        time.sleep(1)
         self.marionette.find_element(
             *self._street_field_locator).send_keys(self.contact['street'])
-        time.sleep(1)
         self.marionette.find_element(
-            *self._zip_code_field_locator).send_keys(self.contact['zip'])
-        time.sleep(1)            
+            *self._zip_code_field_locator).send_keys(self.contact['zip'])           
         self.marionette.find_element(
-            *self._city_field_locator).send_keys(self.contact['city'])
-        time.sleep(1)            
+            *self._city_field_locator).send_keys(self.contact['city'])            
         self.marionette.find_element(
-            *self._country_field_locator).send_keys(self.contact['country'])
-        time.sleep(1)
+            *self._city_field_locator).send_keys(self.contact['city'])   
         self.marionette.find_element(
             *self._comment_field_locator).send_keys(self.contact['comment'])
         time.sleep(1)
         done_button = self.marionette.find_element(*self._done_button_locator)
         self.marionette.tap(done_button)
-        time.sleep(5)
+        time.sleep(3)
 
         contact_locator = self.create_contact_locator(self.contact['givenName'] + extra_text)
         self.wait_for_element_displayed(*contact_locator)

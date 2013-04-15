@@ -14,7 +14,7 @@
     "gaia_ui_stress": {
         "add_contact": {
         	"iterations": 10,
-        	"checkpoint": 10
+        	"checkpoint": 1
         },
         "add_edit_contact": {
         	"iterations": 10,
