@@ -706,7 +706,11 @@ class GaiaStressTest(GaiaTestCase):
 
         # Record name of app under test if haven't already
         if (self.app_under_test == "none"):
-            self.app_under_test = self.app.name
+            try:
+                self.app_under_test = self.app.name
+            except:
+                # No app used in the test; therefore just the homescreen
+                self.app_under_test = "homescreen"
 
         # Dump out some memory status info
         self.marionette.log("checkpoint")
