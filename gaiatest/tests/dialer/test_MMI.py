@@ -32,13 +32,6 @@ class TestMMI(GaiaTestCase):
 
         self._dial_number(IMEI_CODE)
 
-        # Assert that the number was entered correctly.
-        phone_view = self.marionette.find_element(*self._phone_number_view_locator)
-        self.assertEqual(phone_view.get_attribute('value'), IMEI_CODE)
-
-        # Click the call button
-        self.marionette.tap(self.marionette.find_element(*self._call_bar_locator))
-
         self.marionette.switch_to_frame()
 
         self.wait_for_element_displayed(*self._attention_frame_locator)
