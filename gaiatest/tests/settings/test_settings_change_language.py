@@ -10,7 +10,7 @@ class TestChangeLanguage(GaiaTestCase):
     # Language settings locators
     _settings_header_text_locator = ('css selector', '#root > header > h1')
     _language_settings_locator = ('id', 'menuItem-languageAndRegion')
-    _select_language_locator = ('css selector', '#languages li:nth-child(1) .fake-select button')
+    _select_language_locator = ('css selector', '#languages li:nth-child(2) .fake-select button')
     _back_button_locator = ('css selector', ".current header > a")
 
     def setUp(self):

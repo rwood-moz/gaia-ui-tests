@@ -4,7 +4,11 @@
 
 from gaiatest import GaiaTestCase
 
+
 class TestMarketplaceWithoutConnectivity(GaiaTestCase):
+
+    # Marketplace iframe
+    _marketplace_iframe_locator = ('css selector', "iframe[src*='marketplace']")
 
     _error_title_locator = ('css selector', '#appError-appframe1 h3[data-l10n-id="error-title"]')
     _error_message_locator = ('css selector', '#appError-appframe1 span[data-l10n-id="error-message"]')
@@ -21,6 +25,9 @@ class TestMarketplaceWithoutConnectivity(GaiaTestCase):
         # Launch the app
         self.app = self.apps.launch('Marketplace')
 
+        # Switch to marketplace iframe
+        self.marionette.switch_to_frame(self.marionette.find_element(*self._marketplace_iframe_locator))
+
     def test_marketplace_without_connectivity(self):
         self.marionette.switch_to_frame()
 
@@ -30,4 +37,3 @@ class TestMarketplaceWithoutConnectivity(GaiaTestCase):
 
         self.assertEqual(title.text, self._expected_error_title)
         self.assertEqual(message.text, self._expected_error_message)
-

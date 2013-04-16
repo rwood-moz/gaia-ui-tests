@@ -50,7 +50,7 @@ class Contacts(Base):
     class Contact(PageRegion):
 
         _name_locator = ('css selector', 'p > strong')
-        _full_name_locator = ('css selector', 'p[data-order]')
+        _full_name_locator = ('css selector', 'p')
 
         @property
         def name(self):

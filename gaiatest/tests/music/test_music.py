@@ -36,6 +36,7 @@ class TestMusic(GaiaTestCase):
         self.wait_for_element_displayed(*self._album_tile_locator, timeout=60)
 
         # switch to albums view
+        self.wait_for_element_displayed(*self._tab_albums_locator)
         tab_albums = self.marionette.find_element(*self._tab_albums_locator)
         self.marionette.tap(tab_albums)
 
@@ -50,10 +51,9 @@ class TestMusic(GaiaTestCase):
         album_list = self.marionette.find_element(*self._album_list_locator)
         self.marionette.tap(album_list)
 
-        # need a wait but cannot due to an is_displayed bug
-        time.sleep(2)
-
         # select play
+        # This wait is timing out because of bug 862156
+        self.wait_for_element_displayed(*self._views_sublist_controls_play_locator)
         views_sublist_controls_play = self.marionette.find_element(*self._views_sublist_controls_play_locator)
         self.marionette.tap(views_sublist_controls_play)
 

@@ -31,10 +31,17 @@ class TestNotificationBar(GaiaTestCase):
         self.wait_for_element_displayed(*self._statusbar_locator)
         # Push a notification
         self.marionette.execute_script('navigator.mozNotification.createNotification("%s", "%s").show();' % (self._notification_title, self._notification_body))
+
         # Assert the notification pops up and then collapses
-        self.wait_for_element_displayed(*self._notification_toaster_locator)
         notification_toaster = self.marionette.find_element(*self._notification_toaster_locator)
-        self.wait_for_element_not_displayed(*self._notification_toaster_locator)
+
+        # TODO Re-enable this when Bug 861874
+        # self.wait_for_element_displayed(*self._notification_toaster_locator)
+        self.wait_for_condition(lambda m: notification_toaster.location['y'] == 0)
+
+        # TODO Re-enable this when Bug 861874
+        # self.wait_for_element_not_displayed(*self._notification_toaster_locator)
+        self.wait_for_condition(lambda m: notification_toaster.location['y'] == -50)
 
         # Expand the notification bar
         self.wait_for_element_displayed(*self._statusbar_notification_locator)

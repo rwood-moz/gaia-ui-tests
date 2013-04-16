@@ -74,6 +74,7 @@ class NewAlarm(Clock):
         return self.marionette.find_element(*self._current_element(*self._hour_picker_locator)).text
 
     def spin_hour(self):
+        self.wait_for_element_displayed(*self._hour_picker_locator)
         if int(self.hour) > 6:
                 self._flick_menu_down(self._hour_picker_locator)
         else:

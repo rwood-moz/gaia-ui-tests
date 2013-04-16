@@ -2,8 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import time
-
 from gaiatest import GaiaTestCase
 from gaiatest.apps.browser.app import Browser
 
@@ -39,8 +37,9 @@ class TestCostControlDataAlertMobile(GaiaTestCase):
     _done_button_locator = ('css selector', 'section#settings-view button#close-settings')
 
     # data alert section locators
-    _data_alert_label_locator = ('css selector', 'ul.settings label.switch')
+    _data_alert_label_locator = ('xpath', "//ul[preceding-sibling::header[@id='data-usage-settings']]/li[2]/label")
     _data_alert_switch_locator = ('css selector', 'input[data-option="dataLimit"]')
+    _when_use_is_above_button_locator = ('css selector', 'button[data-widget-type="data-limit"]')
     _capacity_button_locator = ('css selector', '#data-limit-dialog form button')
     _size_input_locator = ('css selector', '#data-limit-dialog form input')
     _usage_done_button_locator = ('id', 'data-usage-done-button')
@@ -115,11 +114,13 @@ class TestCostControlDataAlertMobile(GaiaTestCase):
         switch = self.marionette.find_element(*self._data_alert_switch_locator)
 
         if not switch.is_selected():
-            self.marionette.tap(switch)
+            switch_label = self.marionette.find_element(*self._data_alert_label_locator)
+            self.marionette.tap(switch_label)
 
         # make sure the data alert is 0.1MB, or we would set it to 0.1MB
-        detail_section = self.marionette.find_element('css selector', 'ul.settings button span')
-        self.marionette.tap(detail_section)
+        when_use_is_above_button = self.marionette.find_element(*self._when_use_is_above_button_locator)
+        self.wait_for_condition(lambda m: when_use_is_above_button.get_attribute('disabled') == 'false')
+        self.marionette.tap(when_use_is_above_button)
         capacity = self.marionette.find_element(*self._capacity_button_locator)
         # there are two choice in this switch u'GB' or u'MB'. if it is u'GB', try to switch to u'MB'
         if capacity.text == u'GB':
@@ -150,7 +151,7 @@ class TestCostControlDataAlertMobile(GaiaTestCase):
         browser.launch()
         browser.go_to_url('http://www.mozilla.org/')
         browser.switch_to_content()
-        self.wait_for_element_present(*self._page_end_locator)
+        self.wait_for_element_present(*self._page_end_locator, timeout=120)
         browser.switch_to_chrome()
 
         # get the notification bar
@@ -164,4 +165,4 @@ class TestCostControlDataAlertMobile(GaiaTestCase):
         # make sure the color changed
         bar = self.marionette.find_element(*self._data_usage_view_locator)
         self.wait_for_condition(lambda m: 'reached-limit' in bar.get_attribute('class'),
-            message='Data usage bar did not breach limit')
+                                message='Data usage bar did not breach limit')

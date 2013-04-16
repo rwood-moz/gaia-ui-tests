@@ -121,8 +121,10 @@ class TestCalendar(GaiaTestCase):
             self.wait_for_element_displayed(*self._edit_event_button_locator)
             self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))
 
-            self.wait_for_element_displayed(*self._event_title_input_locator)
+            self.wait_for_element_displayed(*self._delete_event_button_locator)
             delete_event_button = self.marionette.find_element(*self._delete_event_button_locator)
+            # TODO: remove this execute_script when bug 862167 has been fixed
+            self.marionette.execute_script("arguments[0].scrollIntoView(false);", [delete_event_button])
             self.marionette.tap(delete_event_button)
 
             self.wait_for_element_displayed(*self._day_view_locator)
