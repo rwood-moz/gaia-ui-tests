@@ -39,6 +39,22 @@ var GaiaDataLayer = {
     };
   },
 
+  getSIMContacts: function(aCallback) {
+    var callback = aCallback || marionetteScriptFinished;
+    SpecialPowers.addPermission('contacts-read', true, document);
+    var req = window.navigator.mozContacts.getSimContacts('ADN');
+    req.onsuccess = function () {
+      console.log('success finding contacts');
+      SpecialPowers.removePermission('contacts-read', document);
+      callback(req.result);
+    };
+    req.onerror = function () {
+      console.error('error finding contacts', req.error.name);
+      SpecialPowers.removePermission('contacts-read', document);
+      callback([]);
+    };
+  },
+
   removeAllContacts: function() {
     var self = this;
     this.getAllContacts(function (aContacts) {

@@ -17,7 +17,7 @@ class TestMMI(GaiaTestCase):
     _call_bar_locator = ('id', 'keypad-callbar-call-action')
 
     # Attention frame
-    _attention_frame_locator = ('xpath', '//*[@id="attention-screen"]/iframe')
+    _attention_frame_locator = ('css selector', 'iframe[src^="app://communications"][src$="index.html#keyboard-view"]')
     _message_locator = ('id', 'message')
     _loading_overlay_locator = ('id', 'loading-overlay')
 
