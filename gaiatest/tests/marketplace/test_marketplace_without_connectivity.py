@@ -15,20 +15,9 @@ class TestMarketplaceWithoutConnectivity(GaiaTestCase):
     _expected_error_title = u'Network connection unavailable'
     _expected_error_message = u'Marketplace requires a network connection. Try connecting to a Wi-Fi or mobile data network.'
 
-    def setUp(self):
-        GaiaTestCase.setUp(self)
-
-        self.data_layer.disable_cell_data()
-        self.data_layer.disable_cell_roaming()
-        self.data_layer.disable_wifi()
-
-        # Launch the app
-        self.app = self.apps.launch('Marketplace')
-
-        # Switch to marketplace iframe
-        self.marionette.switch_to_frame(self.marionette.find_element(*self._marketplace_iframe_locator))
-
     def test_marketplace_without_connectivity(self):
+        self.app = self.apps.launch('Marketplace')
+        self.marionette.switch_to_frame(self.marionette.find_element(*self._marketplace_iframe_locator))
         self.marionette.switch_to_frame()
 
         self.wait_for_element_displayed(*self._error_title_locator)

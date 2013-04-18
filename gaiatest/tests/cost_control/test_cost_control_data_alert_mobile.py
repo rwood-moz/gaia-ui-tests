@@ -53,12 +53,7 @@ class TestCostControlDataAlertMobile(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.disable_wifi()
-            self.data_layer.enable_cell_data()
-
-        # launch the cost control app
+        self.data_layer.connect_to_cell_data()
         self.app = self.apps.launch('Usage')
 
     def test_cost_control_data_alert_mobile(self):

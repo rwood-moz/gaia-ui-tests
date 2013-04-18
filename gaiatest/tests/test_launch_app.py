@@ -14,11 +14,7 @@ class TestLaunchApp(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
-
+        self.connect_to_network()
         self.homescreen = self.apps.launch('Homescreen')
 
         # install app
@@ -66,6 +62,4 @@ class TestLaunchApp(GaiaTestCase):
 
     def tearDown(self):
         self.apps.uninstall(APP_NAME)
-        if self.wifi:
-            self.data_layer.disable_wifi()
         GaiaTestCase.tearDown(self)

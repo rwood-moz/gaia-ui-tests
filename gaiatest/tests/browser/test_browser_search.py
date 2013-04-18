@@ -12,10 +12,7 @@ class TestBrowserSearch(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
+        self.connect_to_network()
 
     def test_browser_search(self):
         # https://github.com/mozilla/gaia-ui-tests/issues/451

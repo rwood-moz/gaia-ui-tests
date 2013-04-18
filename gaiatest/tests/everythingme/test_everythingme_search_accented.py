@@ -20,13 +20,9 @@ class TestEverythingMeSearchAccented(GaiaTestCase):
     _test_string = u"Özdemir Erdoğan"
 
     def setUp(self):
-
         GaiaTestCase.setUp(self)
         self.apps.set_permission('Homescreen', 'geolocation', 'deny')
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
+        self.connect_to_network()
 
     def test_launch_everything_me_search(self):
 

@@ -12,19 +12,9 @@ class TestAirplaneMode(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        #enable Cell Data
-        self.data_layer.enable_cell_data()
-
-        # enable Wifi
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
-
-        #enable GPS
+        self.data_layer.connect_to_cell_data()
+        self.data_layer.connect_to_wifi()
         self.data_layer.set_setting('geolocation.enabled', 'true')
-
-        # Launch the Settings app
         self.app = self.apps.launch('Settings')
 
     def test_toggle_airplane_mode(self):
@@ -63,8 +53,3 @@ class TestAirplaneMode(GaiaTestCase):
 
         # check GPS is enabled
         self.assertTrue(self.data_layer.get_setting('geolocation.enabled'), "GPS was not enabled after switching off Airplane mode")
-
-    def tearDown(self):
-        self.data_layer.disable_cell_data()
-        self.data_layer.disable_wifi()
-        GaiaTestCase.tearDown(self)

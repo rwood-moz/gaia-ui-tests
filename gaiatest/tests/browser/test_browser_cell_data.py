@@ -12,9 +12,7 @@ class TestBrowserCellData(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        self.data_layer.disable_wifi()
-        self.data_layer.enable_cell_data()
+        self.data_layer.connect_to_cell_data()
 
     def test_browser_cell_data(self):
         # https://moztrap.mozilla.org/manage/case/1328/

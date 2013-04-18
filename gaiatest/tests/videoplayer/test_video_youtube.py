@@ -26,12 +26,7 @@ class TestYouTube(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
-
-        # Launch Firefox
+        self.connect_to_network()
         self.app = self.apps.launch('Browser')
         self.wait_for_condition(lambda m: m.execute_script("return window.wrappedJSObject.Browser.hasLoaded;"))
 

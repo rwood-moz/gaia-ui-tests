@@ -14,10 +14,7 @@ class TestBrowserTabs(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
+        self.connect_to_network()
 
     def test_browser_tabs(self):
         """ Open a new tab.

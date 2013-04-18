@@ -59,4 +59,6 @@ class TestSettingsCellData(GaiaTestCase):
         self.wait_for_condition(lambda m: enabled_checkbox.get_attribute('checked') == 'true')
 
         # verify that cell data is now on
-        self.assertTrue(self.data_layer.get_setting('ril.data.enabled'), "Cell data was not connected via Settings app")
+        self.assertTrue(self.data_layer.is_cell_data_enabled, "Cell data was not enabled via Settings app")
+        self.wait_for_condition(lambda m: self.data_layer.is_cell_data_connected,
+                                message="Cell data was not connected via Settings app")

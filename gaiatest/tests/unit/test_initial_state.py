@@ -22,10 +22,9 @@ class TestInitialState(GaiaTestCase):
         # change volume
         self.data_layer.set_volume(5)
 
-        if self.wifi:
-            # connect to wifi network
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
+        # connect to wifi network
+        if (self.testvars.get('wifi') and self.device.has_wifi):
+            self.data_layer.connect_to_wifi()
             self.data_layer.disable_wifi()
 
         # insert contacts
@@ -47,7 +46,10 @@ class TestInitialState(GaiaTestCase):
     def check_initial_state(self):
         self.assertFalse(self.lockscreen.is_locked)
 
-        if self.wifi:
+        self.assertFalse(self.data_layer.is_wifi_enabled)
+        self.assertFalse(self.data_layer.is_cell_data_enabled)
+
+        if self.device.has_wifi:
             self.data_layer.enable_wifi()
             self.assertEqual(self.data_layer.known_networks, [{}])
             self.data_layer.disable_wifi()

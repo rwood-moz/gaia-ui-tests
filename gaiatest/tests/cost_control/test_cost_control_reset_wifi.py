@@ -45,10 +45,7 @@ class TestCostControlReset(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
+        self.data_layer.connect_to_wifi()
 
         # launch the cost control app
         self.app = self.apps.launch('Usage')

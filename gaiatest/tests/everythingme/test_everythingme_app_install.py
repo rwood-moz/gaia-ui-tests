@@ -22,15 +22,12 @@ class TestEverythingMeInstallApp(GaiaTestCase):
     _modal_dialog_ok_locator = ('id', 'modal-dialog-confirm-ok')
 
     def setUp(self):
-
         GaiaTestCase.setUp(self)
 
         # Turn off geolocation prompt
         self.apps.set_permission('Homescreen', 'geolocation', 'deny')
 
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
+        self.connect_to_network()
 
     def test_installing_everything_me_app(self):
         # https://github.com/mozilla/gaia-ui-tests/issues/67

@@ -13,10 +13,7 @@ class TestBrowserBookmark(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
+        self.connect_to_network()
 
         import time
         curr_time = repr(time.time()).replace('.', '')
@@ -52,8 +49,6 @@ class TestBrowserBookmark(GaiaTestCase):
 
     def tearDown(self):
         self.delete_bookmark(self.bookmark_title)
-        if self.wifi:
-            self.data_layer.disable_wifi()
         GaiaTestCase.tearDown(self)
 
     def _go_to_next_page(self):

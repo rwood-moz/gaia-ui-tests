@@ -21,12 +21,7 @@ class TestMarketplaceLogin(GaiaTestCase):
 
     def setUp(self):
         GaiaTestCase.setUp(self)
-
-        if self.wifi:
-            self.data_layer.enable_wifi()
-            self.data_layer.connect_to_wifi(self.testvars['wifi'])
-
-        # Launch the app
+        self.connect_to_network()
         self.app = self.apps.launch('Marketplace')
 
         # Switch to marketplace iframe

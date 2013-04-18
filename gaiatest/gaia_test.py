@@ -120,8 +120,9 @@ class GaiaApps(object):
 
 class GaiaData(object):
 
-    def __init__(self, marionette):
+    def __init__(self, marionette, testvars=None):
         self.marionette = marionette
+        self.testvars = testvars or {}
         js = os.path.abspath(os.path.join(__file__, os.path.pardir, 'atoms', "gaia_data_layer.js"))
         self.marionette.import_script(js)
         self.marionette.set_search_timeout(10000)
@@ -169,10 +170,14 @@ class GaiaData(object):
     def set_volume(self, value):
         self.set_setting('audio.volume.master', value)
 
-    def enable_cell_data(self):
+    @property
+    def is_cell_data_enabled(self):
+        return self.get_setting('ril.data.enabled')
+
+    def connect_to_cell_data(self):
         self.marionette.switch_to_frame()
-        result = self.marionette.execute_async_script("return GaiaDataLayer.enableCellData()", special_powers=True)
-        assert result, 'Unable to enable cell data'
+        result = self.marionette.execute_async_script("return GaiaDataLayer.connectToCellData()", special_powers=True)
+        assert result, 'Unable to connect to cell data'
 
     def disable_cell_data(self):
         self.marionette.switch_to_frame()
@@ -181,13 +186,17 @@ class GaiaData(object):
 
     @property
     def is_cell_data_connected(self):
-        return self.marionette.execute_script("return GaiaDataLayer.isCellDataConnected()")
+        return self.marionette.execute_script("return window.navigator.mozMobileConnection.data.connected;")
 
     def enable_cell_roaming(self):
         self.set_setting('ril.data.roaming_enabled', True)
 
     def disable_cell_roaming(self):
         self.set_setting('ril.data.roaming_enabled', False)
+
+    @property
+    def is_wifi_enabled(self):
+        return self.get_setting('wifi.enabled')
 
     def enable_wifi(self):
         self.marionette.switch_to_frame()
@@ -199,7 +208,10 @@ class GaiaData(object):
         result = self.marionette.execute_async_script("return GaiaDataLayer.disableWiFi()", special_powers=True)
         assert result, 'Unable to disable WiFi'
 
-    def connect_to_wifi(self, network):
+    def connect_to_wifi(self, network=None):
+        network = network or self.testvars.get('wifi')
+        assert network, 'No WiFi network provided'
+        self.enable_wifi()
         self.marionette.switch_to_frame()
         result = self.marionette.execute_async_script("return GaiaDataLayer.connectToWiFi(%s)" % json.dumps(network))
         assert result, 'Unable to connect to WiFi network'
@@ -208,7 +220,9 @@ class GaiaData(object):
         self.marionette.switch_to_frame()
         self.marionette.execute_async_script('return GaiaDataLayer.forgetAllNetworks()')
 
-    def is_wifi_connected(self, network):
+    def is_wifi_connected(self, network=None):
+        network = network or self.testvars.get('wifi')
+        assert network, 'No WiFi network provided'
         self.marionette.switch_to_frame()
         return self.marionette.execute_script("return GaiaDataLayer.isWiFiConnected(%s)" % json.dumps(network))
 
@@ -286,6 +300,12 @@ class GaiaDevice(object):
     def has_mobile_connection(self):
         return self.marionette.execute_script('return window.navigator.mozMobileConnection !== undefined')
 
+    @property
+    def has_wifi(self):
+        if not hasattr(self, '_has_wifi'):
+            self._has_wifi = self.marionette.execute_script('return window.navigator.mozWifiManager !== undefined')
+        return self._has_wifi
+
     def push_file(self, source, count=1, destination='', progress=None):
         if not destination.count('.') > 0:
             destination = '/'.join([destination, source.rpartition(os.path.sep)[-1]])
@@ -346,13 +366,8 @@ class GaiaTestCase(MarionetteTestCase):
         self.marionette.set_search_timeout(self._search_timeout)
         self.lockscreen = LockScreen(self.marionette)
         self.apps = GaiaApps(self.marionette)
-        self.data_layer = GaiaData(self.marionette)
+        self.data_layer = GaiaData(self.marionette, self.testvars)
         self.keyboard = Keyboard(self.marionette, self)
-
-        # wifi is true if testvars includes wifi details and wifi manager is defined
-        self.wifi = self.testvars and \
-            'wifi' in self.testvars and \
-            self.marionette.execute_script('return window.navigator.mozWifiManager !== undefined')
 
         self.cleanUp()
 
@@ -391,8 +406,9 @@ class GaiaTestCase(MarionetteTestCase):
         if self.device.has_mobile_connection:
             self.data_layer.disable_cell_data()
 
-        if self.wifi:
-            # forget any known networks
+        self.data_layer.disable_cell_roaming()
+
+        if self.device.has_wifi:
             self.data_layer.enable_wifi()
             self.data_layer.forget_all_networks()
             self.data_layer.disable_wifi()
@@ -402,6 +418,21 @@ class GaiaTestCase(MarionetteTestCase):
 
         # reset to home screen
         self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('home'));")
+
+    def connect_to_network(self):
+        # TODO determine if we are online already
+        # TODO only enable cell data if lan failed
+        if self.testvars.get('wifi') and self.device.has_wifi:
+            self.data_layer.connect_to_wifi()
+        elif self.device.has_mobile_connection:
+            self.data_layer.connect_to_cell_data()
+        # TODO assert that we are online
+
+    def connect_to_local_area_network(self):
+        # TODO determine if we are online already
+        if self.testvars.get('wifi') and self.device.has_wifi:
+            self.data_layer.connect_to_wifi()
+        # TODO assert that we are online
 
     def push_resource(self, filename, count=1, destination=''):
         self.device.push_file(self.resource(filename), count, '/'.join(['sdcard', destination]))

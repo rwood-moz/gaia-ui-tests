@@ -24,14 +24,12 @@ class TestContacts(GaiaTestCase):
         new_contact_form.type_family_name(self.contact['familyName'])
 
         new_contact_form.type_phone(self.contact['tel']['value'])
-        # Bug 862053 is preventing us from typing in these fields
-        # TODO: Re-enable these types once the bug has been fixed
-        # new_contact_form.type_email(self.contact['email'])
-        # new_contact_form.type_street(self.contact['street'])
-        # new_contact_form.type_zip_code(self.contact['zip'])
-        # new_contact_form.type_city(self.contact['city'])
-        # new_contact_form.type_country(self.contact['country'])
-        # new_contact_form.type_comment(self.contact['comment'])
+        new_contact_form.type_email(self.contact['email'])
+        new_contact_form.type_street(self.contact['street'])
+        new_contact_form.type_zip_code(self.contact['zip'])
+        new_contact_form.type_city(self.contact['city'])
+        new_contact_form.type_country(self.contact['country'])
+        new_contact_form.type_comment(self.contact['comment'])
 
         new_contact_form.tap_done()
         self.wait_for_condition(lambda m: len(contacts_app.contacts) == 1)

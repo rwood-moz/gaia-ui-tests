@@ -89,8 +89,37 @@ Because we’re running against the desktop client we must filter out all tests 
 
 You should then start to see the tests running.
 
-Testvars
-========
+Test Types
+==========
+Tests can be filtered by type, and the types are defined in the manifest files. Tests can belong to multiple types, some
+types imply others, and some are mutually exclusive - for example a test cannot be both 'online' and 'offline' but a
+test that is 'lan' is by definition 'online'. Be warned that despite these rules, there is no error checking on types,
+so you must take care when assigning them. Default types are set in the [DEFAULT] section of a manifest file, and are
+inherited by manifest files referenced by an include.
+
+Here is a list of the types used, and when to use them:
+
+* b2g - this means the test is a B2G (Firefox OS) test. All tests must include this type.
+* antenna - these tests require an antenna (headphones) to be connected.
+* bluetooth - requires bluetooth to be available.
+* camera - these tests require use of a camera.
+* carrier - an active SIM card with carrier connection is required.
+* lan - a local area connection (not cell data) is required by these tests (see note below).
+* offline - specifically requires no online connection.
+* online - some sort of online connection (lan or carrier) is required.
+* qemu - these tests require the Firefox OS emulator to run.
+* sdcard - a storage device must be present.
+* wifi - this means a WiFi connection is required.
+* xfail - a special type that indicates the test is expected to fail.
+
+You may be thinking that there is only WiFi or cell data, and why the need for the 'lan' test type. Well, these tests
+aren't only run on mobile devices... We also run then on single-board computers known as
+[pandaboards](https://en.wikipedia.org/wiki/Panda_Board), which have an ethernet port, and on desktop builds, which
+share the host computer's connection. It is for this reason that we need 'lan' to indicate a connection that is not cell
+data. For an example of where online/lan/carrier are used take a look at the browser tests.
+
+Test Variables
+==============
 We use the --testvars option to pass in local variables, particularly those that cannot be checked into the repository. For example in gaia-ui-tests these variables can be your private login credentials, phone number or details of your WiFi connection.
 
 To use it, copy testvars_template.json to a different filename but add it into .gitignore so you don't check it into your repository.
@@ -104,7 +133,7 @@ Variables:
 
 `remote_phone_number (string)` A phone number that your device can call during the tests (try not to be a nuisance!). Prefix the number with '+' and your international dialing code.
 
-`wifi.ssid (string)` This is the SSID/name of your WiFi connection. Currently this supports WPA/WEP/etc. You can add wifi networks by doing the following (remember to replace "KeyManagement" and "wep" with the value your network supports) :
+`wifi.ssid (string)` This is the SSID/name of your WiFi connection. Currently this supports WPA/WEP/etc. You can add WiFi networks by doing the following (remember to replace "KeyManagement" and "wep" with the value your network supports) :
 
 `
 "wifi": {
