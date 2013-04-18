@@ -29,7 +29,7 @@ class TestStressSetAlarm(GaiaStressTest):
         # Delete any existing alarms
         self.data_layer.delete_all_alarms()
 
-    def test_stress_add_event(self):
+    def test_stress_set_alarm(self):
         self.drive()
 
     def set_alarm(self, count):

@@ -49,7 +49,7 @@ class TestStressSmsSendReceive(GaiaStressTest):
         # launch the app
         self.app = self.apps.launch('Messages')
 
-    def test_stress_add_event(self):
+    def test_stress_sms_send_receive(self):
         self.drive()
 
     def sms_send_receive(self, count):

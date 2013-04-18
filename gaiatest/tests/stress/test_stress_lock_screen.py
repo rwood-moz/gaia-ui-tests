@@ -23,7 +23,7 @@ class TestStressLockScreen(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.lock_screen
 
-    def test_stress_add_event(self):
+    def test_stress_lock_screen(self):
         self.drive()
 
     def lock_screen(self, count):
