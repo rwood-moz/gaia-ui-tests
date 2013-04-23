@@ -13,6 +13,9 @@ class Gallery(Base):
     _empty_gallery_title_locator = ('id', 'overlay-title')
     _empty_gallery_text_locator = ('id', 'overlay-text')
     _progress_bar_locator = ('id', 'progress')
+    _switch_to_camera_button_locator = ('id', 'thumbnails-camera-button')
+    _camera_frame_locator = ('css selector', 'iframe[data-url="app://camera.gaiamobile.org/index.html"]')
+    _switch_to_gallery_button_locator = ('id', 'gallery-button')
 
     def launch(self):
         Base.launch(self)
@@ -42,3 +45,17 @@ class Gallery(Base):
     @property
     def are_gallery_items_displayed(self):
         return self.marionette.find_element(*self._gallery_items_locator).is_displayed()
+
+    def switch_from_gallery_to_camera(self):
+        switch_to_camera_button = self.marionette.find_element(*self._switch_to_camera_button_locator)
+        self.marionette.tap(switch_to_camera_button)
+        self.marionette.switch_to_frame()
+        self.marionette.switch_to_frame(self.marionette.find_element(*self._camera_frame_locator))
+        self.wait_for_element_displayed(*self._switch_to_gallery_button_locator)
+
+    def switch_from_camera_to_gallery(self):
+        switch_to_gallery_button = self.marionette.find_element(*self._switch_to_gallery_button_locator)
+        self.marionette.tap(switch_to_gallery_button)
+        self.marionette.switch_to_frame()
+        self.marionette.switch_to_frame(self.app.frame)
+        self.wait_for_element_displayed(*self._switch_to_camera_button_locator)

@@ -4,30 +4,14 @@
 
 # Approximate runtime per 100 iterations: xxx minutes
 
+import time
+
 from gaiatest import GaiaStressTest
 from gaiatest.mocks.mock_contact import MockContact
-import os
-import time
+from gaiatest.apps.contacts.app import Contacts
 
 
 class TestStressAddContact(GaiaStressTest):
-
-    _loading_overlay = ('id', 'loading-overlay')
-
-    # Header buttons
-    _add_new_contact_button_locator = ('id', 'add-contact-button')
-    _done_button_locator = ('id', 'save-button')
-
-    # New/Edit contact fields
-    _given_name_field_locator = ('id', 'givenName')
-    _family_name_field_locator = ('id', 'familyName')
-    _email_field_locator = ('id', "email_0")
-    _phone_field_locator = ('id', "number_0")
-    _street_field_locator = ('id', "streetAddress_0")
-    _zip_code_field_locator = ('id', "postalCode_0")
-    _city_field_locator = ('id', 'locality_0')
-    _country_field_locator = ('id', 'countryName_0')
-    _comment_field_locator = ('id', 'note_0')
 
     def setUp(self):
         GaiaStressTest.setUp(self)
@@ -39,53 +23,39 @@ class TestStressAddContact(GaiaStressTest):
         self.data_layer.remove_all_contacts(60000)
 
         # Launch the Contacts app
-        self.app = self.apps.launch('Contacts')
-        self.wait_for_element_not_displayed(*self._loading_overlay)
+        self.contacts_app = Contacts(self.marionette)
+        self.contacts_app.launch()
 
         self.contact = MockContact()
 
     def test_stress_add_contact(self):
         self.drive()
 
-    def create_contact_locator(self, contact):
-        return ('css selector', '.contact-item p[data-order^=%s]' % contact)
-
     def add_contact(self, count):
         # Add a new contact, most of this code borrowed from test_add_new_contact
         # Uses data from mock contact, except adds iteration to first name
 
-        # Click Create new contact
-        self.wait_for_element_displayed(*self._add_new_contact_button_locator)
-        add_new_contact = self.marionette.find_element(*self._add_new_contact_button_locator)
-        self.marionette.tap(add_new_contact)
-        self.wait_for_element_displayed(*self._given_name_field_locator)
-        time.sleep(1)
+        # Add new contact
+        new_contact_form = self.contacts_app.tap_new_contact()
 
         # Enter data into fields
         extra_text = "-%dof%d" % (count, self.iterations)
-        self.marionette.find_element(*self._given_name_field_locator).send_keys(self.contact['givenName'] + extra_text)
-        self.marionette.find_element(*self._family_name_field_locator).send_keys(self.contact['familyName'])
-        self.marionette.find_element(
-            *self._phone_field_locator).send_keys(self.contact['tel']['value'])
-        self.marionette.find_element(
-            *self._email_field_locator).send_keys(self.contact['email'])
-        self.marionette.find_element(
-            *self._street_field_locator).send_keys(self.contact['street'])
-        self.marionette.find_element(
-            *self._zip_code_field_locator).send_keys(self.contact['zip'])           
-        self.marionette.find_element(
-            *self._city_field_locator).send_keys(self.contact['city'])            
-        self.marionette.find_element(
-            *self._city_field_locator).send_keys(self.contact['city'])   
-        self.marionette.find_element(
-            *self._comment_field_locator).send_keys(self.contact['comment'])
-        time.sleep(1)
-        done_button = self.marionette.find_element(*self._done_button_locator)
-        self.marionette.tap(done_button)
-        time.sleep(3)
+        new_contact_form.type_given_name(self.contact['givenName'] + extra_text)
+        new_contact_form.type_family_name(self.contact['familyName'])
 
-        contact_locator = self.create_contact_locator(self.contact['givenName'] + extra_text)
-        self.wait_for_element_displayed(*contact_locator)
+        new_contact_form.type_phone(self.contact['tel']['value'])
+        new_contact_form.type_email(self.contact['email'])
+        new_contact_form.type_street(self.contact['street'])
+        new_contact_form.type_zip_code(self.contact['zip'])
+        new_contact_form.type_city(self.contact['city'])
+        new_contact_form.type_country(self.contact['country'])
+        new_contact_form.type_comment(self.contact['comment'])
 
-        # sleep between reps
+        # Save new contact
+        new_contact_form.tap_done()
+
+        # Verify a new contact was added
+        self.wait_for_condition(lambda m: len(self.contacts_app.contacts) == count)
+
+        # Sleep between reps
         time.sleep(3)

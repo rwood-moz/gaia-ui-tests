@@ -3,18 +3,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 # Approximate runtime per 100 iterations: xxx minutes
+import time
 
 from gaiatest import GaiaStressTest
-from gaiatest.tests.clock import clock_object
-
-import os
-import datetime
-import time
+from gaiatest.apps.clock.app import Clock
 
 
 class TestStressSetAlarm(GaiaStressTest):
-
-    # See clock_object.py for element locators etc.
 
     def setUp(self):
         GaiaStressTest.setUp(self)
@@ -22,12 +17,18 @@ class TestStressSetAlarm(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.set_alarm
 
-        # Launch the Clock app and verify
-        self.app = self.apps.launch('Clock')
-        self.wait_for_element_displayed(*clock_object._alarm_create_new_locator)
+        # Launch the Clock app
+        self.clock = Clock(self.marionette)
+        self.clock.launch()
 
         # Delete any existing alarms
         self.data_layer.delete_all_alarms()
+
+        # Bug 864945, UI is not updating unless restart the app
+        self.app = self.clock
+        self.close_app()
+        time.sleep(2)
+        self.clock.launch()
 
     def test_stress_set_alarm(self):
         self.drive()
@@ -35,42 +36,24 @@ class TestStressSetAlarm(GaiaStressTest):
     def set_alarm(self, count):
         # Set a new alarm and verify; code taken from existing clock tests
 
-        # Temporarily removed because of bug 850803
         # Get the number of alarms set, before adding the new alarm
-        # initial_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
+        initial_alarms_count = len(self.clock.alarms)
 
-        # create a new alarm, default values except label
-        alarm_create_new = self.marionette.find_element(*clock_object._alarm_create_new_locator)
-        self.marionette.tap(alarm_create_new)        
-        self.wait_for_element_displayed(*clock_object._new_alarm_label)
-        time.sleep(1)
-
-        # Set label
-        alarm_label = self.marionette.find_element(*clock_object._new_alarm_label)
-        alarm_label.clear()
+        # Create a new alarm with the default values except unique label
+        new_alarm = self.clock.tap_new_alarm()
         text = "%d of %d" %(count, self.iterations)
-        alarm_label.send_keys(text)
-        time.sleep(1)
+        new_alarm.type_alarm_label(text)
 
-        self.wait_for_element_displayed(*clock_object._alarm_save_locator)
-        alarm_save = self.marionette.find_element(*clock_object._alarm_save_locator)
-        self.marionette.tap(alarm_save)
+        self.clock = new_alarm.tap_done()
 
-        # verify the banner-countdown message appears
-        self.wait_for_element_displayed(*clock_object._banner_countdown_notification_locator)
-        alarm_msg = self.marionette.find_element(*clock_object._banner_countdown_notification_locator).text
+        # Verify the banner-countdown message appears
+        alarm_msg = self.clock.banner_countdown_notification
         self.assertTrue('The alarm is set for' in alarm_msg, 'Actual banner message was: "' + alarm_msg + '"')
+        time.sleep(2)
 
-        # Wait for banner-countdown to disappear
-        self.wait_for_element_not_displayed(*clock_object._banner_countdown_notification_locator)
-
-        # Temporarily removed because of bug 850803
-        # Get the number of alarms set after the new alarm was added
-        # new_alarms_count = len(self.marionette.find_elements(*clock_object._all_alarms))
-
-        # Ensure the new alarm has been added and is displayed
-        # self.assertTrue(initial_alarms_count < new_alarms_count,
-        #                'Alarms count did not increment')
+        # Ensure the new alarm has been added
+        self.assertTrue(initial_alarms_count < len(self.clock.alarms),
+                        'Alarms count did not increment')
 
         # A bit of sleep between reps
         time.sleep(3)

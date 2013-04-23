@@ -4,16 +4,13 @@
 
 # Approximate runtime per 100 iterations: xxx minutes
 
-from gaiatest import GaiaStressTest
-
 import time
+
+from gaiatest import GaiaStressTest
+from gaiatest.apps.gallery.app import Gallery
 
 
 class TestStressGalleryCamera(GaiaStressTest):
-
-    _switch_to_camera_button_locator = ('id', 'thumbnails-camera-button')
-    _camera_frame_locator = ('css selector', 'iframe[data-url="app://camera.gaiamobile.org/index.html"]')
-    _switch_to_gallery_button_locator = ('id', 'gallery-button')
 
     def setUp(self):
         GaiaStressTest.setUp(self)
@@ -27,9 +24,9 @@ class TestStressGalleryCamera(GaiaStressTest):
         # add photo to storage
         self.push_resource('IMG_0001.jpg', destination='DCIM/100MZLLA')        
 
-        # Start gallery app
-        self.app = self.apps.launch('Gallery')
-        time.sleep(5)
+        self.gallery = Gallery(self.marionette)
+        self.gallery.launch()
+        self.gallery.wait_for_files_to_load(1)
 
     def test_stress_gallery_camera(self):
         self.drive()
@@ -40,23 +37,11 @@ class TestStressGalleryCamera(GaiaStressTest):
         # 2. when the UI/Camera button appears, tap it to switch to the camera
         # 3. when the UI/Gallery button appears, tap it to switch back to the gallery
         # 4. repeat steps 2 and 3 until *crash*
+        time.sleep(3)
 
-        # Switch to camera
-        self.wait_for_element_displayed(*self._switch_to_camera_button_locator)
-        switch_to_camera_button = self.marionette.find_element(*self._switch_to_camera_button_locator)
-        self.marionette.tap(switch_to_camera_button)
-        time.sleep(5)
+        # From gallery app, switch to camera app
+        self.gallery.switch_from_gallery_to_camera()
+        time.sleep(3)
 
-        # Switch to top level then camera frame
-        self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.marionette.find_element(*self._camera_frame_locator))
-
-        # Switch back to gallery
-        self.wait_for_element_displayed(*self._switch_to_gallery_button_locator)
-        switch_to_gallery_button = self.marionette.find_element(*self._switch_to_gallery_button_locator)
-        self.marionette.tap(switch_to_gallery_button)
-        
-        # Switch to top level then gallery
-        self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.app.frame)
-        time.sleep(5)
+        # From camera app, switch back to gallery again
+        self.gallery.switch_from_camera_to_gallery()
