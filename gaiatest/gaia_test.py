@@ -770,7 +770,7 @@ class GaiaEnduranceTest(GaiaTestCase):
         time.sleep(5)
 
         # Tap the close icon for the current app
-        locator_part_two = '#cards-view li.card[data-origin*="%s"] .close-card' % self.app.name.lower()
+        locator_part_two = '#cards-view li.card[data-origin*="%s"] .close-card' % self.app_under_test.lower()
         _close_button_locator = ('css selector', locator_part_two)
         close_card_app_button = self.marionette.find_element(*_close_button_locator)
         self.marionette.tap(close_card_app_button)

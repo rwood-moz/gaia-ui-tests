@@ -2,21 +2,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 23.5 minutes
+# Approximate runtime per 100 iterations: xxx minutes
 
 from gaiatest import GaiaEnduranceTest
+from gaiatest.apps.camera.app import Camera
 
-import os
-import datetime
 import time
 
 
 class TestEnduranceCameraPhoto(GaiaEnduranceTest):
-
-    _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
-    _capture_button_locator = ('id', 'capture-button')
-    _focus_ring = ('id', 'focus-ring')
-    _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
 
     def setUp(self):
         GaiaEnduranceTest.setUp(self)
@@ -34,29 +28,17 @@ class TestEnduranceCameraPhoto(GaiaEnduranceTest):
         self.drive()
 
     def camera_photo(self, count):
-        # Start camera, take photo and verify a photo was taken, close camera
-        # Code borrowed from test_camera.py
-        self.app = self.apps.launch('camera')
-        self.wait_for_element_present(*self._capture_button_enabled_locator)        
+        # Start camera
+        camera_app = Camera(self.marionette)
+        camera_app.launch()
+        time.sleep(5)
 
-        time.sleep(2)
-        capture_button = self.marionette.find_element(*self._capture_button_locator)
-        self.marionette.tap(capture_button)
+        # Take a photo, verify filmstrip
+        camera_app.capture_photo()
+        self.assertTrue(camera_app.is_filmstrip_image_displayed())
 
-        # Wait to complete focusing
-        self.wait_for_condition(lambda m: m.find_element(*self._focus_ring).get_attribute('data-state') == 'focused',
-            message="Camera failed to focus")
-
-        # Wait for image to be added in to filmstrip
-        self.wait_for_element_displayed(*self._film_strip_image_locator, timeout=30)
-
-        # Find the new picture in the film strip
-        self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
-
-        # Sleep a bit
-        time.sleep(2)
-
-        # Close the app using home button
+        # Sleep a bit then close the app
+        time.sleep(5)
         self.close_app()
 
         # Sleep between iterations

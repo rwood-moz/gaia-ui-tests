@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from gaiatest.apps.base import Base
-
+import gaiatest.apps.camera.app
 
 class Gallery(Base):
 
@@ -46,16 +46,9 @@ class Gallery(Base):
     def are_gallery_items_displayed(self):
         return self.marionette.find_element(*self._gallery_items_locator).is_displayed()
 
-    def switch_from_gallery_to_camera(self):
+    def switch_to_camera(self):
         switch_to_camera_button = self.marionette.find_element(*self._switch_to_camera_button_locator)
         self.marionette.tap(switch_to_camera_button)
-        self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.marionette.find_element(*self._camera_frame_locator))
-        self.wait_for_element_displayed(*self._switch_to_gallery_button_locator)
-
-    def switch_from_camera_to_gallery(self):
-        switch_to_gallery_button = self.marionette.find_element(*self._switch_to_gallery_button_locator)
-        self.marionette.tap(switch_to_gallery_button)
-        self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.app.frame)
-        self.wait_for_element_displayed(*self._switch_to_camera_button_locator)
+        camera_app = gaiatest.apps.camera.app.Camera(self.marionette)
+        camera_app.launch()
+        return camera_app

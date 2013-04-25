@@ -5,18 +5,12 @@
 # Approximate runtime per 100 iterations: XXX minutes
 
 from gaiatest import GaiaEnduranceTest
+from gaiatest.apps.camera.app import Camera
 
 import time
 
 
 class TestEnduranceCameraVideo(GaiaEnduranceTest):
-
-    _switch_source_button_locator = ('id', 'switch-button')
-    _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
-    _capture_button_locator = ('id', 'capture-button')
-    _video_capturing_locator = ('css selector', 'body.capturing')
-    _video_timer_locator = ('id', 'video-timer')
-    _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
 
     def setUp(self):
         GaiaEnduranceTest.setUp(self)
@@ -38,42 +32,21 @@ class TestEnduranceCameraVideo(GaiaEnduranceTest):
         self.drive()
 
     def camera_video(self, count):
-        # Start camera, capture video and verify a video was taken, close camera
-        # Most of the code borrowed from test_camera.py
-        self.app = self.apps.launch('camera')
-        self.wait_for_element_present(*self._capture_button_enabled_locator)
+        # Start camera
+        camera_app = Camera(self.marionette)
+        camera_app.launch()
 
-        switch_source_button = self.marionette.find_element(*self._switch_source_button_locator)
-        self.marionette.tap(switch_source_button)
-        self.wait_for_element_present(*self._capture_button_enabled_locator)
+        # Swtich to video
+        time.sleep(5)
+        camera_app.tap_switch_source_button()
 
-        time.sleep(2)
-        capture_button = self.marionette.find_element(*self._capture_button_locator)
-        self.marionette.tap(capture_button)
+        # Record a video for the specified duration
+        camera_app.record_video(self.duration)
+        self.assertTrue(camera_app.is_filmstrip_image_displayed())
 
-        self.wait_for_element_present(*self._video_capturing_locator)
-
-        # Wait for recording duration
-        timer_text = "00:%02d" % self.duration
-
-        self.wait_for_condition(lambda m: m.find_element(
-            *self._video_timer_locator).text == timer_text, timeout = self.duration + 30)
-
-        # Stop recording
-        self.marionette.tap(capture_button)
-        self.wait_for_element_not_displayed(*self._video_timer_locator)
-
-        # Wait for image to be added in to filmstrip
-        self.wait_for_element_displayed(*self._film_strip_image_locator, timeout=30)
-
-        # Find new video in the film strip
-        self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
-        
-        # Sleep a bit
-        time.sleep(2)
-
-        # Close the app via home button
+        # Sleep a bit and close the app
+        time.sleep(5)
         self.close_app()
 
         # Wait between iterations
-        time.sleep(3)
+        time.sleep(5)
