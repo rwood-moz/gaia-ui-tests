@@ -38,6 +38,9 @@ class TestStressSmsConversation(GaiaStressTest):
         # set name of stress test method to be repeated
         self.test_method = self.sms_conversation
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "messages"
+
         # delete any existing SMS messages to start clean
         self.data_layer.delete_all_sms()
 

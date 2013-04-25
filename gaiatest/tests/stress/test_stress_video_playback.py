@@ -28,6 +28,9 @@ class TestStressVideoPlayback(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.video_playback
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "video"
+
         # add video to storage
         self.push_resource('VID_0001.3gp', destination='DCIM/100MZLLA')
      

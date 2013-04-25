@@ -26,6 +26,9 @@ class TestStressCameraVideo(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.camera_video
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "camera"
+
         # Get video recording duration in seconds, if not present default
         try:
             self.duration = self.testvars['gaia_ui_stress']['camera_video']['capture_duration']

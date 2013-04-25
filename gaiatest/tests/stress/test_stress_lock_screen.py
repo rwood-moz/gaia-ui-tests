@@ -23,6 +23,9 @@ class TestStressLockScreen(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.lock_screen
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "homescreen"
+
     def test_stress_lock_screen(self):
         self.drive()
 

@@ -17,6 +17,9 @@ class TestStressAddDeleteContact(GaiaStressTest):
         # Name of stress test method to be repeated
         self.test_method = self.add_delete_contact
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "contacts"
+
         # Launch the Contacts app
         self.contacts_app = Contacts(self.marionette)
         self.contacts_app.launch()

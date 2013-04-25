@@ -17,6 +17,9 @@ class TestStressSetAlarm(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.set_alarm
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "clock"
+
         # Launch the Clock app
         self.clock = Clock(self.marionette)
         self.clock.launch()

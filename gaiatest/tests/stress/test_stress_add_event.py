@@ -29,6 +29,9 @@ class TestStressAddEvent(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.add_event
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "calendar"
+
         # Setting the system time to a hardcoded datetime to avoid timezone issues
         # Jan. 1, 2013, according to http://www.epochconverter.com/
         _seconds_since_epoch = 1357043430

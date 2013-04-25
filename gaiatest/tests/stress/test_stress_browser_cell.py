@@ -20,6 +20,9 @@ class TestStressBrowserCell(GaiaStressTest):
         # Name of stress test method to be repeated
         self.test_method = self.browser_cell
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "browser"
+
         # Want cell network only
         self.data_layer.disable_wifi()
         self.data_layer.connect_to_cell_data()

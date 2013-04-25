@@ -19,6 +19,9 @@ class TestStressAddEditContact(GaiaStressTest):
         # Name of stress test method to be repeated
         self.test_method = self.add_edit_contact
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "contacts"
+
         # Remove any existing contacts
         self.data_layer.remove_all_contacts(60000)
 

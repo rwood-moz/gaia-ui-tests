@@ -701,7 +701,10 @@ class GaiaStressTest(GaiaTestCase):
     def drive(self):
         # Minimum iterations (default if iterations not specified for individual tests)
         self.min_iterations = 1
-        self.app_under_test = "none"
+
+        # Check if test provided name of app under test (req for DataZilla)
+        if not hasattr(self, 'app_under_test'):
+            self.app_under_test = "** app under test was not specified in the test! **"
 
         # Get iterations, if not specified default to minimum
         try:
@@ -739,14 +742,6 @@ class GaiaStressTest(GaiaTestCase):
         idle_time = 30
         self.marionette.log("sleeping %d seconds to give the device some idle time" % idle_time)
         time.sleep(idle_time)
-
-        # Record name of app under test if haven't already
-        if (self.app_under_test == "none"):
-            try:
-                self.app_under_test = self.app.name
-            except:
-                # No app used in the test; therefore just the homescreen
-                self.app_under_test = "homescreen"
 
         # Dump out some memory status info
         self.marionette.log("checkpoint")

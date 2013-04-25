@@ -26,6 +26,9 @@ class TestStressAirplaneMode(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.airplane_mode
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "homescreen"
+
         # Connect wifi
         self.data_layer.enable_wifi()
         self.data_layer.connect_to_wifi(self.testvars['wifi'])

@@ -19,6 +19,9 @@ class TestStressBrowserWifi(GaiaStressTest):
         # Name of stress test method to be repeated
         self.test_method = self.browser_wifi
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "browser"
+
         # Want wifi only
         self.data_layer.disable_cell_data()
         self.data_layer.enable_wifi()

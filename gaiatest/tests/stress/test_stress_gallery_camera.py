@@ -18,6 +18,9 @@ class TestStressGalleryCamera(GaiaStressTest):
         # Set name of stress test method to be repeated
         self.test_method = self.gallery_camera
 
+        # Specify name of gaia app under test (required for DataZilla)
+        self.app_under_test = "gallery"
+
         # Turn off geolocation prompt
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
