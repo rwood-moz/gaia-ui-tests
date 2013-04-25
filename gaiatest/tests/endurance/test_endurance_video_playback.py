@@ -4,14 +4,13 @@
 
 # Approximate runtime per 100 iterations: 38 minutes
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
-import os
 import datetime
 import time
 
 
-class TestStressVideoPlayback(GaiaStressTest):
+class TestEnduranceVideoPlayback(GaiaEnduranceTest):
 
     # Video list/summary view
     _video_items_locator = ('css selector', 'ul#thumbnails li[data-name]')
@@ -23,9 +22,9 @@ class TestStressVideoPlayback(GaiaStressTest):
     _video_controls_locator = ('id', 'videoControls')
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.video_playback
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -34,7 +33,7 @@ class TestStressVideoPlayback(GaiaStressTest):
         # add video to storage
         self.push_resource('VID_0001.3gp', destination='DCIM/100MZLLA')
      
-    def test_stress_add_event(self):
+    def test_endurance_add_event(self):
         self.drive()
 
     def video_playback(self, count):

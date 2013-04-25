@@ -4,29 +4,29 @@
 
 # Approximate runtime per 100 iterations: xxx minutes
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
 import os
 import datetime
 import time
 
 
-class TestStressLockScreen(GaiaStressTest):
+class TestEnduranceLockScreen(GaiaEnduranceTest):
 
     _lockscreen_locator = ('id', 'lockscreen')
     _statusbar_time_display_locator = ('css selector', '#statusbar-time')
 
     def setUp(self):
         # Note: Screen is unlocked automatically at start of test
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.lock_screen
 
         # Specify name of gaia app under test (required for DataZilla)
         self.app_under_test = "homescreen"
 
-    def test_stress_lock_screen(self):
+    def test_endurance_lock_screen(self):
         self.drive()
 
     def lock_screen(self, count):

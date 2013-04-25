@@ -4,14 +4,12 @@
 
 # Approximate runtime per 100 iterations: XXX minutes
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
-import os
-import datetime
 import time
 
 
-class TestStressCameraVideo(GaiaStressTest):
+class TestEnduranceCameraVideo(GaiaEnduranceTest):
 
     _switch_source_button_locator = ('id', 'switch-button')
     _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
@@ -21,33 +19,22 @@ class TestStressCameraVideo(GaiaStressTest):
     _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.camera_video
 
         # Specify name of gaia app under test (required for DataZilla)
         self.app_under_test = "camera"
 
-        # Get video recording duration in seconds, if not present default
-        try:
-            self.duration = self.testvars['gaia_ui_stress']['camera_video']['capture_duration']
-        except:
-            # Not specified, so default
-            self.duration = 3
-
-        # Currently this test restricts video capture duration to 3 seconds min and 59 seconds max
-        if (self.duration > 59):
-            self.duration = 59
-        elif (self.duration < 3):
-            self.duration = 3
-
+        # Set video record duration
+        self.duration = 7
         self.marionette.log("Video capture duration is " + str(self.duration) + " seconds")
 
         # Turn off geolocation prompt
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
-    def test_stress_camera_video(self):
+    def test_endurance_camera_video(self):
         self.drive()
 
     def camera_video(self, count):

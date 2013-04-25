@@ -4,14 +4,13 @@
 
 # Approximate runtime per 100 iterations: 18 minutes
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
-import os
 import datetime
 import time
 
 
-class TestStressSmsConversation(GaiaStressTest):
+class TestEnduranceSmsConversation(GaiaEnduranceTest):
 
     # summary page
     _summary_header_locator = ('xpath', "//h1[text()='Messages']")
@@ -33,9 +32,9 @@ class TestStressSmsConversation(GaiaStressTest):
     _unread_icon_locator = ('css selector', 'aside.icon-unread')
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # set name of stress test method to be repeated
+        # set name of endurance test method to be repeated
         self.test_method = self.sms_conversation
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -55,7 +54,7 @@ class TestStressSmsConversation(GaiaStressTest):
         self.app = self.apps.launch('Messages')
         self.wait_for_element_displayed(*self._summary_header_locator)
 
-    def test_stress_sms_conversation(self):
+    def test_endurance_sms_conversation(self):
         self.drive()
 
     def sms_conversation(self, count):
@@ -72,7 +71,7 @@ class TestStressSmsConversation(GaiaStressTest):
         """, special_powers=True)
 
         # while still in conversation view, create new message
-        _text_message_content = "SMS %d of %d (sms conversation stress test %s)" % (count, self.iterations, str(time.time()))
+        _text_message_content = "SMS %d of %d (sms conversation endurance test %s)" % (count, self.iterations, str(time.time()))
         create_new_message = self.marionette.find_element(*self._create_new_message_locator)
         self.marionette.tap(create_new_message)
         self.wait_for_element_present(*self._receiver_input_locator)

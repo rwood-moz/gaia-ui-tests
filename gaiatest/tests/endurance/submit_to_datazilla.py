@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #
-# How to submit gaia-ui stress test results to Datazilla:
+# How to submit gaia-ui endurance test results to Datazilla:
 # 1) Attach a b2g device with an engineering build
 # 2) Issue 'adb forward tcp:2828 tcp:2828' cmd
-# 3) Run a gaia-ui stress test, resulting in a checkpoint_*_summary.log results file
+# 3) Run a gaia-ui endurance test, resulting in a checkpoint_*_summary.log results file
 # 4) Keep the device connected, and turn on wifi (so device can get a macAddress), then
 # 5) Run this script and provide the command line options/values, including '--print'
 # 6) Review the results as displayed in the console, verify
@@ -118,7 +118,7 @@ class dzOptionParser(OptionParser):
                         action='store',
                         dest='results_file',
                         metavar='str',
-                        help='Json checkpoint results file from the stress test')
+                        help='Json checkpoint results file from the endurance test')
         self.add_option('--dz-url',
                         action='store',
                         dest='datazilla_url',

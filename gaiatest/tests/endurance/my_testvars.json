@@ -11,83 +11,8 @@
         "password": ""
     },
 
-    "gaia_ui_stress": {
-        "add_contact": {
-        	"iterations": 1,
-        	"checkpoint": 1
-        },
-        "add_edit_contact": {
+    "gaia_ui_endurance": {
         	"iterations": 10,
         	"checkpoint": 10
-        },
-        "add_delete_contact": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "add_event": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "add_edit_event": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "add_delete_event": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "camera_photo": {
-        	"iterations": 2,
-        	"checkpoint": 2
-        },
-        "camera_video": {
-        	"capture_duration": 7,
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "sms_send_receive": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "sms_conversation": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "video_playback": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "music_playback": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "airplane_mode": {
-        	"iterations": 10,
-        	"checkpoint": 1
-        },
-        "set_alarm": {
-        	"iterations": 10,
-        	"checkpoint": 5
-        },
-        "lock_screen": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "browser_cell": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "browser_wifi": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "open_close_email": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        },
-        "gallery_camera": {
-        	"iterations": 10,
-        	"checkpoint": 10
-        }
     }
 }

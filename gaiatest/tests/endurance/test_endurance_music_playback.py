@@ -2,14 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
 import os
 import datetime
 import time
 
 
-class TestStressMusicPlayback(GaiaStressTest):
+class TestEnduranceMusicPlayback(GaiaEnduranceTest):
 
     _body_list_mode_locator = ('css selector', 'body.list-mode')
     _album_tile_locator = ('css selector', '#views-tiles div.tile-container')
@@ -23,9 +23,9 @@ class TestStressMusicPlayback(GaiaStressTest):
     _back_header_button_locator = ('css selector', '#title-back')
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.music_playback
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -56,7 +56,7 @@ class TestStressMusicPlayback(GaiaStressTest):
         album_list = self.marionette.find_element(*self._album_list_locator)
         self.marionette.tap(album_list)
 
-    def test_stress_add_event(self):
+    def test_endurance_add_event(self):
         self.drive()
 
     def music_playback(self, count):

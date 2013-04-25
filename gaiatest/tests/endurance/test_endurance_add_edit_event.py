@@ -4,14 +4,13 @@
 
 # Approximate runtime per 100 iterations: 16.5 minutes
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
-import os
 import datetime
 import time
 
 
-class TestStressAddEditEvent(GaiaStressTest):
+class TestEnduranceAddEditEvent(GaiaEnduranceTest):
 
     _add_event_button_locator = ('xpath', "//a[@href='/event/add/']")
     _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
@@ -28,9 +27,9 @@ class TestStressAddEditEvent(GaiaStressTest):
     _event_notes_input_locator = ('xpath', "//textarea[@data-l10n-id='event-description']")
 
     def setUp(self):  
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.add_edit_event
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -51,7 +50,7 @@ class TestStressAddEditEvent(GaiaStressTest):
         # launch the Calendar app
         self.app = self.apps.launch('calendar')
 
-    def test_stress_add_edit_event(self):
+    def test_endurance_add_edit_event(self):
         self.drive()
 
     def add_edit_event(self, count):

@@ -696,10 +696,10 @@ class Keyboard(object):
             self.marionette.switch_to_frame()
 
 
-class GaiaStressTest(GaiaTestCase):
+class GaiaEnduranceTest(GaiaTestCase):
 
     def drive(self):
-        # Minimum iterations (default if iterations not specified for individual tests)
+        # Minimum iterations (default if iterations not specified)
         self.min_iterations = 1
 
         # Check if test provided name of app under test (req for DataZilla)
@@ -708,7 +708,7 @@ class GaiaStressTest(GaiaTestCase):
 
         # Get iterations, if not specified default to minimum
         try:
-            self.iterations = self.testvars['gaia_ui_stress'][self.test_method.__name__]['iterations']
+            self.iterations = self.testvars['gaia_ui_endurance']['iterations']
             if (self.iterations < self.min_iterations):
                 self.iterations = self.min_iterations
         except:
@@ -716,15 +716,12 @@ class GaiaStressTest(GaiaTestCase):
 
         # Get checkpoint, if not specified just do one at end
         try:
-            self.checkpoint_every = self.testvars['gaia_ui_stress'][self.test_method.__name__]['checkpoint']
+            self.checkpoint_every = self.testvars['gaia_ui_endurance']['checkpoint']
             if self.checkpoint_every > self.iterations or self.checkpoint_every < 1:
                 self.checkpoint_every = self.iterations
         except:
             # Not specified, so just do at start and end
             self.checkpoint_every = self.iterations
-
-        # If want a checkpoint before any iterations do it here; decided not
-        # self.checkpoint()
 
         # Now drive the actual test case iterations
         for count in range(1, self.iterations + 1):
@@ -752,7 +749,7 @@ class GaiaStressTest(GaiaTestCase):
             if not os.path.exists(self.checkpoint_path):
                 os.makedirs(self.checkpoint_path, 0755)
             self.log_name = "%s/checkpoint_%s_%s.log" % (self.checkpoint_path, self.test_method.__name__, self.cur_time)
-            cmd_line = "echo %s Gaia Stress Test: %s > " %(self.cur_time, self.test_method.__name__) + self.log_name
+            cmd_line = "echo %s Gaia Endurance Test: %s > " %(self.cur_time, self.test_method.__name__) + self.log_name
             os.system(cmd_line)
         cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (self.cur_time, iteration, self.iterations) + self.log_name
         os.system(cmd_line)

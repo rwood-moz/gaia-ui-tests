@@ -2,9 +2,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 from gaiatest.mocks.mock_contact import MockContact
-import os
+
 import time
 
 # Approximate runtime per 100 iterations: xxx minutes
@@ -12,14 +12,14 @@ import time
 # PREREQUISITE: Email app already configured on the device for use with
 # a pre-existing email account, so email app will start to inbox.
 
-class TestStressBrowserWifi(GaiaStressTest):
+class TestEnduranceBrowserWifi(GaiaEnduranceTest):
 
     _loading_overlay = ('id', 'loading-overlay')
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Name of stress test method to be repeated
+        # Name of endurance test method to be repeated
         self.test_method = self.open_close_email
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -30,7 +30,7 @@ class TestStressBrowserWifi(GaiaStressTest):
         self.data_layer.enable_wifi()
         self.data_layer.connect_to_wifi(self.testvars['wifi'])
 
-    def test_stress_open_close_email(self):
+    def test_endurance_open_close_email(self):
         self.drive()
 
     def open_close_email(self, count):

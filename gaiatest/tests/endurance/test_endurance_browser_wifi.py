@@ -6,17 +6,17 @@
 
 import time
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 from gaiatest.apps.browser.app import Browser
 
-class TestStressBrowserWifi(GaiaStressTest):
+class TestEnduranceBrowserWifi(GaiaEnduranceTest):
 
     _page_title_locator = ("id", "page-title")
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Name of stress test method to be repeated
+        # Name of endurance test method to be repeated
         self.test_method = self.browser_wifi
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -27,7 +27,7 @@ class TestStressBrowserWifi(GaiaStressTest):
         self.data_layer.enable_wifi()
         self.data_layer.connect_to_wifi(self.testvars['wifi'])
 
-    def test_stress_browser_wifi(self):
+    def test_endurance_browser_wifi(self):
         self.drive()
 
     def browser_wifi(self, count):
@@ -54,7 +54,7 @@ class TestStressBrowserWifi(GaiaStressTest):
         time.sleep(10)
 
     def tearDown(self):
-        GaiaStressTest.tearDown(self)
+        GaiaEnduranceTest.tearDown(self)
 
     def is_throbber_visible(self):
         return self.marionette.find_element(*self._throbber_locator).get_attribute('class') == 'loading'

@@ -4,14 +4,14 @@
 
 # Approximate runtime per 100 iterations: 23.5 minutes
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
 import os
 import datetime
 import time
 
 
-class TestStressCameraPhoto(GaiaStressTest):
+class TestEnduranceCameraPhoto(GaiaEnduranceTest):
 
     _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
     _capture_button_locator = ('id', 'capture-button')
@@ -19,9 +19,9 @@ class TestStressCameraPhoto(GaiaStressTest):
     _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.camera_photo
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -30,7 +30,7 @@ class TestStressCameraPhoto(GaiaStressTest):
         # Turn off geolocation prompt
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
-    def test_stress_camera_photo(self):
+    def test_endurance_camera_photo(self):
         self.drive()
 
     def camera_photo(self, count):

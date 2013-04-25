@@ -4,14 +4,14 @@
 
 # Approximate runtime per 100 iterations: 168 minutes
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 
 import os
 import datetime
 import time
 
 
-class TestStressAirplaneMode(GaiaStressTest):
+class TestEnduranceAirplaneMode(GaiaEnduranceTest):
 
     _cell_data_menu_item_locator = ('id', 'menuItem-cellularAndData')
     _carrier_name_locator = ('id', 'dataNetwork-desc')
@@ -21,9 +21,9 @@ class TestStressAirplaneMode(GaiaStressTest):
     _airplane_mode_enabled_status_locator =  ('css selector', '.sb-icon-flight-mode')
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.airplane_mode
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -33,7 +33,7 @@ class TestStressAirplaneMode(GaiaStressTest):
         self.data_layer.enable_wifi()
         self.data_layer.connect_to_wifi(self.testvars['wifi'])
 
-    def test_stress_airplane_mode(self):
+    def test_endurance_airplane_mode(self):
         self.drive()
 
     def airplane_mode(self, count):

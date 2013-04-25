@@ -5,16 +5,16 @@
 # Approximate runtime per 100 iterations: xxx minutes
 import time
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 from gaiatest.apps.clock.app import Clock
 
 
-class TestStressSetAlarm(GaiaStressTest):
+class TestEnduranceSetAlarm(GaiaEnduranceTest):
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.set_alarm
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -33,7 +33,7 @@ class TestStressSetAlarm(GaiaStressTest):
         time.sleep(2)
         self.clock.launch()
 
-    def test_stress_set_alarm(self):
+    def test_endurance_set_alarm(self):
         self.drive()
 
     def set_alarm(self, count):

@@ -6,17 +6,17 @@
 
 import time
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 from gaiatest.mocks.mock_contact import MockContact
 from gaiatest.apps.contacts.app import Contacts
 
 
-class TestStressAddContact(GaiaStressTest):
+class TestEnduranceAddContact(GaiaEnduranceTest):
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Name of stress test method to be repeated
+        # Name of endurance test method to be repeated
         self.test_method = self.add_contact
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -31,7 +31,7 @@ class TestStressAddContact(GaiaStressTest):
 
         self.contact = MockContact()
 
-    def test_stress_add_contact(self):
+    def test_endurance_add_contact(self):
         self.drive()
 
     def add_contact(self, count):

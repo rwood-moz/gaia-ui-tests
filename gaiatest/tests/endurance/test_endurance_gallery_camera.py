@@ -6,16 +6,16 @@
 
 import time
 
-from gaiatest import GaiaStressTest
+from gaiatest import GaiaEnduranceTest
 from gaiatest.apps.gallery.app import Gallery
 
 
-class TestStressGalleryCamera(GaiaStressTest):
+class TestEnduranceGalleryCamera(GaiaEnduranceTest):
 
     def setUp(self):
-        GaiaStressTest.setUp(self)
+        GaiaEnduranceTest.setUp(self)
 
-        # Set name of stress test method to be repeated
+        # Set name of endurance test method to be repeated
         self.test_method = self.gallery_camera
 
         # Specify name of gaia app under test (required for DataZilla)
@@ -31,7 +31,7 @@ class TestStressGalleryCamera(GaiaStressTest):
         self.gallery.launch()
         self.gallery.wait_for_files_to_load(1)
 
-    def test_stress_gallery_camera(self):
+    def test_endurance_gallery_camera(self):
         self.drive()
 
     def gallery_camera(self, count):
