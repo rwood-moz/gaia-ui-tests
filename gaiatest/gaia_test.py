@@ -668,43 +668,28 @@ class GaiaTestCase(MarionetteTestCase):
 
 class GaiaEnduranceTestCase(GaiaTestCase):
 
-    def drive(self):
-        # Minimum iterations (default if iterations not specified)
-        self.min_iterations = 1
+    def __init__(self, *args, **kwargs):
+        self.iterations = kwargs.pop('iterations') or 1
+        self.checkpoint_interval = kwargs.pop('checkpoint_interval') or self.iterations
+        GaiaTestCase.__init__(self, *args, **kwargs)
 
+    def drive(self):
         # Check if test provided name of app under test (req for DataZilla)
         if not hasattr(self, 'app_under_test'):
             self.app_under_test = "** app under test was not specified in the test! **"
-
-        # Get iterations, if not specified default to minimum
-        try:
-            self.iterations = self.testvars['gaia_ui_endurance']['iterations']
-            if (self.iterations < self.min_iterations):
-                self.iterations = self.min_iterations
-        except:
-            self.iterations = self.min_iterations
-
-        # Get checkpoint, if not specified just do one at end
-        try:
-            self.checkpoint_every = self.testvars['gaia_ui_endurance']['checkpoint']
-            if self.checkpoint_every > self.iterations or self.checkpoint_every < 1:
-                self.checkpoint_every = self.iterations
-        except:
-            # Not specified, so just do at start and end
-            self.checkpoint_every = self.iterations
 
         # Now drive the actual test case iterations
         for count in range(1, self.iterations + 1):
             self.marionette.log("%s iteration %d of %d" % (self.test_method.__name__, count, self.iterations))
             self.test_method(count)
             # Checkpoint time?
-            if ((count % self.checkpoint_every) == 0) or count == self.iterations:
+            if ((count % self.checkpoint_interval) == 0) or count == self.iterations:
                 self.checkpoint(count)
 
         # Finished, now process checkpoint data into .json output
         self.process_checkpoint_data()
 
-    def checkpoint(self, iteration = 0):
+    def checkpoint(self, iteration):
         # Sleep to give device idle time (for gc)
         idle_time = 30
         self.marionette.log("sleeping %d seconds to give the device some idle time" % idle_time)
@@ -714,7 +699,7 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         self.marionette.log("checkpoint")
         self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         # If first checkpoint, create the file if it doesn't exist already
-        if (iteration == 0 or iteration == self.checkpoint_every):
+        if iteration in (0, self.checkpoint_interval):
             self.checkpoint_path = "checkpoints"
             if not os.path.exists(self.checkpoint_path):
                 os.makedirs(self.checkpoint_path, 0755)
@@ -770,7 +755,7 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         summary_file.write('completed: %s\n' % self.cur_time)
         summary_file.write('app_under_test: %s\n' % self.app_under_test.lower())
         summary_file.write('total_iterations: %d\n' % self.iterations)      
-        summary_file.write('checkpoint_every: %d\n' % self.checkpoint_every)
+        summary_file.write('checkpoint_every: %d\n' % self.checkpoint_interval)
         summary_file.write('b2g_vsize: ')
         for index, metric in enumerate(b2g_vsize_list):
             if index != (len(b2g_vsize_list)-1):
