@@ -673,23 +673,23 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         self.checkpoint_interval = kwargs.pop('checkpoint_interval') or self.iterations
         GaiaTestCase.__init__(self, *args, **kwargs)
 
-    def drive(self):
-        # Check if test provided name of app under test (req for DataZilla)
-        if not hasattr(self, 'app_under_test'):
-            self.app_under_test = "** app under test was not specified in the test! **"
+    def drive(self, test, app):
+        self.test_method = test
+        self.app_under_test = app
 
         # Now drive the actual test case iterations
         for count in range(1, self.iterations + 1):
+            self.iteration = count
             self.marionette.log("%s iteration %d of %d" % (self.test_method.__name__, count, self.iterations))
-            self.test_method(count)
+            self.test_method()
             # Checkpoint time?
             if ((count % self.checkpoint_interval) == 0) or count == self.iterations:
-                self.checkpoint(count)
+                self.checkpoint()
 
         # Finished, now process checkpoint data into .json output
         self.process_checkpoint_data()
 
-    def checkpoint(self, iteration):
+    def checkpoint(self):
         # Sleep to give device idle time (for gc)
         idle_time = 30
         self.marionette.log("sleeping %d seconds to give the device some idle time" % idle_time)
@@ -699,14 +699,14 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         self.marionette.log("checkpoint")
         self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         # If first checkpoint, create the file if it doesn't exist already
-        if iteration in (0, self.checkpoint_interval):
+        if self.iteration in (0, self.checkpoint_interval):
             self.checkpoint_path = "checkpoints"
             if not os.path.exists(self.checkpoint_path):
                 os.makedirs(self.checkpoint_path, 0755)
             self.log_name = "%s/checkpoint_%s_%s.log" % (self.checkpoint_path, self.test_method.__name__, self.cur_time)
             cmd_line = "echo %s Gaia Endurance Test: %s > " % (self.cur_time, self.test_method.__name__) + self.log_name
             os.system(cmd_line)
-        cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (self.cur_time, iteration, self.iterations) + self.log_name
+        cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (self.cur_time, self.iteration, self.iterations) + self.log_name
         os.system(cmd_line)
         cmd_line = "adb shell b2g-ps >> " + self.log_name
         os.system(cmd_line)

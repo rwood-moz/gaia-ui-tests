@@ -15,50 +15,36 @@ class TestEnduranceAddContact(GaiaEnduranceTestCase):
 
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
-
-        # Name of endurance test method to be repeated
-        self.test_method = self.add_contact
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "contacts"
-
-        # Remove any existing contacts
-        self.data_layer.remove_all_contacts(60000)
-
-        # Launch the Contacts app
-        self.contacts_app = Contacts(self.marionette)
-        self.contacts_app.launch()
-
-        self.contact = MockContact()
+        self.contacts = Contacts(self.marionette)
+        self.contacts.launch()
 
     def test_endurance_add_contact(self):
-        self.drive()
+        self.drive(test=self.add_contact, app='contacts')
 
-    def add_contact(self, count):
+    def add_contact(self):
         # Add a new contact, most of this code borrowed from test_add_new_contact
         # Uses data from mock contact, except adds iteration to first name
 
         # Add new contact
-        new_contact_form = self.contacts_app.tap_new_contact()
+        new_contact_form = self.contacts.tap_new_contact()
 
         # Enter data into fields
-        extra_text = "-%dof%d" % (count, self.iterations)
-        new_contact_form.type_given_name(self.contact['givenName'] + extra_text)
-        new_contact_form.type_family_name(self.contact['familyName'])
-
-        new_contact_form.type_phone(self.contact['tel']['value'])
-        new_contact_form.type_email(self.contact['email'])
-        new_contact_form.type_street(self.contact['street'])
-        new_contact_form.type_zip_code(self.contact['zip'])
-        new_contact_form.type_city(self.contact['city'])
-        new_contact_form.type_country(self.contact['country'])
-        new_contact_form.type_comment(self.contact['comment'])
+        contact = MockContact()
+        new_contact_form.type_given_name(contact.givenName)
+        new_contact_form.type_family_name(contact.familyName)
+        new_contact_form.type_phone(contact.tel['value'])
+        new_contact_form.type_email(contact.email)
+        new_contact_form.type_street(contact.street)
+        new_contact_form.type_zip_code(contact.zip)
+        new_contact_form.type_city(contact.city)
+        new_contact_form.type_country(contact.country)
+        new_contact_form.type_comment(contact.comment)
 
         # Save new contact
         new_contact_form.tap_done()
 
         # Verify a new contact was added
-        self.wait_for_condition(lambda m: len(self.contacts_app.contacts) == count)
+        self.wait_for_condition(lambda m: len(self.contacts.contacts) == self.iteration)
 
         # Sleep between reps
         time.sleep(3)
