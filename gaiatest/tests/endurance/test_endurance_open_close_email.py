@@ -19,26 +19,18 @@ class TestEnduranceBrowserWifi(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Name of endurance test method to be repeated
-        self.test_method = self.open_close_email
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "email"
-
         # Want wifi only
         self.data_layer.disable_cell_data()
         self.data_layer.enable_wifi()
         self.data_layer.connect_to_wifi(self.testvars['wifi'])
 
     def test_endurance_open_close_email(self):
-        self.drive()
+        self.drive(test=self.open_close_email, app='email')
 
-    def open_close_email(self, count):
+    def open_close_email(self):
         # Start email app
         self.app = self.apps.launch('e-mail')
         self.wait_for_element_not_displayed(*self._loading_overlay)        
-
-        # Verify the app has started; wait until messages loaded
 
         # Wait with page displayed
         time.sleep(5)

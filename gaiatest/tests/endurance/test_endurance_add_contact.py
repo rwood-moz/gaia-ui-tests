@@ -30,7 +30,8 @@ class TestEnduranceAddContact(GaiaEnduranceTestCase):
 
         # Enter data into fields
         contact = MockContact()
-        new_contact_form.type_given_name(contact.givenName)
+        extra_text = "-%dof%d" % (self.iteration, self.iterations)
+        new_contact_form.type_given_name(contact.givenName + extra_text)
         new_contact_form.type_family_name(contact.familyName)
         new_contact_form.type_phone(contact.tel['value'])
         new_contact_form.type_email(contact.email)

@@ -33,12 +33,6 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # set name of endurance test method to be repeated
-        self.test_method = self.sms_send_receive
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "messages"
-
         # delete any existing SMS messages to start clean
         self.data_layer.delete_all_sms()
 
@@ -53,9 +47,9 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
         self.app = self.apps.launch('Messages')
 
     def test_endurance_sms_send_receive(self):
-        self.drive()
+        self.drive(test=self.sms_send_receive, app='messages')
 
-    def sms_send_receive(self, count):
+    def sms_send_receive(self):
         # send a message to self, wait for it to arrive, verify. Back to main message list in between.
         # setup received sms callback
         self.marionette.execute_async_script("""
@@ -71,7 +65,7 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
 
         # create new message
         self.wait_for_element_displayed(*self._summary_header_locator)
-        _text_message_content = "SMS %d of %d (send receive endurance test %s)" % (count, self.iterations, str(time.time()))
+        _text_message_content = "SMS %d of %d (send receive endurance test %s)" % (self.iteration, self.iterations, str(time.time()))
         create_new_message = self.marionette.find_element(*self._create_new_message_locator)
         self.marionette.tap(create_new_message)
         self.wait_for_element_present(*self._receiver_input_locator)

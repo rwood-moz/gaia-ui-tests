@@ -15,19 +15,13 @@ class TestEnduranceCameraPhoto(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Set name of endurance test method to be repeated
-        self.test_method = self.camera_photo
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "camera"
-
         # Turn off geolocation prompt
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
     def test_endurance_camera_photo(self):
-        self.drive()
+        self.drive(test=self.camera_photo, app='camera')
 
-    def camera_photo(self, count):
+    def camera_photo(self):
         # Start camera
         camera_app = Camera(self.marionette)
         camera_app.launch()

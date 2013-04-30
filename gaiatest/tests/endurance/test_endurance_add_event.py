@@ -25,12 +25,6 @@ class TestEnduranceAddEvent(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Set name of endurance test method to be repeated
-        self.test_method = self.add_event
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "calendar"
-
         # Setting the system time to a hardcoded datetime to avoid timezone issues
         # Jan. 1, 2013, according to http://www.epochconverter.com/
         _seconds_since_epoch = 1357043430
@@ -47,12 +41,12 @@ class TestEnduranceAddEvent(GaiaEnduranceTestCase):
         self.app = self.apps.launch('calendar')
 
     def test_endurance_add_event(self):
-        self.drive()
+        self.drive(test=self.add_event, app='calendar')
 
-    def add_event(self, count):
+    def add_event(self):
         # Add a calendar event on the next day and verify
         # Borrowed some code from test_add_calendar.py
-        event_title = "Event %d of %d" % (count, self.iterations)
+        event_title = "Event %d of %d" % (self.iteration, self.iterations)
         event_location = "Event Location %s" % str(time.time())
         event_start_date = self.next_event_date.strftime("%Y-%m-%d")
         event_end_date = self.next_event_date.strftime("%Y-%m-%d")

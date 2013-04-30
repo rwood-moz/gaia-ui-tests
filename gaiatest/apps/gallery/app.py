@@ -13,6 +13,7 @@ class Gallery(Base):
     _empty_gallery_title_locator = ('id', 'overlay-title')
     _empty_gallery_text_locator = ('id', 'overlay-text')
     _progress_bar_locator = ('id', 'progress')
+    _switch_to_camera_button_locator = ('id', 'thumbnails-camera-button')
 
     def launch(self):
         Base.launch(self)

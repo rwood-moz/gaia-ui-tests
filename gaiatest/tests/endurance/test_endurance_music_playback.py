@@ -25,12 +25,6 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Set name of endurance test method to be repeated
-        self.test_method = self.music_playback
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "music"
-
         # add track to storage
         self.push_resource('MUS_0001.mp3')
 
@@ -57,9 +51,9 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
         self.marionette.tap(album_list)
 
     def test_endurance_add_event(self):
-        self.drive()
+        self.drive(test=self.music_playback, app='music')
 
-    def music_playback(self, count):
+    def music_playback(self):
         # Play music for 5 seconds and verify via UI; most code taken from test_music.py
 
         # need a wait but cannot due to an is_displayed bug

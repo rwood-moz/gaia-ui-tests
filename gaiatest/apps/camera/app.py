@@ -34,7 +34,7 @@ class Camera(Base):
     def capture_photo(self):
         self.tap_capture_button()
         # Wait to complete focusing
-        self.wait_for_condition(lambda m: m.find_element(*self._focus_ring).get_attribute('data-state') == 'focused',
+        self.wait_for_condition(lambda m: m.find_element(*self._focus_ring_locator).get_attribute('data-state') == 'focused',
             message="Camera failed to focus")
 
     def is_filmstrip_image_displayed(self):

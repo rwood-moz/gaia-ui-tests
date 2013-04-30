@@ -15,12 +15,6 @@ class TestEnduranceCameraVideo(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Set name of endurance test method to be repeated
-        self.test_method = self.camera_video
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "camera"
-
         # Set video record duration
         self.duration = 7
         self.marionette.log("Video capture duration is " + str(self.duration) + " seconds")
@@ -29,9 +23,9 @@ class TestEnduranceCameraVideo(GaiaEnduranceTestCase):
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
     def test_endurance_camera_video(self):
-        self.drive()
+        self.drive(test=self.camera_video, app='camera')
 
-    def camera_video(self, count):
+    def camera_video(self):
         # Start camera
         camera_app = Camera(self.marionette)
         camera_app.launch()

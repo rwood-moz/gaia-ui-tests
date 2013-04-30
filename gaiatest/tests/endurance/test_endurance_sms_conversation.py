@@ -34,12 +34,6 @@ class TestEnduranceSmsConversation(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # set name of endurance test method to be repeated
-        self.test_method = self.sms_conversation
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "messages"
-
         # delete any existing SMS messages to start clean
         self.data_layer.delete_all_sms()
 
@@ -55,9 +49,9 @@ class TestEnduranceSmsConversation(GaiaEnduranceTestCase):
         self.wait_for_element_displayed(*self._summary_header_locator)
 
     def test_endurance_sms_conversation(self):
-        self.drive()
+        self.drive(test=self.sms_conversation, app='messages')
 
-    def sms_conversation(self, count):
+    def sms_conversation(self):
         # setup received sms callback
         self.marionette.execute_async_script("""
         SpecialPowers.setBoolPref("dom.sms.enabled", true);
@@ -71,7 +65,7 @@ class TestEnduranceSmsConversation(GaiaEnduranceTestCase):
         """, special_powers=True)
 
         # while still in conversation view, create new message
-        _text_message_content = "SMS %d of %d (sms conversation endurance test %s)" % (count, self.iterations, str(time.time()))
+        _text_message_content = "SMS %d of %d (sms conversation endurance test %s)" % (self.iteration, self.iterations, str(time.time()))
         create_new_message = self.marionette.find_element(*self._create_new_message_locator)
         self.marionette.tap(create_new_message)
         self.wait_for_element_present(*self._receiver_input_locator)

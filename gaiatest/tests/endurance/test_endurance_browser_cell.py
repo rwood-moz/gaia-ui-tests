@@ -17,20 +17,14 @@ class TestEnduranceBrowserCell(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Name of endurance test method to be repeated
-        self.test_method = self.browser_cell
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "browser"
-
         # Want cell network only
         self.data_layer.disable_wifi()
         self.data_layer.connect_to_cell_data()
 
     def test_endurance_browser_cell(self):
-        self.drive()
+        self.drive(test=self.browser_cell, app='browser')
 
-    def browser_cell(self, count):
+    def browser_cell(self):
         # Start browser and load page and verify, code taken from test_browser_cell_data.py
         browser = Browser(self.marionette)
         browser.launch()

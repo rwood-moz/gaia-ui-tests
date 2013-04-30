@@ -23,22 +23,16 @@ class TestEnduranceAirplaneMode(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Set name of endurance test method to be repeated
-        self.test_method = self.airplane_mode
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "homescreen"
-
         # Connect wifi
         self.data_layer.enable_wifi()
         self.data_layer.connect_to_wifi(self.testvars['wifi'])
 
     def test_endurance_airplane_mode(self):
-        self.drive()
+        self.drive(test=self.airplane_mode, app='homescreen')
 
-    def airplane_mode(self, count):
+    def airplane_mode(self):
         # Verify airplane mode icon NOT displayed
-        self.wait_for_element_not_displayed(*self._airplane_mode_enabled_status_locator, timeout=30)
+        self.wait_for_element_not_displayed(*self._airplane_mode_enabled_status_locator)
 
         # Verify wifi is enabled (from test_settings_wifi)
         self.assertTrue(self.data_layer.is_wifi_connected(self.testvars['wifi']), "WiFi not connected but should be")
@@ -63,7 +57,7 @@ class TestEnduranceAirplaneMode(GaiaEnduranceTestCase):
         self.wait_for_element_not_displayed(*self._utility_tray_locator)
 
         # Verify ARE in airplane mode - check for icon
-        self.wait_for_element_displayed(*self._airplane_mode_enabled_status_locator, timeout=30)
+        self.wait_for_element_displayed(*self._airplane_mode_enabled_status_locator)
 
         # Ensure wifi is NOT connected now
         self.assertFalse(self.data_layer.is_wifi_connected(self.testvars['wifi']), "WiFi is connected but should not be")

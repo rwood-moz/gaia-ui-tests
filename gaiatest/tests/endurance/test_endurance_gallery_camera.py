@@ -15,12 +15,6 @@ class TestEnduranceGalleryCamera(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Set name of endurance test method to be repeated
-        self.test_method = self.gallery_camera
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "gallery"
-
         # Turn off geolocation prompt
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
@@ -32,9 +26,9 @@ class TestEnduranceGalleryCamera(GaiaEnduranceTestCase):
         self.gallery.wait_for_files_to_load(1)
 
     def test_endurance_gallery_camera(self):
-        self.drive()
+        self.drive(test=self.gallery_camera, app='gallery')
 
-    def gallery_camera(self, count):
+    def gallery_camera(self):
         # Test requested per bug 851626:
         # 1. open the Gallery app
         # 2. when the UI/Camera button appears, tap it to switch to the camera

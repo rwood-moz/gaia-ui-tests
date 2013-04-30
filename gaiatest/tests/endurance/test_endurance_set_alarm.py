@@ -14,12 +14,6 @@ class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
 
-        # Set name of endurance test method to be repeated
-        self.test_method = self.set_alarm
-
-        # Specify name of gaia app under test (required for DataZilla)
-        self.app_under_test = "clock"
-
         # Launch the Clock app
         self.clock = Clock(self.marionette)
         self.clock.launch()
@@ -28,15 +22,15 @@ class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
         self.data_layer.delete_all_alarms()
 
         # Bug 864945, UI is not updating unless restart the app
-        self.app = self.clock
+        self.app_under_test = "clock"
         self.close_app()
         time.sleep(2)
         self.clock.launch()
 
     def test_endurance_set_alarm(self):
-        self.drive()
+        self.drive(test=self.set_alarm, app='clock')
 
-    def set_alarm(self, count):
+    def set_alarm(self):
         # Set a new alarm and verify; code taken from existing clock tests
 
         # Get the number of alarms set, before adding the new alarm
@@ -44,7 +38,7 @@ class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
 
         # Create a new alarm with the default values except unique label
         new_alarm = self.clock.tap_new_alarm()
-        text = "%d of %d" %(count, self.iterations)
+        text = "%d of %d" %(self.iteration, self.iterations)
         new_alarm.type_alarm_label(text)
 
         self.clock = new_alarm.tap_done()
