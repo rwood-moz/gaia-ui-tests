@@ -704,7 +704,7 @@ class GaiaEnduranceTestCase(GaiaTestCase):
             if not os.path.exists(self.checkpoint_path):
                 os.makedirs(self.checkpoint_path, 0755)
             self.log_name = "%s/checkpoint_%s_%s.log" % (self.checkpoint_path, self.test_method.__name__, self.cur_time)
-            cmd_line = "echo %s Gaia Endurance Test: %s > " %(self.cur_time, self.test_method.__name__) + self.log_name
+            cmd_line = "echo %s Gaia Endurance Test: %s > " % (self.cur_time, self.test_method.__name__) + self.log_name
             os.system(cmd_line)
         cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (self.cur_time, iteration, self.iterations) + self.log_name
         os.system(cmd_line)
@@ -754,11 +754,11 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         summary_file.write('test_name: %s\n' % self.test_method.__name__)
         summary_file.write('completed: %s\n' % self.cur_time)
         summary_file.write('app_under_test: %s\n' % self.app_under_test.lower())
-        summary_file.write('total_iterations: %d\n' % self.iterations)      
+        summary_file.write('total_iterations: %d\n' % self.iterations)
         summary_file.write('checkpoint_every: %d\n' % self.checkpoint_interval)
         summary_file.write('b2g_vsize: ')
         for index, metric in enumerate(b2g_vsize_list):
-            if index != (len(b2g_vsize_list)-1):
+            if index != (len(b2g_vsize_list) - 1):
                 summary_file.write('%d, ' % metric)
             else:
                 summary_file.write('%d' % metric)
