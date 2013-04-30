@@ -696,7 +696,7 @@ class Keyboard(object):
             self.marionette.switch_to_frame()
 
 
-class GaiaEnduranceTest(GaiaTestCase):
+class GaiaEnduranceTestCase(GaiaTestCase):
 
     def drive(self):
         # Minimum iterations (default if iterations not specified)

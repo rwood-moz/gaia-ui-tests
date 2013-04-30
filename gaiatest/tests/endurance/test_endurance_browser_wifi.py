@@ -6,15 +6,15 @@
 
 import time
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 from gaiatest.apps.browser.app import Browser
 
-class TestEnduranceBrowserWifi(GaiaEnduranceTest):
+class TestEnduranceBrowserWifi(GaiaEnduranceTestCase):
 
     _page_title_locator = ("id", "page-title")
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Name of endurance test method to be repeated
         self.test_method = self.browser_wifi
@@ -54,7 +54,7 @@ class TestEnduranceBrowserWifi(GaiaEnduranceTest):
         time.sleep(10)
 
     def tearDown(self):
-        GaiaEnduranceTest.tearDown(self)
+        GaiaEnduranceTestCase.tearDown(self)
 
     def is_throbber_visible(self):
         return self.marionette.find_element(*self._throbber_locator).get_attribute('class') == 'loading'

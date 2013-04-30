@@ -12,7 +12,7 @@ class Camera(Base):
     _progress_bar_locator = ('id', 'progress')
     _capture_button_locator = ('id', 'capture-button')
     _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
-    _focus_ring = ('id', 'focus-ring')
+    _focus_ring_locator = ('id', 'focus-ring')
     _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
     _switch_source_button_locator = ('id', 'switch-button')
     _switch_to_gallery_button_locator = ('id', 'gallery-button')
@@ -39,7 +39,7 @@ class Camera(Base):
 
     def is_filmstrip_image_displayed(self):
         # Wait for filmstrip
-        self.wait_for_element_displayed(*self._film_strip_image_locator, timeout=30)
+        self.wait_for_element_displayed(*self._film_strip_image_locator)
         return self.marionette.find_element(*self._film_strip_image_locator).is_displayed()
 
     def tap_switch_source_button(self):

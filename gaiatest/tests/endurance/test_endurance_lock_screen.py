@@ -4,21 +4,21 @@
 
 # Approximate runtime per 100 iterations: xxx minutes
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 
 import os
 import datetime
 import time
 
 
-class TestEnduranceLockScreen(GaiaEnduranceTest):
+class TestEnduranceLockScreen(GaiaEnduranceTestCase):
 
     _lockscreen_locator = ('id', 'lockscreen')
     _statusbar_time_display_locator = ('css selector', '#statusbar-time')
 
     def setUp(self):
         # Note: Screen is unlocked automatically at start of test
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of endurance test method to be repeated
         self.test_method = self.lock_screen

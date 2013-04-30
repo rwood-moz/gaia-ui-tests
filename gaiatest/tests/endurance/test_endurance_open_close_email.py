@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 from gaiatest.mocks.mock_contact import MockContact
 
 import time
@@ -12,12 +12,12 @@ import time
 # PREREQUISITE: Email app already configured on the device for use with
 # a pre-existing email account, so email app will start to inbox.
 
-class TestEnduranceBrowserWifi(GaiaEnduranceTest):
+class TestEnduranceBrowserWifi(GaiaEnduranceTestCase):
 
     _loading_overlay = ('id', 'loading-overlay')
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Name of endurance test method to be repeated
         self.test_method = self.open_close_email

@@ -4,13 +4,13 @@
 
 # Approximate runtime per 100 iterations: xxx minutes
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 
 import datetime
 import time
 
 
-class TestEnduranceAddDeleteEvent(GaiaEnduranceTest):
+class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
 
     _add_event_button_locator = ('xpath', "//a[@href='/event/add/']")
     _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
@@ -24,7 +24,7 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTest):
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of Endurance test method to be repeated
         self.test_method = self.add_delete_event

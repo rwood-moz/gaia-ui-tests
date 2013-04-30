@@ -4,16 +4,16 @@
 
 # Approximate runtime per 100 iterations: xxx minutes
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 from gaiatest.apps.camera.app import Camera
 
 import time
 
 
-class TestEnduranceCameraPhoto(GaiaEnduranceTest):
+class TestEnduranceCameraPhoto(GaiaEnduranceTestCase):
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of endurance test method to be repeated
         self.test_method = self.camera_photo

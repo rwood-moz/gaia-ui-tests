@@ -4,13 +4,13 @@
 
 # Approximate runtime per 100 iterations: 38 minutes
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 
 import datetime
 import time
 
 
-class TestEnduranceVideoPlayback(GaiaEnduranceTest):
+class TestEnduranceVideoPlayback(GaiaEnduranceTestCase):
 
     # Video list/summary view
     _video_items_locator = ('css selector', 'ul#thumbnails li[data-name]')
@@ -22,7 +22,7 @@ class TestEnduranceVideoPlayback(GaiaEnduranceTest):
     _video_controls_locator = ('id', 'videoControls')
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of endurance test method to be repeated
         self.test_method = self.video_playback

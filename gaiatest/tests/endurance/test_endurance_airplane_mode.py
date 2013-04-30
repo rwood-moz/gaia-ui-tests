@@ -4,14 +4,14 @@
 
 # Approximate runtime per 100 iterations: 168 minutes
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 
 import os
 import datetime
 import time
 
 
-class TestEnduranceAirplaneMode(GaiaEnduranceTest):
+class TestEnduranceAirplaneMode(GaiaEnduranceTestCase):
 
     _cell_data_menu_item_locator = ('id', 'menuItem-cellularAndData')
     _carrier_name_locator = ('id', 'dataNetwork-desc')
@@ -21,7 +21,7 @@ class TestEnduranceAirplaneMode(GaiaEnduranceTest):
     _airplane_mode_enabled_status_locator =  ('css selector', '.sb-icon-flight-mode')
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of endurance test method to be repeated
         self.test_method = self.airplane_mode

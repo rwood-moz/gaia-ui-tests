@@ -4,13 +4,13 @@
 
 # Approximate runtime per 100 iterations: 18 minutes
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 
 import datetime
 import time
 
 
-class TestEnduranceSmsConversation(GaiaEnduranceTest):
+class TestEnduranceSmsConversation(GaiaEnduranceTestCase):
 
     # summary page
     _summary_header_locator = ('xpath', "//h1[text()='Messages']")
@@ -32,7 +32,7 @@ class TestEnduranceSmsConversation(GaiaEnduranceTest):
     _unread_icon_locator = ('css selector', 'aside.icon-unread')
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # set name of endurance test method to be repeated
         self.test_method = self.sms_conversation

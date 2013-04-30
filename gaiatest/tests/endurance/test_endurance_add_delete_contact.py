@@ -4,15 +4,15 @@
 
 import time
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 from gaiatest.mocks.mock_contact import MockContact
 from gaiatest.apps.contacts.app import Contacts
 
 
-class TestEnduranceAddDeleteContact(GaiaEnduranceTest):
+class TestEnduranceAddDeleteContact(GaiaEnduranceTestCase):
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Name of endurance test method to be repeated
         self.test_method = self.add_delete_contact

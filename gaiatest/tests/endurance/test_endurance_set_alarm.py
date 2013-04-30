@@ -5,14 +5,14 @@
 # Approximate runtime per 100 iterations: xxx minutes
 import time
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 from gaiatest.apps.clock.app import Clock
 
 
-class TestEnduranceSetAlarm(GaiaEnduranceTest):
+class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of endurance test method to be repeated
         self.test_method = self.set_alarm

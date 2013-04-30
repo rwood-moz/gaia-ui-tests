@@ -2,14 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 
 import os
 import datetime
 import time
 
 
-class TestEnduranceMusicPlayback(GaiaEnduranceTest):
+class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
 
     _body_list_mode_locator = ('css selector', 'body.list-mode')
     _album_tile_locator = ('css selector', '#views-tiles div.tile-container')
@@ -23,7 +23,7 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTest):
     _back_header_button_locator = ('css selector', '#title-back')
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of endurance test method to be repeated
         self.test_method = self.music_playback

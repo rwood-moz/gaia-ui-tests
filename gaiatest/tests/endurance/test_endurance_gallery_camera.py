@@ -6,14 +6,14 @@
 
 import time
 
-from gaiatest import GaiaEnduranceTest
+from gaiatest import GaiaEnduranceTestCase
 from gaiatest.apps.gallery.app import Gallery
 
 
-class TestEnduranceGalleryCamera(GaiaEnduranceTest):
+class TestEnduranceGalleryCamera(GaiaEnduranceTestCase):
 
     def setUp(self):
-        GaiaEnduranceTest.setUp(self)
+        GaiaEnduranceTestCase.setUp(self)
 
         # Set name of endurance test method to be repeated
         self.test_method = self.gallery_camera
