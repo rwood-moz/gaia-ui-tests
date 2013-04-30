@@ -2,7 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.marionette import Actions
+
 from gaiatest import GaiaTestCase
+
 
 
 class TestEverythingMeInstallApp(GaiaTestCase):
@@ -52,7 +55,7 @@ class TestEverythingMeInstallApp(GaiaTestCase):
 
         first_app_icon = self.marionette.find_element(*self._apps_icon_locator)
         self.first_app_name = first_app_icon.text
-        self.marionette.long_press(first_app_icon)
+        Actions(self.marionette).long_press(first_app_icon, 2).perform()
 
         self.marionette.switch_to_frame()
 

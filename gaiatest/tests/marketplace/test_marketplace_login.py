@@ -4,12 +4,12 @@
 
 from gaiatest import GaiaTestCase
 import time
+from gaiatest.apps.marketplace.app import Marketplace
 
 
 class TestMarketplaceLogin(GaiaTestCase):
 
-    # Marketplace iframe
-    _marketplace_iframe_locator = ('css selector', "iframe[src*='marketplace']")
+    MARKETPLACE_DEV_NAME = 'Marketplace Dev'
 
     # Marketplace locators
     _settings_button_locator = ('css selector', 'a.header-button.settings')
@@ -22,10 +22,10 @@ class TestMarketplaceLogin(GaiaTestCase):
     def setUp(self):
         GaiaTestCase.setUp(self)
         self.connect_to_network()
-        self.app = self.apps.launch('Marketplace')
+        self.install_marketplace()
 
-        # Switch to marketplace iframe
-        self.marionette.switch_to_frame(self.marionette.find_element(*self._marketplace_iframe_locator))
+        self.marketplace = Marketplace(self.marionette, self.MARKETPLACE_DEV_NAME)
+        self.marketplace.launch()
 
     def test_login_marketplace(self):
         # https://moztrap.mozilla.org/manage/case/4134/
@@ -47,8 +47,7 @@ class TestMarketplaceLogin(GaiaTestCase):
 
         # switch back to Marketplace
         self.marionette.switch_to_frame()
-        self.marionette.switch_to_frame(self.app.frame)
-        self.marionette.switch_to_frame(self.marionette.find_element(*self._marketplace_iframe_locator))
+        self.marketplace.launch()
 
         # tap on the signed-in notification at the bottom of the screen to dismiss it
         self.wait_for_element_displayed(*self._signed_in_notification_locator)
@@ -131,3 +130,6 @@ class TestMarketplaceLogin(GaiaTestCase):
                 self.marionette.find_element(*_this_session_only_button_locator).click()
             except:
                 pass
+
+    def tearDown(self):
+        GaiaTestCase.tearDown(self)

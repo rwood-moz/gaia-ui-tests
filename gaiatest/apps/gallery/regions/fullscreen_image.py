@@ -65,3 +65,7 @@ class FullscreenImage(Base):
         self.marionette.tap(self.marionette.find_element(*self._tile_view_locator))
         from gaiatest.apps.gallery.app import Gallery
         return Gallery(self.marionette)
+
+    @property
+    def photo_toolbar_width(self):
+        return self.marionette.execute_script('return document.getElementById("fullscreen-toolbar").offsetWidth')

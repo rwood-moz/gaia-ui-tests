@@ -3,92 +3,61 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from gaiatest import GaiaTestCase
-from marionette.keys import Keys
+from gaiatest.apps.marketplace.app import Marketplace
 
 
 class TestSearchMarketplaceAndInstallApp(GaiaTestCase):
+
+    MARKETPLACE_DEV_NAME = 'Marketplace Dev'
 
     APP_NAME = 'Lanyrd'
     APP_DEVELOPER = 'Lanyrd'
     APP_INSTALLED = False
 
-    _loading_fragment_locator = ('css selector', 'div.loading-fragment')
-
-    # Marketplace iframe
-    _marketplace_iframe_locator = ('css selector', "iframe[src*='marketplace']")
-
-    # Marketplace search on home page
-    _search_locator = ('id', 'search-q')
-
-    # Marketplace search results area and a specific result item
-    _search_results_area_locator = ('id', 'search-results')
-    _search_result_locator = ('css selector', '#search-results li.item')
-
-    # Marketplace result app name, author, and install button
-    _app_name_locator = ('xpath', '//h3')
-    _author_locator = ('css selector', '.author.lineclamp.vital')
-    _install_button = ('css selector', '.button.product.install')
-
-    # System app confirmation button to confirm installing an app
-    _yes_button_locator = ('id', 'app-install-install-button')
-
     # Label identifier for all homescreen apps
     _app_icon_locator = ('xpath', "//li[@class='icon']//span[text()='%s']" % APP_NAME)
     _homescreen_iframe_locator = ('css selector', 'div.homescreen iframe')
 
+    # System app confirmation button to confirm installing an app
+    _yes_button_locator = ('id', 'app-install-install-button')
+
     def setUp(self):
         GaiaTestCase.setUp(self)
         self.connect_to_network()
-        self.app = self.apps.launch('Marketplace')
-
-        # Switch to marketplace iframe
-        self.marionette.switch_to_frame(self.marionette.find_element(*self._marketplace_iframe_locator))
+        self.install_marketplace()
 
     def test_search_and_install_app(self):
-        # select to search for an app
+        marketplace = Marketplace(self.marionette, self.MARKETPLACE_DEV_NAME)
+        marketplace.launch()
 
-        self.wait_for_element_not_displayed(*self._loading_fragment_locator)
-
-        search_box = self.marionette.find_element(*self._search_locator)
-
-        if not search_box.is_displayed():
-            # Scroll a little to make the search box appear
-            self.marionette.execute_script('window.scrollTo(0, 10)')
-
-        # search for the lanyrd mobile app
-        search_box.send_keys(self.APP_NAME)
-        search_box.send_keys(Keys.RETURN)
+        results = marketplace.search(self.APP_NAME)
 
         # validate the first result is the official lanyrd mobile app
-        self.wait_for_element_displayed(*self._search_results_area_locator)
-        results = self.marionette.find_elements(*self._search_result_locator)
-        self.assertGreater(len(results), 0, 'no results found')
-        app_name = results[0].find_element(*self._app_name_locator)
-        author = results[0].find_element(*self._author_locator)
-        self.assertEquals(app_name.text, self.APP_NAME, 'First app has wrong name')
-        self.assertEquals(author.text, self.APP_DEVELOPER,
-                          'First app wrong developer')
+        self.assertGreater(len(results.search_results), 0, 'No results found.')
+
+        first_result = results.search_results[0]
+
+        self.assertEquals(first_result.name, self.APP_NAME, 'First app has the wrong name.')
+        self.assertEquals(first_result.author, self.APP_DEVELOPER, 'First app has the wrong author.')
 
         # Find and click the install button to the install the web app
-        install_button = results[0].find_element(*self._install_button)
-        self.assertEquals(install_button.text, 'Free', 'incorrect button label')
-        self.marionette.tap(install_button)
+        self.assertEquals(first_result.install_button_text, 'Free', 'Incorrect button label.')
 
-        # Confirm the installation of the web app
-        self.marionette.switch_to_frame()
-
-        self.wait_for_element_displayed(*self._yes_button_locator)
-        yes_button = self.marionette.find_element(*self._yes_button_locator)
-        self.marionette.tap(yes_button)
-        self.wait_for_element_not_displayed(*self._yes_button_locator)
-
+        first_result.tap_install_button()
+        self.confirm_installation()
         self.APP_INSTALLED = True
 
+        # Check that the icon of the app is on the homescreen
+        self.marionette.switch_to_frame()
         homescreen_frame = self.marionette.find_element(*self._homescreen_iframe_locator)
         self.marionette.switch_to_frame(homescreen_frame)
+        self.assertTrue(self.marionette.find_element(*self._app_icon_locator))
 
-        # Wait for app's icon to appear on the homescreen
-        self.wait_for_element_present(*self._app_icon_locator)
+    def confirm_installation(self):
+        # TODO add this to the system app object when we have one
+        self.wait_for_element_displayed(*self._yes_button_locator)
+        self.marionette.tap(self.marionette.find_element(*self._yes_button_locator))
+        self.wait_for_element_not_displayed(*self._yes_button_locator)
 
     def tearDown(self):
 

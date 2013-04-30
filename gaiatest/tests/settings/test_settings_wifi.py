@@ -55,7 +55,7 @@ class TestSettingsWifi(GaiaTestCase):
             if not password:
                 self.fail('No psk or wep key found in testvars for secured wifi network.')
 
-            self.wait_for_element_present(*self._password_input_locator)
+            self.wait_for_element_displayed(*self._password_input_locator)
             password_input = self.marionette.find_element(*self._password_input_locator)
             password_input.send_keys(password)
             ok = self.marionette.find_element(*self._password_ok_button_locator)

@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import time
+from marionette.marionette import Actions
 from gaiatest.apps.phone.app import Phone
 from gaiatest.apps.phone.regions.call_screen import CallScreen
 
@@ -27,10 +28,7 @@ class Keypad(Phone):
         for i in value:
             if i == "+":
                 zero_button = self.marionette.find_element('css selector', 'div.keypad-key[data-value="0"]')
-                self.marionette.long_press(zero_button, 1200)
-                # Wait same time as the long_press to bust the asynchronous
-                # TODO https://bugzilla.mozilla.org/show_bug.cgi?id=815115
-                time.sleep(2)
+                Actions(self.marionette).long_press(zero_button, 1.2).perform()
             else:
                 self.marionette.tap(self.marionette.find_element('css selector', 'div.keypad-key[data-value="%s"]' % i))
                 time.sleep(0.25)
@@ -39,7 +37,8 @@ class Keypad(Phone):
         self.phone_number = value
         return self.tap_call_button()
 
-    def tap_call_button(self):
+    def tap_call_button(self, switch_to_call_screen=True):
         call_button = self.marionette.find_element(*self._call_bar_locator)
         self.marionette.tap(call_button)
-        return CallScreen(self.marionette)
+        if switch_to_call_screen:
+            return CallScreen(self.marionette)

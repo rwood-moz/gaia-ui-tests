@@ -2,8 +2,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import time
 from gaiatest import GaiaTestCase
+from gaiatest.apps.phone.app import Phone
+from gaiatest.apps.phone.regions.attention_screen import AttentionScreen
 
 IMEI_CODE = "*#06#"
 CALL_FORWARDING_CODE = "*#21#"
@@ -11,54 +12,13 @@ CALL_FORWARDING_CODE = "*#21#"
 
 class TestMMI(GaiaTestCase):
 
-    # Dialer app
-    _keyboard_container_locator = ('id', 'keyboard-container')
-    _phone_number_view_locator = ('id', 'phone-number-view')
-    _call_bar_locator = ('id', 'keypad-callbar-call-action')
-
-    # Attention frame
-    _attention_frame_locator = ('css selector', 'iframe[src^="app://communications"][src$="index.html#keyboard-view"]')
-    _message_locator = ('id', 'message')
-    _loading_overlay_locator = ('id', 'loading-overlay')
-
-    def setUp(self):
-        GaiaTestCase.setUp(self)
-
-        # launch the app
-        self.app = self.apps.launch('Phone')
-
     def test_MMI_code_IMEI(self):
-        self.wait_for_element_displayed(*self._keyboard_container_locator)
 
-        self._dial_number(IMEI_CODE)
+        phone = Phone(self.marionette)
+        phone.launch()
 
-        self.marionette.switch_to_frame()
+        # Dial the code
+        phone.keypad.phone_number = IMEI_CODE
 
-        self.wait_for_element_displayed(*self._attention_frame_locator)
-        attention_frame = self.marionette.find_element(*self._attention_frame_locator)
-
-        # Switch to attention frame
-        self.marionette.switch_to_frame(attention_frame)
-
-        self.wait_for_element_not_displayed(*self._loading_overlay_locator)
-
-        imei = self.marionette.find_element(*self._message_locator).text
-
-        self.assertEqual(imei, self.testvars['imei'])
-
-    def _dial_number(self, phone_number):
-        '''
-        Dial a number using the keypad
-        '''
-
-        for i in phone_number:
-            if i == "+":
-                zero_button = self.marionette.find_element('css selector', 'div.keypad-key[data-value="0"]')
-                self.marionette.long_press(zero_button, 1200)
-                # Wait same time as the long_press to bust the asynchronous
-                # TODO https://bugzilla.mozilla.org/show_bug.cgi?id=815115
-                time.sleep(2)
-
-            else:
-                self.marionette.tap(self.marionette.find_element('css selector', 'div.keypad-key[data-value="%s"]' % i))
-                time.sleep(0.25)
+        attention_screen = AttentionScreen(self.marionette)
+        self.assertEqual(attention_screen.message, self.testvars['imei'])

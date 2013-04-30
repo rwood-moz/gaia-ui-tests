@@ -235,5 +235,4 @@ var GaiaApps = {
       marionetteScriptFinished(false);
     });
   }
-
 };
