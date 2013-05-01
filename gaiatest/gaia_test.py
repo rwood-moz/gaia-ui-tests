@@ -395,8 +395,8 @@ class GaiaTestCase(MarionetteTestCase):
     def __init__(self, *args, **kwargs):
         self.restart = kwargs.pop('restart', False)
         # remove command like arguments reserved for endurance tests
-        kwargs.pop('iterations')
-        kwargs.pop('checkpoint_interval')
+        kwargs.pop('iterations', None)
+        kwargs.pop('checkpoint_interval', None)
         MarionetteTestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
