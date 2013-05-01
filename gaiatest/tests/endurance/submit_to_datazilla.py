@@ -74,10 +74,10 @@ class DatazillaPerfPoster(object):
         for key, value in self.required.items():
             if not value:
                 self.submit_report = False
-                print 'Missing required DataZilla field: %s' % key
+                print '\nMissing required DataZilla field: %s' % key
 
         if not self.submit_report:
-            print 'Reports will not be submitted to DataZilla'
+            print '\n***Reports will not be submitted to DataZilla***'
 
     def post_to_datazilla(self, results, app_name):
         # Prepare DataZilla results
@@ -153,13 +153,7 @@ class dzOptionParser(OptionParser):
         self.add_option('--submit',
                         action='store_true',
                         dest='send_to_datazilla',
-                        metavar='bool',
                         help='Send results to datazilla')
-        self.add_option('--print',
-                        action='store_false',
-                        dest='send_to_datazilla',
-                        metavar='bool',
-                        help='Print results only, do NOT submit to datazilla')
 
     def datazilla_config(self, options):
         if options.sources:
@@ -201,8 +195,11 @@ def cli():
     # Create datazilla post object
     poster = DatazillaPerfPoster(marionette, datazilla_config=datazilla_config, sources=options.sources)
 
-    # Submitting report or just printing it
-    poster.submit_report = options.send_to_datazilla
+    # If was an error getting required values then poster.submit_report will be false;
+    # if it is true then ok to submit if user wants to
+    if poster.submit_report:
+        if not options.send_to_datazilla:
+            poster.submit_report = False
 
     # Parse checkpoint results from provided summary log file
     checkpoint_summary = {}
@@ -215,17 +212,21 @@ def cli():
     summary_file.close()
 
     for x in read_in:
-        k, v = x.split(': ')
-        if k in "total_iterations" or k in "checkpoint_every":
-            checkpoint_summary[k] = int(v)
-        elif k in "b2g_vsize":
-            checkpoint_summary[k] = v.split(',') # list of strings
-            checkpoint_summary[k] = map(int, checkpoint_summary[k]) # list of ints
-        elif k in "test_name":
-            # Prefix test name so all tests are grouped together in datazilla
-            checkpoint_summary[k] = "endurance_" + v
-        else:
-            checkpoint_summary[k] = v
+        try:
+            if x.find(':') != -1: # Ignore empty lines ie. last line of file which is empty
+                k, v = x.split(': ')
+                if k in "total_iterations" or k in "checkpoint_interval":
+                    checkpoint_summary[k] = int(v)
+                elif k in "b2g_vsize":
+                    checkpoint_summary[k] = v.split(',') # list of strings
+                    checkpoint_summary[k] = map(int, checkpoint_summary[k]) # list of ints
+                elif k in "test_name":
+                    # Prefix test name so all tests are grouped together in datazilla
+                    checkpoint_summary[k] = "endurance_" + v
+                else:
+                    checkpoint_summary[k] = v
+        except:
+            raise Exception("Value missing from '%s', cannot proceed." % options.results_file)
 
     # Make sure we have app_under_test
     if (checkpoint_summary['app_under_test'] == "none"):
@@ -248,9 +249,9 @@ def cli():
     else:
         print "\nCheckpoint summary for test '%s':\n" % checkpoint_summary['test_name']
         print checkpoint_summary
-        print '\nResults to be submitted to Datazilla:\n'
+        print '\nEndurance test results data:\n'
         print results
-        print "\nTo submit results, repeat the same command but use '--submit' (instead of '--print').\n"
+        print "\nTo submit results, fix any missing fields and use the '--submit' option.\n"
 
 if __name__ == '__main__':
     cli()

@@ -22,6 +22,8 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
     _delete_event_button_locator = ('css selector', "#modify-event-view a[data-l10n-id='event-delete']")
     _event_start_date_input_locator = ('xpath', "//input[@data-l10n-id='event-start-date']")
     _event_end_date_input_locator = ('xpath', "//input[@data-l10n-id='event-end-date']")
+    _this_event_time_slot_locator = ('css selector', '#event-list section.hour-1 span.display-hour')
+    _month_view_time_slot_all_events_locator = ('css selector', '#event-list section.hour-1 div.events')
 
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
@@ -53,12 +55,6 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
         event_end_date = self.next_event_date.strftime("%Y-%m-%d")
         event_start_time = "01:00:00"
         event_end_time = "02:00:00"
-        this_event_time_slot_locator = (
-            'css selector',
-            '#event-list section.hour-1 span.display-hour')
-        month_view_time_slot_all_events_locator = (
-            'css selector',
-            '#event-list section.hour-1 div.events')
 
         # wait for the add event button to appear
         self.wait_for_element_displayed(*self._add_event_button_locator)
@@ -86,17 +82,17 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
         time.sleep(2)
 
         # wait for the default calendar display
-        self.wait_for_element_displayed(*this_event_time_slot_locator)
+        self.wait_for_element_displayed(*self._this_event_time_slot_locator)
 
         # assert that the event is displayed as expected
-        self.assertTrue(self.marionette.find_element(*this_event_time_slot_locator).is_displayed(),
+        self.assertTrue(self.marionette.find_element(*self._this_event_time_slot_locator).is_displayed(),
                         "Expected the time slot for the event to be present.")
-        displayed_events = self.marionette.find_element(*month_view_time_slot_all_events_locator).text
+        displayed_events = self.marionette.find_element(*self._month_view_time_slot_all_events_locator).text
         self.assertIn(event_title, displayed_events)
         self.assertIn(event_location, displayed_events)
 
         # Now tap on the event to open it
-        event_list = self.marionette.find_element(*month_view_time_slot_all_events_locator)
+        event_list = self.marionette.find_element(*self._month_view_time_slot_all_events_locator)
         self.marionette.tap(event_list)
 
         # Click edit button
@@ -107,7 +103,7 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
         self.wait_for_element_displayed(*self._delete_event_button_locator)
         delete_event_button = self.marionette.find_element(*self._delete_event_button_locator)
         self.marionette.tap(delete_event_button)
-        self.wait_for_element_displayed(*this_event_time_slot_locator)
+        self.wait_for_element_displayed(*self._this_event_time_slot_locator)
 
         # Increment for the next event
         self.next_event_date += datetime.timedelta(days=1)

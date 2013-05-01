@@ -704,12 +704,12 @@ class GaiaEnduranceTestCase(GaiaTestCase):
             if not os.path.exists(self.checkpoint_path):
                 os.makedirs(self.checkpoint_path, 0755)
             self.log_name = "%s/checkpoint_%s_%s.log" % (self.checkpoint_path, self.test_method.__name__, self.cur_time)
-            cmd_line = "echo %s Gaia Endurance Test: %s > " % (self.cur_time, self.test_method.__name__) + self.log_name
-            os.system(cmd_line)
-        cmd_line = "echo %s Checkpoint after iteration %d of %d: >> " % (self.cur_time, self.iteration, self.iterations) + self.log_name
-        os.system(cmd_line)
-        cmd_line = "adb shell b2g-ps >> " + self.log_name
-        os.system(cmd_line)
+            with open(self.log_name, 'a') as log_file:
+                log_file.write('%s Gaia Endurance Test: %s\n' % (self.cur_time, self.test_method.__name__))
+        output_str = self.device.manager.shellCheckOutput(["b2g-ps"])
+        with open(self.log_name, 'a') as log_file:
+            log_file.write('%s Checkpoint after iteration %d of %d:\n' % (self.cur_time, self.iteration, self.iterations))
+            log_file.write('%s\n' % output_str)
 
     def close_app(self):
         # Close the current app (self.app) by using the home button
@@ -741,7 +741,8 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         b2g_vsize_list = []
         for next_line in checkpoint_file:
             if next_line.startswith("b2g"):
-                b2g_vsize_list.append(int(next_line.split()[4]))
+                #b2g_vsize_list.append(int(next_line.split()[4]))
+                b2g_vsize_list.append(next_line.split()[4])
 
         # Close the checkpoint file
         checkpoint_file.close()
@@ -755,13 +756,10 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         summary_file.write('completed: %s\n' % self.cur_time)
         summary_file.write('app_under_test: %s\n' % self.app_under_test.lower())
         summary_file.write('total_iterations: %d\n' % self.iterations)
-        summary_file.write('checkpoint_every: %d\n' % self.checkpoint_interval)
+        summary_file.write('checkpoint_interval: %d\n' % self.checkpoint_interval)
         summary_file.write('b2g_vsize: ')
-        for index, metric in enumerate(b2g_vsize_list):
-            if index != (len(b2g_vsize_list) - 1):
-                summary_file.write('%d, ' % metric)
-            else:
-                summary_file.write('%d' % metric)
+        summary_file.write(', '.join(b2g_vsize_list))
+        summary_file.write('\n\n')
 
         # Close the summary file
         summary_file.close()
