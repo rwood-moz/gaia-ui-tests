@@ -15,6 +15,7 @@ import os
 from urlparse import urlparse
 import xml.dom.minidom
 import zipfile
+import time
 
 import dzclient
 import gaiatest
@@ -154,6 +155,11 @@ class dzOptionParser(OptionParser):
                         action='store_true',
                         dest='send_to_datazilla',
                         help='Send results to datazilla')
+        self.add_option('--process-dir',
+                        action='store',
+                        dest='process_dir',
+                        metavar='str',
+                        help='Process all *_summary.log files in the given folder')
 
     def datazilla_config(self, options):
         if options.sources:
@@ -176,14 +182,28 @@ def cli():
     options, args = parser.parse_args()
 
     # Ensure have all required options
-    if (not options.results_file or not options.datazilla_project or not options.datazilla_branch
+    if (not options.datazilla_project or not options.datazilla_branch
         or not options.datazilla_key or not options.datazilla_secret):
         parser.print_help()
         parser.exit()
 
+    # Either a single file or option to process all in given folder
+    if (not options.results_file) and (not options.process_dir):
+        parser.print_help()
+        parser.exit()
+
+    if options.results_file and options.process_dir:
+        parser.print_help()
+        parser.exit()
+
     # Ensure results file actually exists
-    if not os.path.exists(options.results_file):
-        raise Exception('%s file does not exist' %options.results_file)
+    if options.results_file:
+        if not os.path.exists(options.results_file):
+            raise Exception('%s file does not exist' %options.results_file)
+        
+    if options.process_dir:
+        if not os.path.exists(options.process_dir):
+            raise Exception("Process all path '%s' does not exist" %options.process_dir) 
 
     # Parse config options
     datazilla_config = parser.datazilla_config(options)
@@ -204,54 +224,88 @@ def cli():
     # Parse checkpoint results from provided summary log file
     checkpoint_summary = {}
     results = {}
+    summary_file_list = []
 
-    print "\nProcessing results in '%s'\n" % options.results_file
+    if options.process_dir:
+        # All files in the given path
+        file_path = options.process_dir
+        print "\nSearching for *_summary.log files in %s\n" % options.process_dir
 
-    summary_file = open(options.results_file, 'r')
-    read_in = summary_file.read().split("\n")
-    summary_file.close()
+        entire_file_list = os.listdir(file_path)
+        if len(entire_file_list) == 0:
+            raise Exception("No checkpoint *_summary.log files were found in the given path")
+        for found_file in entire_file_list:
+            if found_file.endswith("summary.log"):
+                summary_file_list.append("%s/%s" % (file_path, found_file))
+        if len(summary_file_list) == 0:
+            raise Exception("No checkpoint *_summary.log files were found in the given path")
 
-    for x in read_in:
-        try:
-            if x.find(':') != -1: # Ignore empty lines ie. last line of file which is empty
-                k, v = x.split(': ')
-                if k in "total_iterations" or k in "checkpoint_interval":
-                    checkpoint_summary[k] = int(v)
-                elif k in "b2g_vsize":
-                    checkpoint_summary[k] = v.split(',') # list of strings
-                    checkpoint_summary[k] = map(int, checkpoint_summary[k]) # list of ints
-                elif k in "test_name":
-                    # Prefix test name so all tests are grouped together in datazilla
-                    checkpoint_summary[k] = "endurance_" + v
-                else:
-                    checkpoint_summary[k] = v
-        except:
-            raise Exception("Value missing from '%s', cannot proceed." % options.results_file)
-
-    # Make sure we have app_under_test
-    if (checkpoint_summary['app_under_test'] == "none"):
-        raise Exception("Checkpoint summary file is missing value for 'app_under_test'. Cannot proceed.")
-    
-    # Results dictionary required format example
-    # {'test_name': [180892, 180892, 181980, 181852, 180828, 182012, 183652, 182972, 183052, 183052]}
-    results[checkpoint_summary['test_name']] = checkpoint_summary['b2g_vsize']
-
-    # Display the Datazilla configuration
-    print 'Datazilla configuration:'
-    print "\napplication (datazilla 'suite'): %s" % checkpoint_summary['app_under_test']
-    for key, value in poster.required.items():
-        print key + ":", value
-
-    # Submit or print the results
-    if poster.submit_report:
-        #poster.post_to_datazilla(results, checkpoint_summary['test_name'])
-        poster.post_to_datazilla(results, checkpoint_summary['app_under_test'])
+        print "Found the following checkpoint summary files to process:\n"
+        for x in summary_file_list:
+            print "%s" % x
+        print "\n" + "-" * 50         
     else:
-        print "\nCheckpoint summary for test '%s':\n" % checkpoint_summary['test_name']
-        print checkpoint_summary
-        print '\nEndurance test results data:\n'
-        print results
-        print "\nTo submit results, fix any missing fields and use the '--submit' option.\n"
+        # Just one file
+        summary_file_list = [options.results_file]
+
+    for next_file in summary_file_list:
+
+        print "\nProcessing results in '%s'\n" % next_file
+
+        summary_file = open(next_file, 'r')
+        read_in = summary_file.read().split("\n")
+        summary_file.close()
+
+        for x in read_in:
+            try:
+                if x.find(':') != -1: # Ignore empty lines ie. last line of file which is empty
+                    k, v = x.split(': ')
+                    if k in "total_iterations" or k in "checkpoint_interval":
+                        checkpoint_summary[k] = int(v)
+                    elif k in "b2g_vsize":
+                        checkpoint_summary[k] = v.split(',') # list of strings
+                        checkpoint_summary[k] = map(int, checkpoint_summary[k]) # list of ints
+                    elif k in "test_name":
+                        # Prefix test name so all tests are grouped together in datazilla
+                        checkpoint_summary[k] = "endurance_" + v
+                    else:
+                        checkpoint_summary[k] = v
+            except:
+                raise Exception("Value missing from '%s', cannot proceed." % options.results_file)
+    
+        # Make sure we have app_under_test
+        if (checkpoint_summary['app_under_test'] == "none"):
+            raise Exception("Checkpoint summary file is missing value for 'app_under_test'. Cannot proceed.")
+        
+        # Results dictionary required format example
+        # {'test_name': [180892, 180892, 181980, 181852, 180828, 182012, 183652, 182972, 183052, 183052]}
+        results[checkpoint_summary['test_name']] = checkpoint_summary['b2g_vsize']
+    
+        # Display the Datazilla configuration
+        print 'Datazilla configuration:'
+        print "\napplication (datazilla 'suite'): %s" % checkpoint_summary['app_under_test']
+        for key, value in poster.required.items():
+            print key + ":", value
+    
+        # Submit or print the results
+        if poster.submit_report:
+            #poster.post_to_datazilla(results, checkpoint_summary['test_name'])
+            poster.post_to_datazilla(results, checkpoint_summary['app_under_test'])
+        else:
+            print "\nCheckpoint summary for test '%s':\n" % checkpoint_summary['test_name']
+            print checkpoint_summary
+            print '\nEndurance test results data:\n'
+            print results
+            print "\nTo submit results, fix any missing fields and use the '--submit' option.\n"
+
+        if options.process_dir:
+            # Sleep between submissions
+            print "Pausing...\n"
+            time.sleep(30)
+            print "-" * 50
+
+    if options.process_dir:
+        print "\nFinished processing all files.\n"
 
 if __name__ == '__main__':
     cli()
