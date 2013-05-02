@@ -13,8 +13,8 @@ class Marketplace(Base):
     _marketplace_iframe_locator = ('css selector', 'iframe[src*="marketplace"]')
 
     _loading_fragment_locator = ('css selector', 'div.loading-fragment')
-    _error_title_locator = ('css selector', '#appError-appframe1 h3[data-l10n-id="error-title"]')
-    _error_message_locator = ('css selector', '#appError-appframe1 span[data-l10n-id="error-message"]')
+    _error_title_locator = ('css selector', 'div.modal-dialog-message-container > h3.title')
+    _error_message_locator = ('css selector', 'div.modal-dialog-message-container .message')
 
     # Marketplace search on home page
     _search_locator = ('id', 'search-q')
