@@ -394,6 +394,8 @@ class GaiaTestCase(MarionetteTestCase):
 
     def __init__(self, *args, **kwargs):
         self.restart = kwargs.pop('restart', False)
+        kwargs.pop('iterations', None)
+        kwargs.pop('checkpoint_interval', None)
         MarionetteTestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
