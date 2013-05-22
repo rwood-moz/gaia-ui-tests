@@ -95,10 +95,6 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
         event_list = self.marionette.find_element(*self._month_view_time_slot_all_events_locator)
         self.marionette.tap(event_list)
 
-        # Click edit button
-        self.wait_for_element_displayed(*self._edit_event_button_locator)
-        self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))
-
         # Then delete it
         self.wait_for_element_displayed(*self._delete_event_button_locator)
         delete_event_button = self.marionette.find_element(*self._delete_event_button_locator)
