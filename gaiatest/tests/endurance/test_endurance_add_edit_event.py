@@ -12,7 +12,7 @@ import time
 
 class TestEnduranceAddEditEvent(GaiaEnduranceTestCase):
 
-    _add_event_button_locator = ('xpath', "//a[@href='/event/add/']")
+    _add_event_button_locator = ('xpath', "//span[@data-l10n-id='new-event']")
     _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
     _event_location_input_locator = ('xpath', "//input[@data-l10n-id='event-location']")
     _event_start_time_input_locator = ('xpath', "//input[@data-l10n-id='event-start-time']")
