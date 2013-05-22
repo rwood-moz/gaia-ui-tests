@@ -250,6 +250,9 @@ def cli():
 
     for next_file in summary_file_list:
 
+        # Clear results as only want results for current file being processed
+        results = {}
+
         print "\nProcessing results in '%s'\n" % next_file
 
         summary_file = open(next_file, 'r')
