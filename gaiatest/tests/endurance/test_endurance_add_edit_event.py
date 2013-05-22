@@ -99,10 +99,6 @@ class TestEnduranceAddEditEvent(GaiaEnduranceTestCase):
         # Now tap on the event to open it
         event_list = self.marionette.find_element(*month_view_time_slot_all_events_locator)
         self.marionette.tap(event_list)
-        
-        # Click edit button
-        self.wait_for_element_displayed(*self._edit_event_button_locator)
-        self.marionette.tap(self.marionette.find_element(*self._edit_event_button_locator))        
 
         # Edit the existing event (add to title)
         self.wait_for_element_displayed(*self._event_title_input_locator)
@@ -113,11 +109,6 @@ class TestEnduranceAddEditEvent(GaiaEnduranceTestCase):
         # Click Done button to save changes
         done_edit_button = self.marionette.find_element(*self._done_edit_button_locator)
         self.marionette.tap(done_edit_button)
-
-        # Click back to close the event and return to main calendar display
-        self.wait_for_element_displayed(*self._event_view_back_button_locator)
-        back_button = self.marionette.find_element(*self._event_view_back_button_locator)
-        self.marionette.tap(back_button)
 
         # wait for the default calendar display
         self.wait_for_element_displayed(*this_event_time_slot_locator)
