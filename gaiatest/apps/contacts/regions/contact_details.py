@@ -14,6 +14,7 @@ class ContactDetails(Base):
     _edit_contact_button_locator = ('id', 'edit-contact-button')
     _back_button_locator = ('id', 'details-back')
     _add_remove_favorite_button_locator = ('id', 'toggle-favorite')
+    _comments_locator = ('id', 'note-details-template-0')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)
@@ -26,6 +27,10 @@ class ContactDetails(Base):
     @property
     def phone_number(self):
         return self.marionette.find_element(*self._call_phone_number_button_locator).text
+
+    @property
+    def comments(self):
+        return self.marionette.find_element(*self._comments_locator).text
 
     @property
     def image_style(self):

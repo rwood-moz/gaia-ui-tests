@@ -11,9 +11,9 @@ class TestSettingsMediaStorage(GaiaTestCase):
     _media_storage_locator = ('id', 'menuItem-mediaStorage')
 
     # Media storage locators
-    _music_space_locator = ('css selector', '#music-space > a > .size')
-    _pictures_space_locator = ('css selector', '#pictures-space > a > .size')
-    _movies_space_locator = ('css selector', '#videos-space > a > .size')
+    _music_space_locator = ('css selector', '.color-music > a > .size')
+    _pictures_space_locator = ('css selector', '.color-pictures > a > .size')
+    _movies_space_locator = ('css selector', '.color-videos > a > .size')
 
     def test_settings_media_storage(self):
 
@@ -45,7 +45,7 @@ class TestSettingsMediaStorage(GaiaTestCase):
         movies = self.marionette.find_element(*self._movies_space_locator)
 
         # Check that media storage has updated to reflect the newly pushed media
-        self.assertEqual(music.text, '241 KB')
+        self.assertEqual(music.text, '120 KB')
         self.assertEqual(pictures.text, '348 KB')
         self.assertEqual(movies.text, '120 KB')
 

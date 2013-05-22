@@ -33,7 +33,7 @@ class TestFtu(GaiaTestCase):
     # Step Date & Time
     _section_date_time_locator = ('id', 'date_and_time')
     _timezone_continent_locator = ('css selector', '#time-form li:nth-child(1) > .change.icon.icon-dialog')
-    _timezone_city_locator =  ('css selector', '#time-form li:nth-child(2) > .change.icon.icon-dialog')
+    _timezone_city_locator = ('css selector', '#time-form li:nth-child(2) > .change.icon.icon-dialog')
     _time_zone_title_locator = ('id', 'time-zone-title')
 
     # Section Import contacts
@@ -136,12 +136,14 @@ class TestFtu(GaiaTestCase):
             self.marionette.tap(self.marionette.find_element(*self._join_network_locator))
 
         self.wait_for_condition(
-            lambda m: wifi_network.find_element(*self._network_state_locator).text == "Connected")
+            lambda m: m.find_element(
+                'id', self.testvars['wifi']['ssid']).find_element(*self._network_state_locator).text == "Connected"
+        )
 
         self.assertTrue(self.data_layer.is_wifi_connected(self.testvars['wifi']),
-                                "WiFi was not connected via FTU app")
+                        "WiFi was not connected via FTU app")
 
-        # Marionette needs to be resynced to the frame, see bug 855029
+        # is_wifi_connected() calls switch_to_frame()
         self.marionette.switch_to_frame(self.app.frame)
 
         # Tap next
