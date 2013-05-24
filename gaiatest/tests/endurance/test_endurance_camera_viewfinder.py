@@ -10,7 +10,7 @@ from gaiatest.apps.camera.app import Camera
 import time
 
 
-class TestEnduranceCameraPhoto(GaiaEnduranceTestCase):
+class TestEnduranceCameraViewfinder(GaiaEnduranceTestCase):
 
     def setUp(self):
         GaiaEnduranceTestCase.setUp(self)
@@ -18,7 +18,7 @@ class TestEnduranceCameraPhoto(GaiaEnduranceTestCase):
         # Turn off geolocation prompt
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
-    def test_endurance_camera_photo(self):
+    def test_endurance_camera_viewfinder(self):
         self.drive(test=self.camera_viewfinder, app='camera')
 
     def camera_viewfinder(self):
