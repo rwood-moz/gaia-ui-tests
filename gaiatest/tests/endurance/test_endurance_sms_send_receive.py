@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: xxx minutes
+# Approximate runtime per 100 iterations: 100 minutes
 
 from gaiatest import GaiaEnduranceTestCase
 
@@ -73,7 +73,7 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
         # type phone number and message text
         contact_field = self.marionette.find_element(
             *self._receiver_input_locator)
-        contact_field.send_keys(self.testvars['this_phone_number'])
+        contact_field.send_keys(self.testvars['carrier']['phone_number'])
         message_field = self.marionette.find_element(
             *self._message_field_locator)
         message_field.send_keys(_text_message_content)
@@ -107,12 +107,13 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
         """, special_powers = True)
 
         # click on the sms conversation in the message list i.e. user checking the new message
+        time.sleep(5)
         sms_thread = self.marionette.find_element(*self._thread_list_locator)
         self.marionette.tap(sms_thread)
 
         # sleep with list of messages displayed; user would be here a bit to read messages
         # need sleep here anyway as with large number of messages can sometimes take awhile
-        time.sleep(15)
+        time.sleep(30)
 
         # TEMP: put back in after bug 850803 is fixed
         # verify received message text is correct
@@ -125,4 +126,4 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
         self.marionette.tap(back_header_button)
 
         # sleep between reps
-        time.sleep(3)
+        time.sleep(10)
