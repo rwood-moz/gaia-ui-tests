@@ -22,7 +22,7 @@ class Gallery(Base):
         self.wait_for_element_displayed(*self._thumbnail_list_view_locator)
 
     def wait_for_files_to_load(self, files_number):
-        self.wait_for_condition(lambda m: m.execute_script('return window.wrappedJSObject.files.length') == files_number)
+        self.wait_for_condition(lambda m: m.execute_script('return window.wrappedJSObject.files.length') >= files_number)
 
     @property
     def gallery_items_number(self):

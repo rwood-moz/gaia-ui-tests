@@ -23,7 +23,7 @@ class TestEnduranceGalleryFlick(GaiaEnduranceTestCase):
         self.gallery = Gallery(self.marionette)
         self.gallery.launch()
         self.gallery.wait_for_files_to_load(self.image_count)
-        self.assertEqual(self.gallery.gallery_items_number, self.image_count)
+        self.assertTrue(self.gallery.gallery_items_number >= self.image_count)
 
         # Tap first image to open full screen view.
         self.image = self.gallery.tap_first_gallery_item()
