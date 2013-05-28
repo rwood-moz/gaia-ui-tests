@@ -33,14 +33,17 @@ class Settings(Base):
         switch = self.marionette.find_element(*self._data_alert_switch_locator)
         if switch.is_selected() is not value:
             label = self.marionette.find_element(*self._data_alert_label_locator)
-            self.marionette.tap(label)
+            # TODO: Switch to using tap() when bug #869041 is fixed
+            label.click()
 
     def select_when_use_is_above_unit_and_value(self, unit, value):
+
         when_use_is_above_button = self.marionette.find_element(*self._when_use_is_above_button_locator)
         self.wait_for_condition(
             lambda m: m.find_element(*self._when_use_is_above_button_locator).get_attribute('disabled') == 'false'
         )
-        self.marionette.tap(when_use_is_above_button)
+        # TODO: Switch to using tap() when bug #869041 is fixed
+        when_use_is_above_button.click()
 
         self.wait_for_element_displayed(*self._unit_button_locator)
         current_unit = self.marionette.find_element(*self._unit_button_locator)
@@ -55,18 +58,18 @@ class Settings(Base):
         size.clear()
         size.send_keys(value)
         done = self.marionette.find_element(*self._usage_done_button_locator)
-        self.marionette.tap(done)
+        done.tap()
 
     def reset_data_usage(self):
         self.wait_for_element_displayed(*self._settings_title_locator)
-        self.marionette.tap(self.marionette.find_element(*self._reset_button_locator))
+        self.marionette.find_element(*self._reset_button_locator).tap()
         self.wait_for_element_displayed(*self._reset_confirm_locator)
-        self.marionette.tap(self.marionette.find_element(*self._reset_confirm_locator))
+        self.marionette.find_element(*self._reset_confirm_locator).tap()
         self.wait_for_element_displayed(*self._settings_title_locator)
 
     def tap_done(self):
         self.wait_for_element_displayed(*self._done_button_locator)
-        self.marionette.tap(self.marionette.find_element(*self._done_button_locator))
+        self.marionette.find_element(*self._done_button_locator).tap()
         # Switch back to Cos Control app frame
         from gaiatest.apps.cost_control.app import CostControl
         CostControl(self.marionette).launch()

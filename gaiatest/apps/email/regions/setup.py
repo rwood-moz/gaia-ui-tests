@@ -27,13 +27,13 @@ class SetupEmail(Base):
         self.marionette.find_element(*self._password_locator).send_keys(value)
 
     def tap_next(self):
-        self.marionette.tap(self.marionette.find_element(*self._next_locator))
+        self.marionette.find_element(*self._next_locator).tap()
 
     def wait_for_setup_complete(self):
         self.wait_for_element_displayed(*self._continue_button_locator)
 
     def tap_continue(self):
-        self.marionette.tap(self.marionette.find_element(*self._continue_button_locator))
+        self.marionette.find_element(*self._continue_button_locator).tap()
 
 
 class ManualSetupEmail(Base):
@@ -54,9 +54,8 @@ class ManualSetupEmail(Base):
     _smtp_hostname_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-smtp-hostname')
     _smtp_port_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-smtp-port')
 
-    _activesync_username_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-activesync-hostname')
-
-    _activesync_hostname_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-activesync-username')
+    _activesync_hostname_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-activesync-hostname')
+    _activesync_username_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-activesync-username')
 
     _next_locator = ('css selector', '.sup-manual-next-btn')
     _continue_button_locator = ('class name', 'sup-show-mail-btn sup-form-btn recommend')
@@ -130,10 +129,10 @@ class ManualSetupEmail(Base):
         el.send_keys(value)
 
     def tap_next(self):
-        self.marionette.tap(self.marionette.find_element(*self._next_locator))
+        self.marionette.find_element(*self._next_locator).tap()
 
     def wait_for_setup_complete(self):
         self.wait_for_element_displayed(*self._continue_button_locator)
 
     def tap_continue(self):
-        self.marionette.tap(self.marionette.find_element(*self._continue_button_locator))
+        self.marionette.find_element(*self._continue_button_locator).tap()
