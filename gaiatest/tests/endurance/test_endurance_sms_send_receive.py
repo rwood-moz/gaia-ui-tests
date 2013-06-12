@@ -67,7 +67,7 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
         self.wait_for_element_displayed(*self._summary_header_locator)
         _text_message_content = "SMS %d of %d (send receive endurance test %s)" % (self.iteration, self.iterations, str(time.time()))
         create_new_message = self.marionette.find_element(*self._create_new_message_locator)
-        self.marionette.tap(create_new_message)
+        create_new_message.tap()
         self.wait_for_element_present(*self._receiver_input_locator)
 
         # type phone number and message text
@@ -82,12 +82,12 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
         # click send
         send_message_button = self.marionette.find_element(
             *self._send_message_button_locator)
-        self.marionette.tap(send_message_button)
+        send_message_button.tap()
         time.sleep(1)
 
         # go back to main message list
         back_header_button = self.marionette.find_element(*self._back_header_link_locator)
-        self.marionette.tap(back_header_button)
+        back_header_button.tap()
         self.wait_for_element_displayed(*self._summary_header_locator)
         time.sleep(5)
 
@@ -109,7 +109,7 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
         # click on the sms conversation in the message list i.e. user checking the new message
         time.sleep(5)
         sms_thread = self.marionette.find_element(*self._thread_list_locator)
-        self.marionette.tap(sms_thread)
+        sms_thread.tap()
 
         # sleep with list of messages displayed; user would be here a bit to read messages
         # need sleep here anyway as with large number of messages can sometimes take awhile
@@ -123,7 +123,7 @@ class TestEnduranceSmsSendReceive(GaiaEnduranceTestCase):
 
         # now go back to main message list, so ready for next iteration
         back_header_button = self.marionette.find_element(*self._back_header_link_locator)
-        self.marionette.tap(back_header_button)
+        back_header_button.tap()
 
         # sleep between reps
         time.sleep(10)

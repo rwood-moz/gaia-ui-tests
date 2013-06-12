@@ -29,7 +29,7 @@ class Camera(Base):
     def tap_capture_button(self):
         self.wait_for_capture_button_enabled()
         capture_button = self.marionette.find_element(*self._capture_button_locator)
-        self.marionette.tap(capture_button)
+        capture_button.tap()
 
     def capture_photo(self):
         self.tap_capture_button()
@@ -43,7 +43,7 @@ class Camera(Base):
 
     def tap_switch_source_button(self):
         switch_source_button = self.marionette.find_element(*self._switch_source_button_locator)
-        self.marionette.tap(switch_source_button)
+        switch_source_button.tap()
 
     def record_video(self, duration):
         # Start recording

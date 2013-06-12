@@ -67,7 +67,7 @@ class TestEnduranceSmsConversation(GaiaEnduranceTestCase):
         # while still in conversation view, create new message
         _text_message_content = "SMS %d of %d (sms conversation endurance test %s)" % (self.iteration, self.iterations, str(time.time()))
         create_new_message = self.marionette.find_element(*self._create_new_message_locator)
-        self.marionette.tap(create_new_message)
+        create_new_message.tap()
         self.wait_for_element_present(*self._receiver_input_locator)
 
         # type phone number and message text
@@ -82,7 +82,7 @@ class TestEnduranceSmsConversation(GaiaEnduranceTestCase):
         # click send
         send_message_button = self.marionette.find_element(
             *self._send_message_button_locator)
-        self.marionette.tap(send_message_button)
+        send_message_button.tap()
 
         # sleep a bit
         time.sleep(3)

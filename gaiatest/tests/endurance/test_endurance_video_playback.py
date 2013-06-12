@@ -45,11 +45,12 @@ class TestEnduranceVideoPlayback(GaiaEnduranceTestCase):
         self.first_video_name = self.first_video.find_element(*self._video_name_locator).get_attribute('data-raw')
 
         # click on the first video
-        self.marionette.tap(self.first_video)
+        self.first_video.tap()
 
         # Tap on video to keep toolbar visible
         self.wait_for_element_displayed(*self._video_controls_locator)
-        self.marionette.tap(self.marionette.find_element(*self._video_controls_locator))
+        video_control = self.marionette.find_element(*self._video_controls_locator)
+        video_control.tap()
 
         # The elapsed time != 0:00 is the only indication of the toolbar visible
         time.sleep(1)

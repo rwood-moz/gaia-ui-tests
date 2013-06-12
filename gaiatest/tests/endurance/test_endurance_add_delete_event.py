@@ -62,7 +62,7 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
         # click the add event button
         time.sleep(1)
         add_event_button = self.marionette.find_element(*self._add_event_button_locator)
-        self.marionette.tap(add_event_button)
+        add_event_button.tap()
         self.wait_for_element_displayed(*self._event_title_input_locator)
 
         # create a new event
@@ -78,7 +78,7 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
         self.marionette.find_element(*self._event_end_time_input_locator).send_keys(event_end_time)
         time.sleep(1)
         save_event_button = self.marionette.find_element(*self._save_event_button_locator)
-        self.marionette.tap(save_event_button)
+        save_event_button.tap()
         time.sleep(2)
 
         # wait for the default calendar display
@@ -93,12 +93,12 @@ class TestEnduranceAddDeleteEvent(GaiaEnduranceTestCase):
 
         # Now tap on the event to open it
         event_list = self.marionette.find_element(*self._month_view_time_slot_all_events_locator)
-        self.marionette.tap(event_list)
+        event_list.tap()
 
         # Then delete it
         self.wait_for_element_displayed(*self._delete_event_button_locator)
         delete_event_button = self.marionette.find_element(*self._delete_event_button_locator)
-        self.marionette.tap(delete_event_button)
+        delete_event_button.tap()
         self.wait_for_element_displayed(*self._this_event_time_slot_locator)
 
         # Increment for the next event

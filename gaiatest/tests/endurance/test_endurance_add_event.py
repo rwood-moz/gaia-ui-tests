@@ -64,7 +64,7 @@ class TestEnduranceAddEvent(GaiaEnduranceTestCase):
 
         # click the add event button
         add_event_button = self.marionette.find_element(*self._add_event_button_locator)
-        self.marionette.tap(add_event_button)
+        add_event_button.tap()
         self.wait_for_element_displayed(*self._event_title_input_locator)
 
         # create a new event
@@ -80,7 +80,7 @@ class TestEnduranceAddEvent(GaiaEnduranceTestCase):
         self.marionette.find_element(*self._event_end_time_input_locator).send_keys(event_end_time)
         time.sleep(1)
         save_event_button = self.marionette.find_element(*self._save_event_button_locator)
-        self.marionette.tap(save_event_button)
+        save_event_button.tap()
 
         # wait for the default calendar display
         self.wait_for_element_displayed(*this_event_time_slot_locator)

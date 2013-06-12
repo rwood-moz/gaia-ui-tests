@@ -36,7 +36,7 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
 
         # switch to albums view
         tab_albums = self.marionette.find_element(*self._tab_albums_locator)
-        self.marionette.tap(tab_albums)     
+        tab_albums.tap()     
 
         # wait for it to switch into list mode
         self.wait_for_element_present(*self._body_list_mode_locator)
@@ -48,7 +48,7 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
 
         # select an album
         album_list = self.marionette.find_element(*self._album_list_locator)
-        self.marionette.tap(album_list)
+        album_list.tap()
 
     def test_endurance_add_event(self):
         self.drive(test=self.music_playback, app='music')
@@ -61,7 +61,7 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
 
         # select play
         views_sublist_controls_play = self.marionette.find_element(*self._views_sublist_controls_play_locator)
-        self.marionette.tap(views_sublist_controls_play)
+        views_sublist_controls_play.tap()
 
         # need to allow timer text to clear back to 00:00
         self.wait_for_condition(
@@ -80,7 +80,7 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
 
         # select stop
         player_controls_play = self.marionette.find_element(*self._player_controls_play_locator)
-        self.marionette.tap(player_controls_play)
+        player_controls_play.tap()
 
         # wait to be sure the pause settles in
         time.sleep(2)
@@ -90,4 +90,4 @@ class TestEnduranceMusicPlayback(GaiaEnduranceTestCase):
 
         # exit back to albums list, so can start again at next iteration
         back_header_button = self.marionette.find_element(*self._back_header_button_locator)
-        self.marionette.tap(back_header_button)
+        back_header_button.tap()

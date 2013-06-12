@@ -51,7 +51,7 @@ class TestEnduranceBrowserWifi(GaiaEnduranceTestCase):
         locator_part_two = '#cards-view li.card[data-origin*="email"] .close-card'
         _close_button_locator = ('css selector', locator_part_two)
         close_card_app_button = self.marionette.find_element(*_close_button_locator)
-        self.marionette.tap(close_card_app_button)        
+        close_card_app_button.tap()       
 
         # Wait a couple of seconds between iterations
         time.sleep(2)
