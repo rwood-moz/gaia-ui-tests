@@ -48,7 +48,8 @@ class Gallery(Base):
 
     def switch_to_camera(self):
         switch_to_camera_button = self.marionette.find_element(*self._switch_to_camera_button_locator)
-        self.marionette.tap(switch_to_camera_button)
+        #self.marionette.tap(switch_to_camera_button)
+        switch_to_camera_button.tap()
         camera_app = gaiatest.apps.camera.app.Camera(self.marionette)
         camera_app.launch()
         return camera_app
