@@ -45,10 +45,10 @@ class GaiaTestOptions(MarionetteTestOptions):
 
         return options, tests
 
-    def verify_usage(self):
-        MarionetteTestOptions.verify_usage(self)
+    def verify_usage(self, options, tests):
+        MarionetteTestOptions.verify_usage(self,options, tests)
 
-        options, tests = self.parse_args()
+        #options, tests = self.parse_args()
 
         if options.iterations is not None and options.iterations < 1:
             raise ValueError('iterations must be a positive integer')
