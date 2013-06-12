@@ -20,8 +20,7 @@ class TestClockTestAllItemsPresentNewAlarm(GaiaTestCase):
         new_alarm = self.clock.tap_new_alarm()
 
         # Ensure label has the default placeholder and text
-        self.assertEquals(new_alarm.alarm_label_placeholder, 'Alarm')
-        self.assertEquals(new_alarm.alarm_label, 'Alarm')
+        self.assertEquals(new_alarm.alarm_label_placeholder, 'Alarm name')
 
         # Ensure repeat has the default value
         self.assertEquals(new_alarm.alarm_repeat, 'Never')

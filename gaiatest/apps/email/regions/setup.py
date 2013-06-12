@@ -27,7 +27,9 @@ class SetupEmail(Base):
         self.marionette.find_element(*self._password_locator).send_keys(value)
 
     def tap_next(self):
-        self.marionette.find_element(*self._next_locator).tap()
+        # TODO Tap one pixel above bottom edge to dodge the System update notification banner bug 879192
+        next_button = self.marionette.find_element(*self._next_locator)
+        next_button.tap(y=(next_button.size['height'] - 1))
 
     def wait_for_setup_complete(self):
         self.wait_for_element_displayed(*self._continue_button_locator)
@@ -80,7 +82,10 @@ class ManualSetupEmail(Base):
         el.send_keys(value)
 
     def select_account_type(self, value):
-        self.marionette.find_element(*self._account_type_locator).click()
+        account_type = self.marionette.find_element(*self._account_type_locator)
+        # TODO: remove the explicit scroll once bug 833370 is fixed
+        self.marionette.execute_script("arguments[0].scrollIntoView(false);", [account_type])
+        account_type.click()
         self.select(value)
 
     def type_imap_name(self, value):

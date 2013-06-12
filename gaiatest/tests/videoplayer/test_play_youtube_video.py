@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import time
 from gaiatest import GaiaTestCase
 from gaiatest.apps.browser.app import Browser
 from gaiatest.apps.videoplayer.regions.fullscreen_video import FullscreenVideo
@@ -32,6 +33,8 @@ class TestYouTube(GaiaTestCase):
         # Tap the video
         self.wait_for_element_present(*self._video_container_locator)
         self.marionette.find_element(*self._video_container_locator).tap()
+        # TODO: Remove sleep when Bug # 815115 is addressed, or if we can wait for a Javascript condition
+        time.sleep(1)
         self.marionette.switch_to_frame()
         fullscreen_video = FullscreenVideo(self.marionette)
 

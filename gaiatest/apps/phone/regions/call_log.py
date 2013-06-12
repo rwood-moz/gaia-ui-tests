@@ -7,10 +7,8 @@ from gaiatest.apps.phone.app import Phone
 
 class CallLog(Phone):
 
-    _call_log_locator = ('css selector', "iframe[name='call_screen0']")
-
-    _all_calls_tab_locator = ('id', 'allFilter')
-    _all_calls_tab_link_locator = ('css selector', '#allFilter a')
+    _all_calls_tab_locator = ('id', 'all-filter')
+    _all_calls_tab_link_locator = ('css selector', '#all-filter a')
     _all_calls_list_item_locator = ('css selector', 'li.log-item')
 
     def __init__(self, marionette):

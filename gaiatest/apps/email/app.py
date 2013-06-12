@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import time
+from marionette.errors import TimeoutException
 from gaiatest.apps.base import Base
 from gaiatest.apps.base import PageRegion
 from gaiatest.apps.email.regions.setup import SetupEmail
@@ -13,10 +15,10 @@ class Email(Base):
 
     name = 'E-Mail'
 
-    _header_area_locator = ('css selector', '.msg-list-header.msg-nonsearch-only')
-    _email_locator = ('css selector', '.msg-header-item')
-    _syncing_locator = ('css selector', '.msg-messages-syncing > .small')
-    _manual_setup_locator = ('css selector', '.sup-manual-config-btn')
+    _header_area_locator = ('css selector', '#cardContainer .msg-list-header.msg-nonsearch-only')
+    _email_locator = ('css selector', '#cardContainer .msg-header-item')
+    _syncing_locator = ('css selector', '#cardContainer .msg-messages-syncing > .small')
+    _manual_setup_locator = ('css selector', '#cardContainer .sup-manual-config-btn')
 
     def basic_setup_email(self, name, email, password):
 
@@ -46,6 +48,23 @@ class Email(Base):
         setup.type_smtp_hostname(imap['smtp_hostname'])
         setup.type_smtp_name(imap['smtp_name'])
         setup.type_smtp_port(imap['smtp_port'])
+
+        setup.tap_next()
+        setup.wait_for_setup_complete()
+        setup.tap_continue()
+        self.wait_for_header_area()
+
+    def setup_active_sync_email(self, active_sync):
+        setup = self.tap_manual_setup()
+        setup.type_name(active_sync['name'])
+
+        setup.type_email(active_sync['email'])
+        setup.type_password(active_sync['password'])
+
+        setup.select_account_type('ActiveSync')
+
+        setup.type_activesync_hostname(active_sync['active_sync_hostname'])
+        setup.type_activesync_name(active_sync['active_sync_username'])
 
         setup.tap_next()
         setup.wait_for_setup_complete()
@@ -84,6 +103,18 @@ class Email(Base):
     def wait_for_header_area(self):
         self.wait_for_element_displayed(*self._header_area_locator)
 
+    def wait_for_email(self, subject, timeout=60):
+        timeout = float(timeout) + time.time()
+        while time.time() < timeout:
+            time.sleep(5)
+            self.toolbar.tap_refresh()
+            self.wait_for_emails_to_sync()
+            emails = self.mails
+            if subject in [mail.subject for mail in emails]:
+                break
+        else:
+            raise TimeoutException('Email %s not received before timeout' % subject)
+
 
 class Header(Base):
     _menu_button_locator = ('css selector', '.card.center .msg-folder-list-btn')
@@ -93,7 +124,7 @@ class Header(Base):
     def tap_menu(self):
         self.marionette.find_element(*self._menu_button_locator).tap()
         toolbar = ToolBar(self.marionette)
-        self.wait_for_condition(lambda m: toolbar.is_settings_visible)
+        self.wait_for_condition(lambda m: toolbar.is_visible)
         return toolbar
 
     def tap_compose(self):
@@ -115,10 +146,12 @@ class Header(Base):
 
 
 class ToolBar(Base):
-    _refresh_locator = ('css selector', '.msg-refresh-btn')
-    _search_locator = ('css selector', '.msg-search-btn')
-    _edit_locator = ('css selector', '.msg-edit-btn')
-    _settings_locator = ('css selector', '.fld-nav-settings-btn')
+    _toolbar_locator = ('css selector', '#cardContainer .fld-nav-toolbar')
+    _refresh_locator = ('css selector', '#cardContainer .msg-refresh-btn')
+    _search_locator = ('css selector', '#cardContainer .msg-search-btn')
+    _edit_locator = ('css selector', '#cardContainer .msg-edit-btn')
+    _settings_locator = ('css selector', '#cardContainer .fld-nav-settings-btn')
+
 
     def tap_refresh(self):
         self.marionette.find_element(*self._refresh_locator).tap()
@@ -130,8 +163,11 @@ class ToolBar(Base):
         self.marionette.find_element(*self._edit_locator).tap()
 
     def tap_settings(self):
-        # TODO: el.tap() if not tapping settings button
-        self.marionette.find_element(*self._settings_locator).click()
+        self.marionette.find_element(*self._settings_locator).tap()
+
+    @property
+    def is_visible(self):
+        return self.marionette.find_element(*self._toolbar_locator).location['x'] == 0
 
     @property
     def is_refresh_visible(self):
@@ -157,9 +193,13 @@ class Message(PageRegion):
     def subject(self):
         return self.root_element.find_element(*self._subject_locator).text
 
+    def scroll_to_message(self):
+        self.marionette.execute_script("arguments[0].scrollIntoView(false);", [self.root_element])
+
     def tap_subject(self):
         el = self.root_element.find_element(*self._subject_locator)
+        # TODO: Remove scrollIntoView when bug #877163 is fixed
         self.marionette.execute_script("arguments[0].scrollIntoView(false);", [el])
-        self.marionette.tap(self.root_element.find_element(*self._subject_locator))
+        self.root_element.find_element(*self._subject_locator).tap()
         from gaiatest.apps.email.regions.read_email import ReadEmail
         return ReadEmail(self.marionette)

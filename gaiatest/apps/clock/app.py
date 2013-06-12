@@ -56,10 +56,12 @@ class Clock(Base):
         self.wait_for_element_displayed(*self._banner_countdown_notification_locator)
 
     def tap_analog_display(self):
+        self.wait_for_element_displayed(*self._analog_clock_display_locator)
         self.marionette.find_element(*self._analog_clock_display_locator).tap()
         self.wait_for_element_displayed(*self._digital_clock_display_locator)
 
     def tap_digital_display(self):
+        self.wait_for_element_displayed(*self._digital_clock_display_locator)
         self.marionette.find_element(*self._digital_clock_display_locator).tap()
         self.wait_for_element_displayed(*self._analog_clock_display_locator)
 
@@ -68,15 +70,15 @@ class Clock(Base):
 
         from gaiatest.apps.clock.regions.alarm import NewAlarm
         new_alarm = NewAlarm(self.marionette)
-        new_alarm.wait_for_picker_to_be_visible()
+        new_alarm.wait_for_fields_to_be_visible()
         return new_alarm
 
     class Alarm(PageRegion):
 
-        _label_locator = ('css selector', 'div.label')
-        _time_locator = ('css selector', 'div.alarmList-time')
-        _tap_locator = ('id', 'alarm-item')
-        _check_box_locator = ('id', 'input-enable')
+        _label_locator = ('css selector', '.label')
+        _time_locator = ('css selector', '.time')
+        _tap_locator = ('css selector', '.alarm-item')
+        _check_box_locator = ('css selector', '.alarmList .input-enable')
         _enable_button_locator = ('css selector', 'label.alarmList')
 
         @property

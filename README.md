@@ -11,14 +11,15 @@ Installation
 
 Installation is simple:
 
-    easy_install gaiatest
-
-If you anticipate modifying gaiatest, you can instead:
-
     git clone git://github.com/mozilla/gaia-ui-tests.git
     cd gaia-ui-tests
     python setup.py develop
 
+Risks
+====
+
+Please visit [this page](https://developer.mozilla.org/en-US/docs/Gaia_Test_Runner) to understand and acknowledge the risks involved when running these tests.
+ 
 Running Tests
 =============
 
@@ -36,6 +37,9 @@ Options:
         desktop build.  If you've used port forwarding as described below,
         you'd specify --address localhost:2828
     --testvars= (see section below)
+    --restart restart target instance between tests. This option will remove 
+        the /data/local/indexedDB and /data/b2g/mozilla folders and restore the 
+        device back to a common state
 
 Testing on a Device
 ===================
@@ -62,10 +66,10 @@ Alternatively, it may be downloaded as part of the
 Testing on Desktop build
 ========================
 
-You can download the latest build of the desktop client from [this location](http://ftp.mozilla.org/pub/mozilla.org/b2g/nightly/latest-mozilla-b2g18/), 
+You can download the latest build of the desktop client from [this location](http://ftp.mozilla.org/pub/mozilla.org/b2g/nightly/latest-mozilla-b2g18/),
 but make sure you download the appropriate file for your operating system.
 
-Note : Unfortunately, due to [Bug 832469](https://bugzilla.mozilla.org/show_bug.cgi?id=832469) the nightly desktop builds do not currently work on Windows, so you will 
+Note : Unfortunately, due to [Bug 832469](https://bugzilla.mozilla.org/show_bug.cgi?id=832469) the nightly desktop builds do not currently work on Windows, so you will
 need either Mac or Linux to continue :
 
   * **Mac**: b2g-[VERSION].multi.mac64.dmg
@@ -74,15 +78,15 @@ need either Mac or Linux to continue :
 
 Note : If you do not have the operating systems installed on your machine, a virtual machine is fine as well.
 
-Once downloaded, you will need to extract the contents to a local folder. For the purposes of the rest 
+Once downloaded, you will need to extract the contents to a local folder. For the purposes of the rest
 of this guide, I’ll refer to this location as `$B2G_HOME`.
 
 
 Add the line `user_pref('marionette.force-local', true);` to your gaia/profile/user.js file, which on :
 
-  * **Mac** is located in $B2G_HOME/B2G.app/Contents/MacOS 
+  * **Mac** is located in $B2G_HOME/B2G.app/Contents/MacOS
   * **Linux** is located in $B2G_HOME/b2g
- 
+
 Because we’re running against the desktop client we must filter out all tests that are unsuitable. To run the tests, use the following command:
 
 `gaiatest --address=localhost:2828 --type=b2g-antenna-bluetooth-carrier-camera-sdcard-wifi-xfail gaiatest/tests/manifest.ini`
@@ -129,37 +133,79 @@ When running your tests add the argument:
 
 Variables:
 
-`this_phone_number (string)` The phone number of the SIM card in your device. Prefix the number with '+' and your international dialing code.
+`"carrier": {} (dict)` The carrier information of the test phone. This contains the phone number, country and network of the SIM card.
 
-`remote_phone_number (string)` A phone number that your device can call during the tests (try not to be a nuisance!). Prefix the number with '+' and your international dialing code.
+```
+"carrier":{
+    "phone_number": "",
+    "country": "",
+    "network": ""
+}
+```
+`"imei": "" (string)` The 12 digit IMEI code of the test phone.
+`"remote_phone_number": "" (string)` A phone number that your device can call during the tests (try not to be a nuisance!). Prefix the number with '+' and your international dialing code.
+`"wifi":{}{ (dict)` This are the settings of your WiFi connection. Currently this supports WPA/WEP/etc. You can add WiFi networks by doing the following (remember to replace "KeyManagement" and "wep" with the value your network supports) :
 
-`wifi.ssid (string)` This is the SSID/name of your WiFi connection. Currently this supports WPA/WEP/etc. You can add WiFi networks by doing the following (remember to replace "KeyManagement" and "wep" with the value your network supports) :
-
-`
+```
 "wifi": {
     "ssid": "MyNetwork",
     "keyManagement": "WEP",
     "wep": "MyPassword"
 }
-`
+```
 
-` WPA-PSK:
+WPA-PSK:
+```
 "wifi": {
     "ssid": "MyNetwork",
     "keyManagement": "WPA-PSK",
     "psk": "MyPassword"
 }
-`
-
-` Marketplace:
-"marketplace": {
-    "username": "MyUsername",
-    "password": "MyPassword"
-}
-`
-
-
+```
 __Note__: Due to [Bug 775499](http://bugzil.la/775499), WiFi connections via WPA-EAP are not capable at this time.
+
+`"email": {} (dict)` The email login information used by the email tests. It can contain different types of email accounts:
+
+Gmail:
+```
+"gmail": {
+       "name": "",
+       "email": "",
+       "password": ""
+    }
+```
+
+Or different email protocols:
+```
+"IMAP": {
+    "name": "",
+    "email": "",
+    "password": "",
+    "imap_hostname": "",
+    "imap_name": "",
+    "imap_port": "",
+    "smtp_hostname": "",
+    "smtp_name": "",
+    "smtp_port": ""
+}
+```
+Or:
+```
+"ActiveSync":{
+    "name": "",
+    "email": "",
+    "password": "",
+    "active_sync_hostname": "",
+    "active_sync_username": ""
+}
+```
+`"settings": {} (dict)` Custom settings to override the Gaia default settings. These will be set before each test run but are not mandatory.
+```
+"settings:{
+    "<setting>":<value>
+}"
+```
+
 
 Test data Prerequisites
 =======================

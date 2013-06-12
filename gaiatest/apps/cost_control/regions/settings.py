@@ -33,8 +33,7 @@ class Settings(Base):
         switch = self.marionette.find_element(*self._data_alert_switch_locator)
         if switch.is_selected() is not value:
             label = self.marionette.find_element(*self._data_alert_label_locator)
-            # TODO: Switch to using tap() when bug #869041 is fixed
-            label.click()
+            label.tap()
 
     def select_when_use_is_above_unit_and_value(self, unit, value):
 
@@ -42,13 +41,12 @@ class Settings(Base):
         self.wait_for_condition(
             lambda m: m.find_element(*self._when_use_is_above_button_locator).get_attribute('disabled') == 'false'
         )
-        # TODO: Switch to using tap() when bug #869041 is fixed
-        when_use_is_above_button.click()
+        when_use_is_above_button.tap()
 
         self.wait_for_element_displayed(*self._unit_button_locator)
         current_unit = self.marionette.find_element(*self._unit_button_locator)
         if current_unit.text is not unit:
-            self.marionette.tap(current_unit)
+            current_unit.tap()
             # We need to wait for the javascript to do its stuff
             self.wait_for_condition(lambda m: m.find_element(*self._unit_button_locator).text == unit)
 

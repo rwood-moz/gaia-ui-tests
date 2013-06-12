@@ -33,7 +33,7 @@ class TestClockSetAlarmRepeat(GaiaTestCase):
 
         # check select Sunday twice
         new_alarm.select_repeat('Sunday')
-        self.assertEqual('Mon, Tue, Wed, Thu, Fri Sun', new_alarm.alarm_repeat)
+        self.assertEqual('Mon, Tue, Wed, Thu, Fri, Sun', new_alarm.alarm_repeat)
 
         new_alarm.select_repeat('Sunday')
         self.assertEqual('Weekdays', new_alarm.alarm_repeat)

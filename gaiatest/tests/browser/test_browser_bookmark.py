@@ -51,12 +51,6 @@ class TestBrowserBookmark(GaiaTestCase):
 
         self.assertTrue(self._bookmark_added, 'The bookmark %s was not found to be installed on the home screen.' % self.bookmark_title)
 
-    def tearDown(self):
-        if self._bookmark_added:
-            self._delete_bookmark(self.bookmark_title)
-
-        GaiaTestCase.tearDown(self)
-
     def _go_to_next_page(self):
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToNextPage()')
 
@@ -66,21 +60,3 @@ class TestBrowserBookmark(GaiaTestCase):
         return self.marionette.execute_script("""
         var pageHelper = window.wrappedJSObject.GridManager.pageHelper;
         return pageHelper.getCurrentPageNumber() < (pageHelper.getTotalPagesNumber() - 1);""")
-
-    def _delete_bookmark(self, bookmark_name):
-        # TODO move this snippet to the Homescreen app object
-
-        # ensure we are in the homescreen app
-        self.apps.launch('Homescreen')
-        self.marionette.execute_script("""
-                                          name = arguments[0];
-                                          let apps = window.wrappedJSObject.GridManager.getApps();
-                                          apps.forEach (function(aApp) {
-                                            if (aApp.isBookmark) {
-                                              if (aApp.manifest.name == name) {
-                                                console.log('uninstalling app with name ' + aApp.manifest.name);
-                                                window.wrappedJSObject.GridManager.uninstall(aApp);
-                                              };
-                                            };
-                                          });
-                                        """, script_args=[bookmark_name])

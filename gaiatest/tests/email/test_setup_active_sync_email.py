@@ -18,20 +18,8 @@ class TestSetupActiveSync(GaiaTestCase):
         self.email = Email(self.marionette)
         self.email.launch()
 
-        setup = self.email.tap_manual_setup()
-        setup.type_name(self.testvars['email']['ActiveSync']['name'])
-        setup.type_email(self.testvars['email']['ActiveSync']['email'])
-        setup.type_password(self.testvars['email']['ActiveSync']['password'])
-
-        setup.select_account_type('ActiveSync')
-
-        setup.type_activesync_hostname(self.testvars['email']['ActiveSync']['active_sync_hostname'])
-        setup.type_activesync_name(self.testvars['email']['ActiveSync']['active_sync_username'])
-
-        setup.tap_next()
-        setup.wait_for_setup_complete()
-        setup.tap_continue()
-        self.email.wait_for_header_area()
+        self.email.setup_active_sync_email(
+            self.testvars['email']['ActiveSync'])
 
         # check header area
         self.assertTrue(self.email.header.is_compose_visible)
@@ -42,6 +30,5 @@ class TestSetupActiveSync(GaiaTestCase):
         self.assertTrue(self.email.toolbar.is_edit_visible)
         self.assertTrue(self.email.toolbar.is_refresh_visible)
 
-        # check account has emails
+        # wait for sync to complete
         self.email.wait_for_emails_to_sync()
-        self.assertGreater(len(self.email.mails), 0)
