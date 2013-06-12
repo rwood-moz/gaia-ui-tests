@@ -413,6 +413,8 @@ class GaiaTestCase(MarionetteTestCase):
 
     def __init__(self, *args, **kwargs):
         self.restart = kwargs.pop('restart', False)
+        kwargs.pop('iterations', None)
+        kwargs.pop('checkpoint_interval', None)
         MarionetteTestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
@@ -693,3 +695,102 @@ class GaiaTestCase(MarionetteTestCase):
         self.apps = None
         self.data_layer = None
         MarionetteTestCase.tearDown(self)
+
+
+class GaiaEnduranceTestCase(GaiaTestCase):
+
+    def __init__(self, *args, **kwargs):
+        self.iterations = kwargs.pop('iterations') or 1
+        self.checkpoint_interval = kwargs.pop('checkpoint_interval') or self.iterations
+        GaiaTestCase.__init__(self, *args, **kwargs)
+
+    def drive(self, test, app):
+        self.test_method = test
+        self.app_under_test = app
+
+        # Now drive the actual test case iterations
+        for count in range(1, self.iterations + 1):
+            self.iteration = count
+            self.marionette.log("%s iteration %d of %d" % (self.test_method.__name__, count, self.iterations))
+            self.test_method()
+            # Checkpoint time?
+            if ((count % self.checkpoint_interval) == 0) or count == self.iterations:
+                self.checkpoint()
+
+        # Finished, now process checkpoint data into .json output
+        self.process_checkpoint_data()
+
+    def checkpoint(self):
+        # Sleep to give device idle time (for gc)
+        idle_time = 30
+        self.marionette.log("sleeping %d seconds to give the device some idle time" % idle_time)
+        time.sleep(idle_time)
+
+        # Dump out some memory status info
+        self.marionette.log("checkpoint")
+        self.cur_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
+        # If first checkpoint, create the file if it doesn't exist already
+        if self.iteration in (0, self.checkpoint_interval):
+            self.checkpoint_path = "checkpoints"
+            if not os.path.exists(self.checkpoint_path):
+                os.makedirs(self.checkpoint_path, 0755)
+            self.log_name = "%s/checkpoint_%s_%s.log" % (self.checkpoint_path, self.test_method.__name__, self.cur_time)
+            with open(self.log_name, 'a') as log_file:
+                log_file.write('%s Gaia Endurance Test: %s\n' % (self.cur_time, self.test_method.__name__))
+        output_str = self.device.manager.shellCheckOutput(["b2g-ps"])
+        with open(self.log_name, 'a') as log_file:
+            log_file.write('%s Checkpoint after iteration %d of %d:\n' % (self.cur_time, self.iteration, self.iterations))
+            log_file.write('%s\n' % output_str)
+
+    def close_app(self):
+        # Close the current app (self.app) by using the home button
+        self.marionette.switch_to_frame()
+        self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('home'));")
+
+        # Bring up the cards view
+        _cards_view_locator = ('id', 'cards-view')
+        self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('holdhome'));")
+        self.wait_for_element_displayed(*_cards_view_locator)
+
+        # Sleep a bit
+        time.sleep(5)
+
+        # Tap the close icon for the current app
+        locator_part_two = '#cards-view li.card[data-origin*="%s"] .close-card' % self.app_under_test.lower()
+        _close_button_locator = ('css selector', locator_part_two)
+        close_card_app_button = self.marionette.find_element(*_close_button_locator)
+        self.marionette.tap(close_card_app_button)
+
+    def process_checkpoint_data(self):
+        # Process checkpoint data into .json
+        self.marionette.log("processing checkpoint data from %s" % self.log_name)
+
+        # Open the checkpoint file
+        checkpoint_file = open(self.log_name, 'r')
+
+        # Grab every b2g_vsize reading for each checkpoint
+        b2g_vsize_list = []
+        for next_line in checkpoint_file:
+            if next_line.startswith("b2g"):
+                #b2g_vsize_list.append(int(next_line.split()[4]))
+                b2g_vsize_list.append(next_line.split()[4])
+
+        # Close the checkpoint file
+        checkpoint_file.close()
+
+        # Create a summary text file
+        summary_name = self.log_name.replace('.log', '_summary.log')
+        summary_file = open(summary_name, 'w')
+
+        # Write the summarized checkpoint data
+        summary_file.write('test_name: %s\n' % self.test_method.__name__)
+        summary_file.write('completed: %s\n' % self.cur_time)
+        summary_file.write('app_under_test: %s\n' % self.app_under_test.lower())
+        summary_file.write('total_iterations: %d\n' % self.iterations)
+        summary_file.write('checkpoint_interval: %d\n' % self.checkpoint_interval)
+        summary_file.write('b2g_vsize: ')
+        summary_file.write(', '.join(b2g_vsize_list))
+        summary_file.write('\n\n')
+
+        # Close the summary file
+        summary_file.close()

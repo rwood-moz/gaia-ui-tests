@@ -23,6 +23,39 @@ class GaiaTestOptions(MarionetteTestOptions):
                          dest='restart',
                          default=False,
                          help='restart target instance between tests')
+        group.add_option('--iterations',
+                         action='store',
+                         dest='iterations',
+                         type='int',
+                         metavar='int',
+                         help='iterations for endurance tests')
+        group.add_option('--checkpoint',
+                         action='store',
+                         dest='checkpoint_interval',
+                         type='int',
+                         metavar='int',
+                         help='checkpoint interval for endurance tests')
+
+    def parse_args(self, args=None, values=None):
+        options, tests = MarionetteTestOptions.parse_args(self)
+
+        if options.iterations is not None:
+            if options.checkpoint_interval is None or options.checkpoint_interval > options.iterations:
+                options.checkpoint_interval = options.iterations
+
+        return options, tests
+
+    def verify_usage(self):
+        MarionetteTestOptions.verify_usage(self)
+
+        options, tests = self.parse_args()
+
+        if options.iterations is not None and options.iterations < 1:
+            raise ValueError('iterations must be a positive integer')
+        if options.checkpoint_interval is not None and options.checkpoint_interval < 1:
+            raise ValueError('checkpoint interval must be a positive integer')
+        if options.checkpoint_interval and not options.iterations:
+            raise ValueError('you must specify iterations when using checkpoint intervals')
 
 
 class GaiaTestRunner(MarionetteTestRunner):
