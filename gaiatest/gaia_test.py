@@ -712,6 +712,11 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         for count in range(1, self.iterations + 1):
             self.iteration = count
             self.marionette.log("%s iteration %d of %d" % (self.test_method.__name__, count, self.iterations))
+            # Print to console so can see what iteration we're on while test is running
+            if self.iteration == 1:
+                print "\n"
+            print "Iteration %d of %d..." % (count, self.iterations)
+
             self.test_method()
             # Checkpoint time?
             if ((count % self.checkpoint_interval) == 0) or count == self.iterations:
@@ -721,6 +726,8 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         self.process_checkpoint_data()
 
     def checkpoint(self):
+        # Console output so know what's happening if watching console
+        print "Checkpoint..."
         # Sleep to give device idle time (for gc)
         idle_time = 30
         self.marionette.log("sleeping %d seconds to give the device some idle time" % idle_time)
