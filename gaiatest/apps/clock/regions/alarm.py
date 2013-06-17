@@ -13,7 +13,7 @@ from marionette.marionette import Actions
 class NewAlarm(Clock):
 
     _edit_alarm_fields_locator = ('id', 'edit-alarm')
-    _alarm_name_locator = ('xpath', "//input[@placeholder='Alarm name']")
+    _alarm_name_locator = ('xpath', "//input[@name='alarm.label']")
     _repeat_menu_locator = ('id', 'repeat-menu')
     _sound_menu_locator = ('id', 'sound-menu')
     _snooze_menu_locator = ('id', 'snooze-menu')
