@@ -26,6 +26,7 @@ class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
         self.close_app()
         time.sleep(2)
         self.clock.launch()
+        self.initial_alarms_count = len(self.clock.alarms)
 
     def test_endurance_set_alarm(self):
         self.drive(test=self.set_alarm, app='clock')
@@ -33,14 +34,10 @@ class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
     def set_alarm(self):
         # Set a new alarm and verify; code taken from existing clock tests
 
-        # Get the number of alarms set, before adding the new alarm
-        initial_alarms_count = len(self.clock.alarms)
-
         # Create a new alarm with the default values except unique label
         new_alarm = self.clock.tap_new_alarm()
         text = "%d of %d" %(self.iteration, self.iterations)
         new_alarm.type_alarm_label(text)
-
         self.clock = new_alarm.tap_done()
 
         # Verify the banner-countdown message appears
@@ -48,9 +45,10 @@ class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
         self.assertTrue('The alarm is set for' in alarm_msg, 'Actual banner message was: "' + alarm_msg + '"')
         time.sleep(2)
 
-        # Ensure the new alarm has been added
-        self.assertTrue(initial_alarms_count < len(self.clock.alarms),
-                        'Alarms count did not increment')
+        # Ensure all of the new alarms were added
+        if self.iteration == self.iterations:
+            alarms = self.clock.alarms
+            self.assertEqual(len(alarms), self.initial_alarms_count + self.iteration, 'Alarms count did not increment')
 
         # A bit of sleep between reps
         time.sleep(3)

@@ -44,8 +44,9 @@ class TestEnduranceAddContact(GaiaEnduranceTestCase):
         # Save new contact
         new_contact_form.tap_done()
 
-        # Verify a new contact was added
-        self.wait_for_condition(lambda m: len(self.contacts.contacts) == self.iteration)
+        # Ensure all contacts were added
+        if self.iteration == self.iterations:
+            self.assertEqual(len(self.contacts.contacts), self.iterations)
 
         # Sleep between reps
         time.sleep(3)
