@@ -787,6 +787,12 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         # Close the checkpoint file
         checkpoint_file.close()
 
+        # Calculate the average b2g_vsize
+        total = 0
+        for b2g_mem_value in b2g_vsize_list:
+            total+=int(b2g_mem_value)
+        avg_vsize = total/len(b2g_vsize_list)
+
         # Create a summary text file
         summary_name = self.log_name.replace('.log', '_summary.log')
         summary_file = open(summary_name, 'w')
@@ -799,7 +805,7 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         summary_file.write('checkpoint_interval: %d\n' % self.checkpoint_interval)
         summary_file.write('b2g_vsize: ')
         summary_file.write(', '.join(b2g_vsize_list))
-        summary_file.write('\n\n')
+        summary_file.write('\navg_vsize: %d\n\n' % avg_vsize)
 
         # Close the summary file
         summary_file.close()
