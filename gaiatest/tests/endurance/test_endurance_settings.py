@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-# Approximate runtime per 100 iterations: 205 minutes
+# Approximate runtime per 100 iterations: 210 minutes
 
 import time
 
@@ -68,8 +68,9 @@ class TestEnduranceSettings(GaiaEnduranceTestCase):
 
         # Need explicit scroll because of bug 833370
         self.marionette.execute_script('arguments[0].scrollIntoView(false);', [menu_item])
-
+        time.sleep(1)
         menu_item.tap()
+        time.sleep(2)
         self.wait_for_element_present(settings_screen_locator[0], settings_screen_locator[1])
         self.go_back_to_main_settings()
 
