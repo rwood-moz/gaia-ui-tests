@@ -809,3 +809,9 @@ class GaiaEnduranceTestCase(GaiaTestCase):
 
         # Close the summary file
         summary_file.close()
+
+        # Write to suite summary file
+        suite_summary_file_name = '%s/avg_b2g_vsize_suite_summary.log' % self.checkpoint_path
+        suite_summary_file = open(suite_summary_file_name, 'a')
+        suite_summary_file.write('%s: %s\n' % (self.test_method.__name__, avg_vsize))
+        suite_summary_file.close()
