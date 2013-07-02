@@ -29,8 +29,8 @@ def parse_results(suite_summary_file):
 def cli():
     current_results = {}
     previous_results = {}
-    current_results_file_name = '../../checkpoints/avg_b2g_vsize_suite_summary.log'
-    previous_results_file_name = '../../checkpoints/frompreviousbuild/checkpoints/avg_b2g_vsize_suite_summary.log'
+    current_results_file_name = 'checkpoints/avg_b2g_vsize_suite_summary.log'
+    previous_results_file_name = 'checkpoints/frompreviousbuild/checkpoints/avg_b2g_vsize_suite_summary.log'
     flagged_count = 0
 
     # Allowed deviation i.e. current value change from previous value, max allowed deviation before
