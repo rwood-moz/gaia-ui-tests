@@ -241,10 +241,11 @@ def cli():
         print "\nSearching for *_summary.log files in %s\n" % options.process_dir
 
         entire_file_list = os.listdir(file_path)
+
         if len(entire_file_list) == 0:
             raise Exception("No checkpoint *_summary.log files were found in the given path")
         for found_file in entire_file_list:
-            if found_file.endswith("summary.log"):
+            if found_file.endswith("summary.log") and found_file != "avg_b2g_vsize_suite_summary.log":
                 summary_file_list.append("%s/%s" % (file_path, found_file))
         if len(summary_file_list) == 0:
             raise Exception("No checkpoint *_summary.log files were found in the given path")
