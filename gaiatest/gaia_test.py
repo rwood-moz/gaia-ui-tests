@@ -777,21 +777,20 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         # Open the checkpoint file
         checkpoint_file = open(self.log_name, 'r')
 
-        # Grab every b2g_vsize reading for each checkpoint
-        b2g_vsize_list = []
+        # Grab every b2g rss reading for each checkpoint
+        b2g_rss_list = []
         for next_line in checkpoint_file:
             if next_line.startswith("b2g"):
-                #b2g_vsize_list.append(int(next_line.split()[4]))
-                b2g_vsize_list.append(next_line.split()[4])
+                b2g_rss_list.append(next_line.split()[5])
 
         # Close the checkpoint file
         checkpoint_file.close()
 
-        # Calculate the average b2g_vsize
+        # Calculate the average b2g_rss
         total = 0
-        for b2g_mem_value in b2g_vsize_list:
+        for b2g_mem_value in b2g_rss_list:
             total+=int(b2g_mem_value)
-        avg_vsize = total/len(b2g_vsize_list)
+        avg_rss = total/len(b2g_rss_list)
 
         # Create a summary text file
         summary_name = self.log_name.replace('.log', '_summary.log')
@@ -803,15 +802,15 @@ class GaiaEnduranceTestCase(GaiaTestCase):
         summary_file.write('app_under_test: %s\n' % self.app_under_test.lower())
         summary_file.write('total_iterations: %d\n' % self.iterations)
         summary_file.write('checkpoint_interval: %d\n' % self.checkpoint_interval)
-        summary_file.write('b2g_vsize: ')
-        summary_file.write(', '.join(b2g_vsize_list))
-        summary_file.write('\navg_vsize: %d\n\n' % avg_vsize)
+        summary_file.write('b2g_rss: ')
+        summary_file.write(', '.join(b2g_rss_list))
+        summary_file.write('\navg_rss: %d\n\n' % avg_rss)
 
         # Close the summary file
         summary_file.close()
 
         # Write to suite summary file
-        suite_summary_file_name = '%s/avg_b2g_vsize_suite_summary.log' % self.checkpoint_path
+        suite_summary_file_name = '%s/avg_b2g_rss_suite_summary.log' % self.checkpoint_path
         suite_summary_file = open(suite_summary_file_name, 'a')
-        suite_summary_file.write('%s: %s\n' % (self.test_method.__name__, avg_vsize))
+        suite_summary_file.write('%s: %s\n' % (self.test_method.__name__, avg_rss))
         suite_summary_file.close()

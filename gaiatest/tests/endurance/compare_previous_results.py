@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #
-# Compare endurance test results (avg b2g vsize values) in the current run with
-# results from the previous test suite run. Flag if the b2g vsize memory use
+# Compare endurance test results (avg b2g rss values) in the current run with
+# results from the previous test suite run. Flag if the b2g rss memory use
 # increases by x% in any of the tests; in future also compare with thresholds.
 # To be run from Jenkins after the current results have been submitted to DataZilla.
 # In the Jenkins workspace:
-# ==> From current test run:  checkpoints/avg_b2g_vsize_suite_summary.log
-# ==> From previous test run: checkpoints/frompreviousbuild/checkpoints/avg_b2g_vsize_suite_summary.log
+# ==> From current test run:  checkpoints/avg_b2g_rss_suite_summary.log
+# ==> From previous test run: checkpoints/frompreviousbuild/checkpoints/avg_b2g_rss_suite_summary.log
 
 import os
 import sys
@@ -29,8 +29,8 @@ def parse_results(suite_summary_file):
 def cli():
     current_results = {}
     previous_results = {}
-    current_results_file_name = 'checkpoints/avg_b2g_vsize_suite_summary.log'
-    previous_results_file_name = 'checkpoints/frompreviousbuild/checkpoints/avg_b2g_vsize_suite_summary.log'
+    current_results_file_name = 'checkpoints/avg_b2g_rss_suite_summary.log'
+    previous_results_file_name = 'checkpoints/frompreviousbuild/checkpoints/avg_b2g_rss_suite_summary.log'
     flagged_count = 0
 
     # Allowed deviation i.e. current value change from previous value, max allowed deviation before
@@ -40,12 +40,12 @@ def cli():
     # Get current and previous results
     current_results = parse_results(current_results_file_name)
     if len(current_results) == 0:
-        print "No results found in avg_b2g_vsize_suite_summary.log from current test run."
+        print "No results found in avg_b2g_rss_suite_summary.log from current test run."
         exit(0)
 
     previous_results = parse_results(previous_results_file_name)
     if len(previous_results) == 0:
-        print "No results found in avg_b2g_vsize_suite_summary.log from previous test run."
+        print "No results found in avg_b2g_rss_suite_summary.log from previous test run."
         exit(0)
 
     # Compare; if want to flag return error code so jenkins will be marked as fail and send email
@@ -61,10 +61,10 @@ def cli():
             print "Allowed deviation: %d (%d percent variation)" % (max_difference, allowed_deviation * 100)
             print "Difference: %d (%.2f percent)" % (difference, (float(difference) / previous_value) * 100.00)
             if difference > max_difference:
-                print "Avg b2g vsize value has changed more than the allowed deviation!"
+                print "Avg b2g rss value has changed more than the allowed deviation!"
                 flagged_count += 1
             else:
-                print "Avg b2g vsize value change is within the allowable deviation."
+                print "Avg b2g rss value change is within the allowable deviation."
             # TO-DO
             # Check current values against thresholds; since variation could occur over time that is under
             # the allowed deviation but over time exceeds it; and want to be sure to flag that also

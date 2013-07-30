@@ -245,7 +245,7 @@ def cli():
         if len(entire_file_list) == 0:
             raise Exception("No checkpoint *_summary.log files were found in the given path")
         for found_file in entire_file_list:
-            if found_file.endswith("summary.log") and found_file != "avg_b2g_vsize_suite_summary.log":
+            if found_file.endswith("summary.log") and found_file != "avg_b2g_rss_suite_summary.log":
                 summary_file_list.append("%s/%s" % (file_path, found_file))
         if len(summary_file_list) == 0:
             raise Exception("No checkpoint *_summary.log files were found in the given path")
@@ -275,7 +275,7 @@ def cli():
                     k, v = x.split(': ')
                     if k in "total_iterations" or k in "checkpoint_interval":
                         checkpoint_summary[k] = int(v)
-                    elif k in "b2g_vsize":
+                    elif k in "b2g_rss":
                         checkpoint_summary[k] = v.split(',') # list of strings
                         checkpoint_summary[k] = map(int, checkpoint_summary[k]) # list of ints
                     elif k in "test_name":
@@ -292,7 +292,7 @@ def cli():
         
         # Results dictionary required format example
         # {'test_name': [180892, 180892, 181980, 181852, 180828, 182012, 183652, 182972, 183052, 183052]}
-        results[checkpoint_summary['test_name']] = checkpoint_summary['b2g_vsize']
+        results[checkpoint_summary['test_name']] = checkpoint_summary['b2g_rss']
     
         # Display the Datazilla configuration
         print 'Datazilla configuration:'
