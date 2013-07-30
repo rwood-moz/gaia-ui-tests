@@ -34,8 +34,8 @@ def cli():
     flagged_count = 0
 
     # Allowed deviation i.e. current value change from previous value, max allowed deviation before
-    # the result is flagged as a failure; i.e. .05 (5%)
-    allowed_deviation = .05
+    # the result is flagged as a failure; i.e. .1 (10%)
+    allowed_deviation = .1
 
     # Get current and previous results
     current_results = parse_results(current_results_file_name)
