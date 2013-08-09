@@ -2,17 +2,20 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.phone.app import Phone
 
 
 class CallLog(Phone):
 
-    _all_calls_tab_locator = ('id', 'all-filter')
-    _all_calls_tab_link_locator = ('css selector', '#all-filter a')
-    _all_calls_list_item_locator = ('css selector', 'li.log-item')
+    _upgrade_progress_locator = (By.ID, 'call-log-upgrading')
+    _all_calls_tab_locator = (By.ID, 'all-filter')
+    _all_calls_tab_link_locator = (By.CSS_SELECTOR, '#all-filter a')
+    _all_calls_list_item_locator = (By.CSS_SELECTOR, 'li.log-item')
 
     def __init__(self, marionette):
         Phone.__init__(self, marionette)
+        self.wait_for_element_not_displayed(*self._upgrade_progress_locator)
         self.wait_for_element_displayed(*self._all_calls_tab_locator)
 
     def tap_all_calls_tab(self):

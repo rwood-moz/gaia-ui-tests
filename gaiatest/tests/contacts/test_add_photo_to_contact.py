@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.mocks.mock_contact import MockContact
 from gaiatest.apps.contacts.app import Contacts
@@ -10,12 +11,12 @@ from gaiatest.apps.contacts.app import Contacts
 class TestContacts(GaiaTestCase):
 
     # Select from: dialog
-    _gallery_button_locator = ('xpath', "//a[text()='Gallery']")
+    _gallery_button_locator = (By.XPATH, "//a[text()='Gallery']")
 
     # Gallery
-    _gallery_frame_locator = ('css selector', "iframe[src^='app://gallery'][src$='index.html#pick']")
-    _gallery_items_locator = ('css selector', 'li.thumbnail')
-    _gallery_crop_done_button_locator = ('id', 'crop-done-button')
+    _gallery_frame_locator = (By.CSS_SELECTOR, "iframe[src^='app://gallery'][src$='index.html#pick']")
+    _gallery_items_locator = (By.CSS_SELECTOR, 'li.thumbnail')
+    _gallery_crop_done_button_locator = (By.ID, 'crop-done-button')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -31,6 +32,7 @@ class TestContacts(GaiaTestCase):
 
         contacts_app = Contacts(self.marionette)
         contacts_app.launch()
+        contacts_app.wait_for_contacts()
 
         contact_details = contacts_app.contact(self.contact['givenName']).tap()
 

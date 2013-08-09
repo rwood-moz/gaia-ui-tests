@@ -213,7 +213,7 @@ var GaiaApps = {
               },
               function() {
                 origin = GaiaApps.getRunningAppOrigin(appName);
-                return !!origin;
+                return windowManager.getDisplayedApp() == origin;
               }
             );
           });

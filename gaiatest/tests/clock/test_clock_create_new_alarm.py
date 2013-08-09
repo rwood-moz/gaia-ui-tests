@@ -58,9 +58,3 @@ class TestClockCreateNewAlarm(GaiaTestCase):
         alarms = self.clock.alarms
         self.assertEqual(len(alarms), 1)
         self.assertEqual(alarms[0].label, alarm_label_text)
-
-    def tearDown(self):
-        # delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
-        GaiaTestCase.tearDown(self)

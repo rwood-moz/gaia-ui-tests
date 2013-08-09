@@ -38,9 +38,3 @@ class TestClockDeleteAlarm(GaiaTestCase):
         self.wait_for_condition(lambda m: len(self.clock.alarms) != initial_alarms_count)
 
         self.assertEqual(len(self.clock.alarms), initial_alarms_count - 1, "delete alarm failed.")
-
-    def tearDown(self):
-        # delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
-        GaiaTestCase.tearDown(self)

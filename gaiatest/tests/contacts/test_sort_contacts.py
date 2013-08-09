@@ -32,6 +32,7 @@ class TestContacts(GaiaTestCase):
 
         contacts_app = Contacts(self.marionette)
         contacts_app.launch()
+        contacts_app.wait_for_contacts(number_to_wait_for=len(self._contacts_name_list))
 
         # if "Order by last name" switch is on, turn off it
         contacts_settings = contacts_app.tap_settings()

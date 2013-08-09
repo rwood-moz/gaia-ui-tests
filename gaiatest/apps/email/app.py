@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import time
+from marionette.by import By
 from marionette.errors import TimeoutException
 from gaiatest.apps.base import Base
 from gaiatest.apps.base import PageRegion
@@ -15,10 +16,10 @@ class Email(Base):
 
     name = 'E-Mail'
 
-    _header_area_locator = ('css selector', '#cardContainer .msg-list-header.msg-nonsearch-only')
-    _email_locator = ('css selector', '#cardContainer .msg-header-item')
-    _syncing_locator = ('css selector', '#cardContainer .msg-messages-syncing > .small')
-    _manual_setup_locator = ('css selector', '#cardContainer .sup-manual-config-btn')
+    _header_area_locator = (By.CSS_SELECTOR, '#cardContainer .msg-list-header.msg-nonsearch-only')
+    _email_locator = (By.CSS_SELECTOR, '#cardContainer .msg-header-item')
+    _syncing_locator = (By.CSS_SELECTOR, '#cardContainer .msg-messages-syncing > .small')
+    _manual_setup_locator = (By.CSS_SELECTOR, '#cardContainer .sup-manual-config-btn')
 
     def basic_setup_email(self, name, email, password):
 
@@ -117,9 +118,9 @@ class Email(Base):
 
 
 class Header(Base):
-    _menu_button_locator = ('css selector', '.card.center .msg-folder-list-btn')
-    _compose_button_locator = ('css selector', '.card.center .msg-compose-btn')
-    _label_locator = ('css selector', '.card.center .msg-list-header-folder-label.header-label')
+    _menu_button_locator = (By.CSS_SELECTOR, '.card.center .msg-folder-list-btn')
+    _compose_button_locator = (By.CSS_SELECTOR, '.card.center .msg-compose-btn')
+    _label_locator = (By.CSS_SELECTOR, '.card.center .msg-list-header-folder-label.header-label')
 
     def tap_menu(self):
         self.marionette.find_element(*self._menu_button_locator).tap()
@@ -146,12 +147,11 @@ class Header(Base):
 
 
 class ToolBar(Base):
-    _toolbar_locator = ('css selector', '#cardContainer .fld-nav-toolbar')
-    _refresh_locator = ('css selector', '#cardContainer .msg-refresh-btn')
-    _search_locator = ('css selector', '#cardContainer .msg-search-btn')
-    _edit_locator = ('css selector', '#cardContainer .msg-edit-btn')
-    _settings_locator = ('css selector', '#cardContainer .fld-nav-settings-btn')
-
+    _toolbar_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .fld-nav-toolbar')
+    _refresh_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .msg-refresh-btn')
+    _search_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .msg-search-btn')
+    _edit_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .msg-edit-btn')
+    _settings_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .fld-nav-settings-btn')
 
     def tap_refresh(self):
         self.marionette.find_element(*self._refresh_locator).tap()
@@ -187,11 +187,16 @@ class ToolBar(Base):
 
 
 class Message(PageRegion):
-    _subject_locator = ('css selector', '.msg-header-subject')
+    _subject_locator = (By.CSS_SELECTOR, '.msg-header-subject')
+    _senders_email_locator = (By.CSS_SELECTOR, '.msg-header-author')
 
     @property
     def subject(self):
         return self.root_element.find_element(*self._subject_locator).text
+
+    @property
+    def senders_email(self):
+        return self.root_element.find_element(*self._senders_email_locator).text
 
     def scroll_to_message(self):
         self.marionette.execute_script("arguments[0].scrollIntoView(false);", [self.root_element])

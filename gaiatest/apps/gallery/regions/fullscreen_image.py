@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import time
+from marionette.by import By
 
 from marionette.marionette import Actions
 
@@ -11,13 +11,13 @@ from gaiatest.apps.base import Base
 
 class FullscreenImage(Base):
 
-    _fullscreen_view_locator = ('id', 'fullscreen-view')
-    _current_image_locator = ('css selector', '#frames > div.frame[style ~= "translateX(0px);"] > img')
-    _photos_toolbar_locator = ('id', 'fullscreen-toolbar')
-    _delete_image_locator = ('id', 'fullscreen-delete-button')
-    _confirm_delete_locator = ('id', 'modal-dialog-confirm-ok')
-    _edit_photo_locator = ('id', 'fullscreen-edit-button')
-    _tile_view_locator = ('id', 'fullscreen-back-button')
+    _fullscreen_view_locator = (By.ID, 'fullscreen-view')
+    _current_image_locator = (By.CSS_SELECTOR, '#frames > div.frame[style ~= "translateX(0px);"] > img')
+    _photos_toolbar_locator = (By.ID, 'fullscreen-toolbar')
+    _delete_image_locator = (By.ID, 'fullscreen-delete-button')
+    _confirm_delete_locator = (By.ID, 'modal-dialog-confirm-ok')
+    _edit_photo_locator = (By.ID, 'fullscreen-edit-button')
+    _tile_view_locator = (By.ID, 'fullscreen-back-button')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)

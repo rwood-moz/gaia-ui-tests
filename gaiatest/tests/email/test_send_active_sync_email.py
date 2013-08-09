@@ -3,6 +3,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import time
+
+from marionette import SkipTest
+
 from gaiatest import GaiaTestCase
 from gaiatest.apps.email.app import Email
 
@@ -10,6 +13,11 @@ from gaiatest.apps.email.app import Email
 class TestSendActiveSyncEmail(GaiaTestCase):
 
     def setUp(self):
+        try:
+            account = self.testvars['email']['ActiveSync']
+        except KeyError:
+            raise SkipTest('account details not present in test variables')
+
         GaiaTestCase.setUp(self)
         self.connect_to_network()
 
@@ -17,8 +25,7 @@ class TestSendActiveSyncEmail(GaiaTestCase):
         self.email.launch()
 
         # setup ActiveSync account
-        self.email.setup_active_sync_email(
-            self.testvars['email']['ActiveSync'])
+        self.email.setup_active_sync_email(account)
 
     def test_send_active_sync_email(self):
         curr_time = repr(time.time()).replace('.', '')

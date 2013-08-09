@@ -13,6 +13,9 @@ class TestCostControlFTU(GaiaTestCase):
         cost_control = CostControl(self.marionette)
         cost_control.launch()
 
+        # This will switch to ftu iframe
+        cost_control.switch_to_ftu()
+
         ftu_step1 = cost_control.ftu_step1
         ftu_step2 = ftu_step1.tap_next()
 
@@ -20,7 +23,8 @@ class TestCostControlFTU(GaiaTestCase):
         ftu_step3 = ftu_step2.tap_next()
 
         ftu_step3.toggle_data_alert_switch(True)
-        ftu_step3.select_when_use_is_above_unit_and_value('MB', '0.1')
+        ftu_step3.select_when_use_is_above_unit_and_value(u'MB', '0.1')
         ftu_step3.tap_lets_go()
 
+        self.marionette.switch_to_frame(self.apps.displayed_app.frame)
         self.assertTrue(cost_control.is_mobile_data_tracking_on)

@@ -30,9 +30,3 @@ class TestClockTestAllItemsPresentNewAlarm(GaiaTestCase):
 
         # Ensure snooze has the default value
         self.assertEquals(new_alarm.alarm_snooze, '5 minutes')
-
-    def tearDown(self):
-        # delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
-        GaiaTestCase.tearDown(self)

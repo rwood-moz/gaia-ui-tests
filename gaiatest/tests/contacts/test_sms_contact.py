@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.mocks.mock_contact import MockContact
 
@@ -10,11 +11,11 @@ from gaiatest.apps.contacts.app import Contacts
 
 class TestContacts(GaiaTestCase):
 
-    _sms_app_iframe_locator = ('css selector', 'iframe[src^="app://sms"][src$="index.html"]')
+    _sms_app_iframe_locator = (By.CSS_SELECTOR, 'iframe[src^="app://sms"][src$="index.html"]')
 
     #SMS app locators
-    _recipients_list_locator = ('css selector', '#messages-recipients-list span.recipient')
-    _contact_carrier_locator = ('id', 'contact-carrier')
+    _recipients_list_locator = (By.CSS_SELECTOR, '#messages-recipients-list span.recipient')
+    _contact_carrier_locator = (By.ID, 'contact-carrier')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -28,6 +29,7 @@ class TestContacts(GaiaTestCase):
 
         contacts = Contacts(self.marionette)
         contacts.launch()
+        contacts.wait_for_contacts()
 
         # tap on the created contact
         contact_details = contacts.contact(self.contact['givenName']).tap()

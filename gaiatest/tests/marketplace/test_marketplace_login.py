@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.apps.marketplace.app import Marketplace
 from gaiatest.mocks.persona_test_user import PersonaTestUser
@@ -12,12 +13,12 @@ class TestMarketplaceLogin(GaiaTestCase):
     MARKETPLACE_DEV_NAME = 'Marketplace Dev'
 
     # Marketplace locators
-    _settings_button_locator = ('css selector', 'a.header-button.settings')
-    _sign_in_button_locator = ('css selector', 'a.button.browserid')
-    _signed_in_notification_locator = ('css selector', '#notification.show')
-    _sign_out_button_locator = ('css selector', 'a.button.logout')
+    _settings_button_locator = (By.CSS_SELECTOR, 'a.header-button.settings')
+    _sign_in_button_locator = (By.CSS_SELECTOR, 'a.button.browserid')
+    _signed_in_notification_locator = (By.CSS_SELECTOR, '#notification.show')
+    _sign_out_button_locator = (By.CSS_SELECTOR, 'a.button.logout')
 
-    _email_account_field_locator = ('id', 'email')
+    _email_account_field_locator = (By.ID, 'email')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -53,6 +54,4 @@ class TestMarketplaceLogin(GaiaTestCase):
         settings.tap_sign_out()
 
         # Verify that user is signed out
-        self.marketplace.wait_for_setting_displayed()
-        settings = self.marketplace.tap_settings()
         settings.wait_for_sign_in_displayed()

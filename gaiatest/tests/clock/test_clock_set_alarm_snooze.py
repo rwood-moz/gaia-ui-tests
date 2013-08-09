@@ -41,9 +41,3 @@ class TestClockSetAlarmSnooze(GaiaTestCase):
         # Close alarm
         edit_alarm.tap_done()
         self.clock.wait_for_banner_not_visible()
-
-    def tearDown(self):
-        # delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
-        GaiaTestCase.tearDown(self)

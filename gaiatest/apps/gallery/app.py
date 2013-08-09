@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 import gaiatest.apps.camera.app
 
@@ -9,12 +10,12 @@ class Gallery(Base):
 
     name = 'Gallery'
 
-    _gallery_items_locator = ('css selector', 'li.thumbnail')
-    _empty_gallery_title_locator = ('id', 'overlay-title')
-    _empty_gallery_text_locator = ('id', 'overlay-text')
-    _progress_bar_locator = ('id', 'progress')
-    _switch_to_camera_button_locator = ('id', 'thumbnails-camera-button')
-    _thumbnail_list_view_locator = ('id', 'thumbnail-list-view')
+    _gallery_items_locator = (By.CSS_SELECTOR, 'li.thumbnail')
+    _empty_gallery_title_locator = (By.ID, 'overlay-title')
+    _empty_gallery_text_locator = (By.ID, 'overlay-text')
+    _progress_bar_locator = (By.ID, 'progress')
+    _thumbnail_list_view_locator = (By.ID, 'thumbnail-list-view')
+    _switch_to_camera_button_locator = (By.ID, 'thumbnails-camera-button')    
 
     def launch(self):
         Base.launch(self)

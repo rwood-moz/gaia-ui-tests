@@ -2,13 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.mocks.mock_contact import MockContact
 
 
 class TestInitialState(GaiaTestCase):
 
-    homescreen_frame_locator = ('css selector', 'div.homescreen iframe')
+    homescreen_frame_locator = (By.CSS_SELECTOR, 'div.homescreen iframe')
 
     def test_initial_state(self):
         self.check_initial_state()

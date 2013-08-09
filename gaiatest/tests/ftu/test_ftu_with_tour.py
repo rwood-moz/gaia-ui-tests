@@ -2,47 +2,49 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
+from marionette.by import By
 
-import time
+from gaiatest import GaiaTestCase
 
 
 class TestFtu(GaiaTestCase):
 
-    _next_button_locator = ('id', 'forward')
+    _next_button_locator = (By.ID, 'forward')
 
-    _section_languages_locator = ('id', 'languages')
-    _section_cell_data_locator = ('id', 'data_3g')
-    _section_wifi_locator = ('id', 'wifi')
-    _found_wifi_networks_locator = ('css selector', 'ul#networks-list li')
-    _section_date_time_locator = ('id', 'date_and_time')
-    _section_geolocation_locator = ('id', 'geolocation')
-    _section_import_contacts_locator = ('id', 'import_contacts')
-    _section_ayr_locator = ('id', 'about-your-rights')
-    _section_welcome_browser_locator = ('id', 'welcome_browser')
-    _section_browser_privacy_locator = ('id', 'browser_privacy')
-    _section_finish_locator = ('id', 'finish-screen')
+    _section_languages_locator = (By.ID, 'languages')
+    _section_cell_data_locator = (By.ID, 'data_3g')
+    _section_wifi_locator = (By.ID, 'wifi')
+    _found_wifi_networks_locator = (By.CSS_SELECTOR, 'ul#networks-list li')
+    _section_date_time_locator = (By.ID, 'date_and_time')
+    _section_geolocation_locator = (By.ID, 'geolocation')
+    _section_import_contacts_locator = (By.ID, 'import_contacts')
+    _section_ayr_locator = (By.ID, 'about-your-rights')
+    _section_welcome_browser_locator = (By.ID, 'welcome_browser')
+    _section_browser_privacy_locator = (By.ID, 'browser_privacy')
+    _section_finish_locator = (By.ID, 'finish-screen')
 
-    _take_tour_button_locator = ('id', 'lets-go-button')
+    _take_tour_button_locator = (By.ID, 'lets-go-button')
 
     # Section Tour
-    _step1_header_locator = ('id', 'step1Header')
-    _step2_header_locator = ('id', 'step2Header')
-    _step3_header_locator = ('id', 'step3Header')
-    _step4_header_locator = ('id', 'step4Header')
-    _step5_header_locator = ('id', 'step5Header')
-    _tour_next_button_locator = ('id', 'forwardTutorial')
-    _tour_back_button_locator = ('id', 'backTutorial')
+    _step1_header_locator = (By.ID, 'step1Header')
+    _step2_header_locator = (By.ID, 'step2Header')
+    _step3_header_locator = (By.ID, 'step3Header')
+    _step4_header_locator = (By.ID, 'step4Header')
+    _step5_header_locator = (By.ID, 'step5Header')
+    _tour_next_button_locator = (By.ID, 'forwardTutorial')
+    _tour_back_button_locator = (By.ID, 'backTutorial')
 
     # Section Tutorial Finish
-    _section_tutorial_finish_locator = ('id', 'tutorialFinish')
-    _lets_go_button_locator = ('id', 'tutorialFinished')
+    _section_tutorial_finish_locator = (By.ID, 'tutorialFinish')
+    _lets_go_button_locator = (By.ID, 'tutorialFinished')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
 
         # launch the First Time User app
         self.app = self.apps.launch('FTU')
+
+        self.wait_for_condition(lambda m: self.data_layer.is_wifi_enabled)
 
     def test_ftu_with_tour(self):
 

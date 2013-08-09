@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 
 
@@ -9,14 +10,14 @@ class VideoPlayer(Base):
 
     name = 'Video'
 
-    _progress_bar_locator = ('id', 'progress')
+    _progress_bar_locator = (By.ID, 'progress')
 
     # Video list/summary view
-    _video_items_locator = ('css selector', 'ul#thumbnails li[data-name]')
-    _video_name_locator = ('css selector', 'div.details')
+    _video_items_locator = (By.CSS_SELECTOR, 'ul#thumbnails li[data-name]')
+    _video_name_locator = (By.CSS_SELECTOR, 'div.details')
 
-    _empty_video_title_locator = ('id', 'overlay-title')
-    _empty_video_text_locator = ('id', 'overlay-text')
+    _empty_video_title_locator = (By.ID, 'overlay-title')
+    _empty_video_text_locator = (By.ID, 'overlay-text')
 
     def launch(self):
         Base.launch(self)

@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 from gaiatest.apps.base import PageRegion
 
@@ -10,13 +11,13 @@ class Clock(Base):
 
     name = 'Clock'
 
-    _alarm_create_new_locator = ('id', 'alarm-new')
-    _analog_clock_display_locator = ('id', 'analog-clock')
-    _digital_clock_display_locator = ('id', 'digital-clock')
-    _clock_day_date_locator = ('id', 'clock-day-date')
-    _digital_clock_hour24_state_locator = ('id', 'clock-hour24-state')
-    _all_alarms_locator = ('css selector', '#alarms li')
-    _banner_countdown_notification_locator = ('id', 'banner-countdown')
+    _alarm_create_new_locator = (By.ID, 'alarm-new')
+    _analog_clock_display_locator = (By.ID, 'analog-clock')
+    _digital_clock_display_locator = (By.ID, 'digital-clock')
+    _clock_day_date_locator = (By.ID, 'clock-day-date')
+    _digital_clock_hour24_state_locator = (By.ID, 'clock-hour24-state')
+    _all_alarms_locator = (By.CSS_SELECTOR, '#alarms li')
+    _banner_countdown_notification_locator = (By.ID, 'banner-countdown')
 
     def launch(self):
         Base.launch(self)
@@ -57,7 +58,13 @@ class Clock(Base):
 
     def tap_analog_display(self):
         self.wait_for_element_displayed(*self._analog_clock_display_locator)
-        self.marionette.find_element(*self._analog_clock_display_locator).tap()
+
+        analog_clock = self.marionette.find_element(*self._analog_clock_display_locator)
+        # Tapping on clock hand fails; find a coordinate outside the range of the clock hands
+        x_tap = int(analog_clock.size['width'] * 0.1)
+        y_tap = int(analog_clock.size['height'] * 0.1)
+        analog_clock.tap(x=x_tap, y=y_tap)
+
         self.wait_for_element_displayed(*self._digital_clock_display_locator)
 
     def tap_digital_display(self):
@@ -66,20 +73,21 @@ class Clock(Base):
         self.wait_for_element_displayed(*self._analog_clock_display_locator)
 
     def tap_new_alarm(self):
+        self.wait_for_element_displayed(*self._alarm_create_new_locator)
         self.marionette.find_element(*self._alarm_create_new_locator).tap()
 
         from gaiatest.apps.clock.regions.alarm import NewAlarm
         new_alarm = NewAlarm(self.marionette)
-        new_alarm.wait_for_fields_to_be_visible()
+        new_alarm.wait_for_panel_to_load()
         return new_alarm
 
     class Alarm(PageRegion):
 
-        _label_locator = ('css selector', '.label')
-        _time_locator = ('css selector', '.time')
-        _tap_locator = ('css selector', '.alarm-item')
-        _check_box_locator = ('css selector', '.alarmList .input-enable')
-        _enable_button_locator = ('css selector', 'label.alarmList')
+        _label_locator = (By.CSS_SELECTOR, '.label')
+        _time_locator = (By.CSS_SELECTOR, '.time')
+        _tap_locator = (By.CSS_SELECTOR, '.alarm-item')
+        _check_box_locator = (By.CSS_SELECTOR, '.alarmList .input-enable')
+        _enable_button_locator = (By.CSS_SELECTOR, 'label.alarmList')
 
         @property
         def label(self):

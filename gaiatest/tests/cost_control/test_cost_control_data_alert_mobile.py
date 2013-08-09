@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.apps.browser.app import Browser
 from gaiatest.apps.cost_control.app import CostControl
@@ -10,17 +11,19 @@ from gaiatest.apps.cost_control.app import CostControl
 class TestCostControlDataAlertMobile(GaiaTestCase):
 
     # notification bar locators
-    _cost_control_widget_locator = ('css selector', 'iframe[data-frame-origin="app://costcontrol.gaiamobile.org"]')
-    _data_usage_view_locator = ('id', 'datausage-limit-view')
+    _cost_control_widget_locator = (By.CSS_SELECTOR, 'iframe[data-frame-origin="app://costcontrol.gaiamobile.org"]')
+    _data_usage_view_locator = (By.ID, 'datausage-limit-view')
 
     # locator for page loaded in browser
-    _page_body_locator = ("id", "home")
+    _page_body_locator = (By.ID, 'home')
 
     def test_cost_control_data_alert_mobile(self):
 
         self.data_layer.connect_to_cell_data()
         cost_control = CostControl(self.marionette)
         cost_control.launch()
+
+        cost_control.switch_to_ftu()
         cost_control.run_ftu_accepting_defaults()
 
         self.assertTrue(cost_control.is_mobile_data_tracking_on)
@@ -28,13 +31,12 @@ class TestCostControlDataAlertMobile(GaiaTestCase):
 
         settings = cost_control.tap_settings()
         settings.toggle_data_alert_switch(True)
-        settings.select_when_use_is_above_unit_and_value('MB', '0.1')
+        settings.select_when_use_is_above_unit_and_value(u'MB', '0.1')
         settings.reset_data_usage()
         settings.tap_done()
         self.assertTrue(cost_control.is_mobile_data_tracking_on)
 
         # open browser to get some data downloaded
-        # please remove this once there is a better way than launching browser app/obj to do so
         browser = Browser(self.marionette)
         browser.launch()
         browser.go_to_url('http://developer.mozilla.org/')

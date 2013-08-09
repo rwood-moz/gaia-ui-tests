@@ -3,7 +3,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import os
-import unittest
+
+from marionette import expectedFailure
 
 from gaiatest import GaiaTestCase
 
@@ -12,7 +13,7 @@ class TestDebug(GaiaTestCase):
 
     expect_debug = False
 
-    @unittest.expectedFailure
+    @expectedFailure
     def test_debug_expected(self):
         self.expect_debug = True
         self.lockscreen.unlock()

@@ -2,26 +2,27 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 
 
 class ContactForm(Base):
 
-    _contact_form_locator = ('id', 'contact-form')
-    _contact_form_title_locator = ('id', 'contact-form-title')
+    _contact_form_locator = (By.ID, 'contact-form')
+    _contact_form_title_locator = (By.ID, 'contact-form-title')
 
-    _given_name_locator = ('id', 'givenName')
-    _family_name_locator = ('id', 'familyName')
-    _phone_locator = ('id', "number_0")
-    _email_locator = ('id', "email_0")
-    _street_locator = ('id', "streetAddress_0")
-    _zip_code_locator = ('id', "postalCode_0")
-    _city_locator = ('id', 'locality_0')
-    _country_locator = ('id', 'countryName_0')
-    _comment_locator = ('id', 'note_0')
+    _given_name_locator = (By.ID, 'givenName')
+    _family_name_locator = (By.ID, 'familyName')
+    _phone_locator = (By.ID, 'number_0')
+    _email_locator = (By.ID, 'email_0')
+    _street_locator = (By.ID, 'streetAddress_0')
+    _zip_code_locator = (By.ID, 'postalCode_0')
+    _city_locator = (By.ID, 'locality_0')
+    _country_locator = (By.ID, 'countryName_0')
+    _comment_locator = (By.ID, 'note_0')
 
-    _add_picture_link_locator = ('id', 'thumbnail-photo')
-    _picture_loaded_locator = ('css selector', '#thumbnail-photo[style*="background-image"] ')
+    _add_picture_link_locator = (By.ID, 'thumbnail-photo')
+    _picture_loaded_locator = (By.CSS_SELECTOR, '#thumbnail-photo[style*="background-image"] ')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)
@@ -108,6 +109,7 @@ class ContactForm(Base):
         return self.marionette.find_element(*self._comment_locator).text
 
     def type_comment(self, value):
+        self.wait_for_element_displayed(*self._comment_locator)
         element = self.marionette.find_element(*self._comment_locator)
         element.clear()
         element.send_keys(value)
@@ -129,12 +131,12 @@ class ContactForm(Base):
 
 class EditContact(ContactForm):
 
-    _update_locator = ('id', 'save-button')
-    _cancel_locator = ('id', 'cancel-edit')
-    _delete_locator = ('id', 'delete-contact')
-    _delete_form_locator = ('id', 'confirmation-message')
-    _cancel_delete_locator = ('css selector', 'form#confirmation-message button:not(.danger)')
-    _confirm_delete_locator = ('css selector', 'form#confirmation-message button.danger')
+    _update_locator = (By.ID, 'save-button')
+    _cancel_locator = (By.ID, 'cancel-edit')
+    _delete_locator = (By.ID, 'delete-contact')
+    _delete_form_locator = (By.ID, 'confirmation-message')
+    _cancel_delete_locator = (By.CSS_SELECTOR, 'form#confirmation-message button:not(.danger)')
+    _confirm_delete_locator = (By.CSS_SELECTOR, 'form#confirmation-message button.danger')
 
     def __init__(self, marionette):
         ContactForm.__init__(self, marionette)
@@ -169,7 +171,7 @@ class EditContact(ContactForm):
 
 class NewContact(ContactForm):
 
-    _done_button_locator = ('id', 'save-button')
+    _done_button_locator = (By.ID, 'save-button')
 
     def __init__(self, marionette):
         ContactForm.__init__(self, marionette)

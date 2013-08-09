@@ -5,22 +5,11 @@
 from gaiatest import GaiaTestCase
 
 
-class TestLaunch(GaiaTestCase):
-
-    def test_cold_launch(self):
-        app = self.apps.launch('Clock')
-        self.assertTrue(app.frame)
-        self.assertTrue('clock' in self.marionette.get_url())
+class TestWarmLaunch(GaiaTestCase):
 
     def test_warm_launch(self):
         cold = self.apps.launch('Clock')
         self.apps.launch('Calendar')
-        warm = self.apps.launch('Clock')
-        self.assertEqual(cold, warm)
-        self.assertTrue('clock' in self.marionette.get_url())
-
-    def test_launch_twice(self):
-        cold = self.apps.launch('Clock')
         warm = self.apps.launch('Clock')
         self.assertEqual(cold, warm)
         self.assertTrue('clock' in self.marionette.get_url())

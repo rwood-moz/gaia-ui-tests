@@ -2,19 +2,20 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 
 
 class ContactDetails(Base):
 
-    _contact_name_title_locator = ('id', 'contact-name-title')
-    _contact_image_locator = ('id', 'cover-img')
-    _call_phone_number_button_locator = ('id', 'call-or-pick-0')
-    _send_sms_button_locator = ('id', 'send-sms-button-0')
-    _edit_contact_button_locator = ('id', 'edit-contact-button')
-    _back_button_locator = ('id', 'details-back')
-    _add_remove_favorite_button_locator = ('id', 'toggle-favorite')
-    _comments_locator = ('id', 'note-details-template-0')
+    _contact_name_title_locator = (By.ID, 'contact-name-title')
+    _contact_image_locator = (By.ID, 'cover-img')
+    _call_phone_number_button_locator = (By.ID, 'call-or-pick-0')
+    _send_sms_button_locator = (By.ID, 'send-sms-button-0')
+    _edit_contact_button_locator = (By.ID, 'edit-contact-button')
+    _back_button_locator = (By.ID, 'details-back')
+    _add_remove_favorite_button_locator = (By.ID, 'toggle-favorite')
+    _comments_locator = (By.ID, 'note-details-template-0')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)

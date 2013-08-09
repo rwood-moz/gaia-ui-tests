@@ -2,24 +2,25 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 
 
 class Settings(Base):
 
-    _settings_iframe_locator = ('id', "settings-view-placeholder")
-    _settings_title_locator = ('css selector', 'section#settings-view h1')
+    _settings_iframe_locator = (By.ID, 'settings-view-placeholder')
+    _settings_title_locator = (By.CSS_SELECTOR, 'section#settings-view h1')
 
-    _data_alert_label_locator = ('xpath', "//ul[preceding-sibling::header[@id='data-usage-settings']]/li[2]/label")
-    _data_alert_switch_locator = ('css selector', 'input[data-option="dataLimit"]')
-    _when_use_is_above_button_locator = ('css selector', 'button[data-widget-type="data-limit"]')
-    _unit_button_locator = ('css selector', '#data-limit-dialog form button')
-    _size_input_locator = ('css selector', '#data-limit-dialog form input')
-    _usage_done_button_locator = ('id', 'data-usage-done-button')
+    _data_alert_label_locator = (By.XPATH, "//ul[preceding-sibling::header[@id='data-usage-settings']]/li[2]/label")
+    _data_alert_switch_locator = (By.CSS_SELECTOR, 'input[data-option="dataLimit"]')
+    _when_use_is_above_button_locator = (By.CSS_SELECTOR, 'button[data-widget-type="data-limit"]')
+    _unit_button_locator = (By.CSS_SELECTOR, '#data-limit-dialog form button')
+    _size_input_locator = (By.CSS_SELECTOR, '#data-limit-dialog form input')
+    _usage_done_button_locator = (By.ID, 'data-usage-done-button')
 
-    _reset_button_locator = ('id', 'reset-data-usage')
-    _reset_confirm_locator = ('css selector', 'section#reset-confirmation-dialog button.danger')
-    _done_button_locator = ('css selector', 'section#settings-view button#close-settings')
+    _reset_button_locator = (By.ID, 'reset-data-usage')
+    _reset_confirm_locator = (By.CSS_SELECTOR, 'section#reset-confirmation-dialog button.danger')
+    _done_button_locator = (By.CSS_SELECTOR, 'section#settings-view button#close-settings')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)
@@ -31,7 +32,7 @@ class Settings(Base):
     def toggle_data_alert_switch(self, value):
         self.wait_for_element_displayed(*self._data_alert_label_locator)
         switch = self.marionette.find_element(*self._data_alert_switch_locator)
-        if switch.is_selected() is not value:
+        if switch.is_selected() != value:
             label = self.marionette.find_element(*self._data_alert_label_locator)
             label.tap()
 
@@ -45,7 +46,7 @@ class Settings(Base):
 
         self.wait_for_element_displayed(*self._unit_button_locator)
         current_unit = self.marionette.find_element(*self._unit_button_locator)
-        if current_unit.text is not unit:
+        if current_unit.text != unit:
             current_unit.tap()
             # We need to wait for the javascript to do its stuff
             self.wait_for_condition(lambda m: m.find_element(*self._unit_button_locator).text == unit)

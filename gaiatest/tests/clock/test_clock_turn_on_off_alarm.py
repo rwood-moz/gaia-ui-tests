@@ -40,9 +40,3 @@ class TestClockTurnOnOffAlarm(GaiaTestCase):
         time.sleep(2)  # TODO: Remove the sleep and add a wait_for_checkbox_state_to_change (one day)
 
         self.assertTrue(origin_alarm_checked != alarm.is_alarm_active, 'user should be able to turn off the alarm.')
-
-    def tearDown(self):
-        # delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
-        GaiaTestCase.tearDown(self)

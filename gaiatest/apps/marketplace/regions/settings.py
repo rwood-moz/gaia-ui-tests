@@ -2,17 +2,22 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
-from gaiatest.apps.base import PageRegion
 
 
 class Settings(Base):
 
-    _email_account_field_locator = ('id', 'email')
-    _save_locator = ('css selector', 'footer > p > button')
-    _sign_in_button_locator = ('css selector', 'a.button.persona')
-    _sign_out_button_locator = ('css selector', 'a.button.logout')
-    _back_button_locator = ('id', 'nav-back')
+    name = 'Marketplace Dev'
+
+    _email_account_field_locator = (By.ID, 'email')
+    _save_locator = (By.CSS_SELECTOR, 'footer > p > button')
+    _sign_in_button_locator = (By.CSS_SELECTOR, 'a.button.persona')
+    _sign_out_button_locator = (By.CSS_SELECTOR, 'a.button.logout')
+    _back_button_locator = (By.ID, 'nav-back')
+    _region_select_locator = (By.ID, 'region')
+    _region_select_value_locator = (By.CSS_SELECTOR, '#region option[selected]')
+    _save_changes_button_locator = (By.XPATH, "//section[@id='account-settings']//button[text()='Save Changes']")
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)
@@ -27,8 +32,7 @@ class Settings(Base):
         self.wait_for_element_displayed(*self._sign_in_button_locator)
 
     def tap_sign_in(self):
-        # TODO: click works but not tap
-        self.marionette.find_element(*self._sign_in_button_locator).click()
+        self.marionette.find_element(*self._sign_in_button_locator).tap()
         from gaiatest.apps.persona.app import Persona
         return Persona(self.marionette)
 
@@ -40,6 +44,17 @@ class Settings(Base):
         # TODO: remove scrollIntoView hack
         self.marionette.execute_script("arguments[0].scrollIntoView(false);", [sign_out_button])
         sign_out_button.tap()
+
+    def select_region(self, region):
+        self.marionette.find_element(*self._region_select_locator).tap()
+        self.select(region)
+
+    def tap_save_changes(self):
+        self.marionette.find_element(*self._save_changes_button_locator).tap()
+
+    @property
+    def region(self):
+        return self.marionette.find_element(*self._region_select_value_locator).text
 
     @property
     def email(self):

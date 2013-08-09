@@ -11,10 +11,12 @@ import traceback
 
 from marionette import MarionetteTestCase
 from marionette import Marionette
+from marionette.by import By
 from marionette.errors import NoSuchElementException
 from marionette.errors import ElementNotVisibleException
 from marionette.errors import TimeoutException
 from marionette.errors import StaleElementException
+from marionette.errors import InvalidResponseException
 import mozdevice
 
 
@@ -68,9 +70,9 @@ class GaiaApps(object):
         return self.marionette.execute_async_script("return GaiaApps.setPermission('%s', '%s', '%s')" %
                                                     (app_name, permission_name, value))
 
-    def launch(self, name, switch_to_frame=True, url=None):
+    def launch(self, name, switch_to_frame=True, url=None, launch_timeout=None):
         self.marionette.switch_to_frame()
-        result = self.marionette.execute_async_script("GaiaApps.launchWithName('%s')" % name)
+        result = self.marionette.execute_async_script("GaiaApps.launchWithName('%s')" % name, script_timeout=launch_timeout)
         assert result, "Failed to launch app with name '%s'" % name
         app = GaiaApp(frame=result.get('frame'),
                       src=result.get('src'),
@@ -185,23 +187,34 @@ class GaiaData(object):
         for channel in channels:
             self.set_setting('audio.volume.%s' % channel, value)
 
-    def bt_enable_bluetooth(self):
+    def bluetooth_enable(self):
         self.marionette.switch_to_frame()
         return self.marionette.execute_async_script("return GaiaDataLayer.enableBluetooth()")
 
-    def bt_disable_bluetooth(self):
+    def bluetooth_disable(self):
         self.marionette.switch_to_frame()
         return self.marionette.execute_async_script("return GaiaDataLayer.disableBluetooth()")
 
-    def bt_pair_bluetooth_device(self, device_name):
+    def bluetooth_pair_device(self, device_name):
         return self.marionette.execute_async_script('return GaiaDataLayer.pairBluetoothDevice("%s")' % device_name)
 
-    def bt_unpair_all_bluetooth_devices(self):
+    def bluetooth_unpair_all_devices(self):
         self.marionette.switch_to_frame()
         self.marionette.execute_async_script('return GaiaDataLayer.unpairAllBluetoothDevices()')
 
+    def bluetooth_set_device_name(self, device_name):
+        result = self.marionette.execute_async_script('return GaiaDataLayer.bluetoothSetDeviceName(%s);' % device_name)
+        assert result, "Unable to set device's bluetooth name to %s" % device_name
+
+    def bluetooth_set_device_discoverable_mode(self, discoverable):
+        if (discoverable):
+            result = self.marionette.execute_async_script('return GaiaDataLayer.bluetoothSetDeviceDiscoverableMode(true);')
+        else:
+            result = self.marionette.execute_async_script('return GaiaDataLayer.bluetoothSetDeviceDiscoverableMode(false);')
+        assert result, 'Able to set the device bluetooth discoverable mode'
+
     @property
-    def bt_is_bluetooth_enabled(self):
+    def bluetooth_is_enabled(self):
         return self.marionette.execute_script("return window.navigator.mozBluetooth.enabled")
 
     @property
@@ -230,7 +243,7 @@ class GaiaData(object):
 
     @property
     def is_wifi_enabled(self):
-        return self.get_setting('wifi.enabled')
+        return self.marionette.execute_script("return window.navigator.mozWifiManager.enabled;")
 
     def enable_wifi(self):
         self.marionette.switch_to_frame()
@@ -293,9 +306,6 @@ class GaiaData(object):
         self.marionette.switch_to_frame()
         return self.marionette.execute_async_script("return GaiaDataLayer.deleteAllSms();", special_powers=True)
 
-    def delete_all_alarms(self):
-        self.marionette.execute_script('GaiaDataLayer.deleteAllAlarms();')
-
     def delete_all_call_log_entries(self):
         """The call log needs to be open and focused in order for this to work."""
         self.marionette.execute_script('window.wrappedJSObject.RecentsDBManager.deleteAll();')
@@ -307,8 +317,9 @@ class GaiaData(object):
 
 class GaiaDevice(object):
 
-    def __init__(self, marionette):
+    def __init__(self, marionette, testvars=None):
         self.marionette = marionette
+        self.testvars = testvars or {}
 
     @property
     def manager(self):
@@ -332,9 +343,9 @@ class GaiaDevice(object):
 
     @property
     def is_android_build(self):
-        if not hasattr(self, '_is_android_build'):
-            self._is_android_build = 'Android' in self.marionette.session_capabilities['platform']
-        return self._is_android_build
+        if self.testvars.get('is_android_build') is None:
+            self.testvars['is_android_build'] = 'Android' in self.marionette.session_capabilities['platform']
+        return self.testvars['is_android_build']
 
     @property
     def is_online(self):
@@ -418,9 +429,13 @@ class GaiaTestCase(MarionetteTestCase):
         MarionetteTestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
-        MarionetteTestCase.setUp(self)
+        try:
+            MarionetteTestCase.setUp(self)
+        except InvalidResponseException:
+            if self.restart:
+                pass
 
-        self.device = GaiaDevice(self.marionette)
+        self.device = GaiaDevice(self.marionette, self.testvars)
         if self.restart and (self.device.is_android_build or self.marionette.instance):
             self.device.stop_b2g()
             if self.device.is_android_build:
@@ -463,6 +478,7 @@ class GaiaTestCase(MarionetteTestCase):
 
         # Change timezone back to PST
         self.data_layer.set_setting("time.timezone", "America/Los_Angeles")
+        self.data_layer.set_setting("time.timezone.user-selected", "America/Los_Angeles")
 
         # restore settings from testvars
         [self.data_layer.set_setting(name, value) for name, value in self.testvars.get('settings', {}).items()]
@@ -494,7 +510,7 @@ class GaiaTestCase(MarionetteTestCase):
         self.marionette.execute_script("window.wrappedJSObject.dispatchEvent(new Event('home'));")
 
     def install_marketplace(self):
-        _yes_button_locator = ('id', 'app-install-install-button')
+        _yes_button_locator = (By.ID, 'app-install-install-button')
         mk = {"name": "Marketplace Dev",
               "manifest": "https://marketplace-dev.allizom.org/manifest.webapp ",
               }

@@ -2,14 +2,16 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
+
 from gaiatest import GaiaTestCase
 from gaiatest.apps.browser.app import Browser
 
 
 class TestBrowserBookmark(GaiaTestCase):
 
-    _homescreen_frame_locator = ('css selector', 'div.homescreen > iframe')
-    _homescreen_icon_locator = ('css selector', 'li.icon[aria-label="%s"]')
+    _homescreen_frame_locator = (By.CSS_SELECTOR, 'div.homescreen > iframe')
+    _homescreen_icon_locator = (By.CSS_SELECTOR, 'li.icon[aria-label="%s"]')
     _bookmark_added = False
 
     def setUp(self):
@@ -32,6 +34,7 @@ class TestBrowserBookmark(GaiaTestCase):
         browser.tap_bookmark_button()
         browser.tap_add_bookmark_to_home_screen_choice_button()
         browser.type_bookmark_title(self.bookmark_title)
+        browser.dismiss_keyboard()
         browser.tap_add_bookmark_to_home_screen_dialog_button()
 
         # Switch to Home Screen to look for bookmark
@@ -44,10 +47,10 @@ class TestBrowserBookmark(GaiaTestCase):
 
         # check whether bookmark was added
         while self._homescreen_has_more_pages:
+            self._go_to_next_page()
             if self.is_element_displayed(*self._homescreen_icon_locator):
                 self._bookmark_added = True
                 break
-            self._go_to_next_page()
 
         self.assertTrue(self._bookmark_added, 'The bookmark %s was not found to be installed on the home screen.' % self.bookmark_title)
 

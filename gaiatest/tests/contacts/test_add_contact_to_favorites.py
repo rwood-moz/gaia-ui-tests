@@ -18,6 +18,7 @@ class TestAddContactToFavorite(GaiaTestCase):
     def test_add_contact_to_favorite(self):
         contacts_app = Contacts(self.marionette)
         contacts_app.launch()
+        contacts_app.wait_for_contacts()
 
         contact_details = contacts_app.contact(self.contact['givenName']).tap()
         contact_details.tap_add_remove_favorite()

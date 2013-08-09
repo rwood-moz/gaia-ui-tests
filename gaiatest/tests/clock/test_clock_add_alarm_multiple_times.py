@@ -14,9 +14,6 @@ class TestClockAddAlarmMultipleTimes(GaiaTestCase):
         self.clock = Clock(self.marionette)
         self.clock.launch()
 
-        # delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
     def test_clock_add_alarm_multiple_times(self):
         """ Add multiple alarm
 
@@ -38,9 +35,3 @@ class TestClockAddAlarmMultipleTimes(GaiaTestCase):
 
             # Ensure the new alarm has been added and is displayed
             self.assertEqual(i, len(self.clock.alarms))
-
-    def tearDown(self):
-        # delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
-        GaiaTestCase.tearDown(self)

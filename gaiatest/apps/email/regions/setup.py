@@ -2,15 +2,16 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 
 
 class SetupEmail(Base):
 
-    _name_locator = ('css selector', 'section.card-setup-account-info input.sup-info-name')
-    _email_locator = ('css selector', 'section.card-setup-account-info input.sup-info-email')
-    _password_locator = ('css selector', 'section.card-setup-account-info input.sup-info-password')
-    _next_locator = ('css selector', '.sup-info-next-btn')
+    _name_locator = (By.CSS_SELECTOR, 'section.card-setup-account-info input.sup-info-name')
+    _email_locator = (By.CSS_SELECTOR, 'section.card-setup-account-info input.sup-info-email')
+    _password_locator = (By.CSS_SELECTOR, 'section.card-setup-account-info input.sup-info-password')
+    _next_locator = (By.CSS_SELECTOR, '.sup-info-next-btn')
     _continue_button_locator = ('class name', 'sup-show-mail-btn sup-form-btn recommend')
 
     def __init__(self, marionette):
@@ -42,25 +43,25 @@ class ManualSetupEmail(Base):
 
     name = 'E-Mail'  # hack to be able to use select
 
-    _name_locator = ('css selector', 'section.card-setup-manual-config input.sup-info-name')
-    _email_locator = ('css selector', 'section.card-setup-manual-config input.sup-info-email')
-    _password_locator = ('css selector', 'section.card-setup-manual-config input.sup-info-password')
+    _name_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config input.sup-info-name')
+    _email_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config input.sup-info-email')
+    _password_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config input.sup-info-password')
 
-    _account_type_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-account-type')
+    _account_type_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-account-type')
 
-    _imap_username_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-imap-username')
-    _imap_hostname_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-imap-hostname')
-    _imap_port_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-imap-port')
+    _imap_username_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-imap-username')
+    _imap_hostname_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-imap-hostname')
+    _imap_port_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-imap-port')
 
-    _smtp_username_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-smtp-username')
-    _smtp_hostname_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-smtp-hostname')
-    _smtp_port_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-smtp-port')
+    _smtp_username_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-smtp-username')
+    _smtp_hostname_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-smtp-hostname')
+    _smtp_port_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-smtp-port')
 
-    _activesync_hostname_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-activesync-hostname')
-    _activesync_username_locator = ('css selector', 'section.card-setup-manual-config .sup-manual-activesync-username')
+    _activesync_hostname_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-activesync-hostname')
+    _activesync_username_locator = (By.CSS_SELECTOR, 'section.card-setup-manual-config .sup-manual-activesync-username')
 
-    _next_locator = ('css selector', '.sup-manual-next-btn')
-    _continue_button_locator = ('class name', 'sup-show-mail-btn sup-form-btn recommend')
+    _next_locator = (By.CSS_SELECTOR, '.sup-manual-next-btn')
+    _continue_button_locator = (By.CLASS_NAME, 'sup-show-mail-btn sup-form-btn recommend')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)
@@ -75,11 +76,13 @@ class ManualSetupEmail(Base):
         el = self.marionette.find_element(*self._email_locator)
         el.clear()
         el.send_keys(value)
+        self.dismiss_keyboard()
 
     def type_password(self, value):
         el = self.marionette.find_element(*self._password_locator)
         el.clear()
         el.send_keys(value)
+        self.dismiss_keyboard()
 
     def select_account_type(self, value):
         account_type = self.marionette.find_element(*self._account_type_locator)

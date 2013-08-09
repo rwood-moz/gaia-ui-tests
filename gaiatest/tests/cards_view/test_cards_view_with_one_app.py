@@ -2,9 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
-
+from marionette.by import By
 from marionette.errors import NoSuchElementException
+
+from gaiatest import GaiaTestCase
 
 
 class TestCardsView(GaiaTestCase):
@@ -12,12 +13,12 @@ class TestCardsView(GaiaTestCase):
     _app_under_test = "Clock"
 
     # Home/Cards view locators
-    _cards_view_locator = ('id', 'cards-view')
+    _cards_view_locator = (By.ID, 'cards-view')
     # Check that the origin contains the current app name, origin is in the format:
     # app://clock.gaiamobile.org
-    _app_card_locator = ('css selector', '#cards-view li[data-origin*="%s"]' % _app_under_test.lower())
-    _close_button_locator = ('css selector', '#cards-view li[data-origin*="%s"] .close-card' % _app_under_test.lower())
-    _clock_frame_locator = ('css selector', "iframe[mozapp^='app://clock'][mozapp$='manifest.webapp']")
+    _app_card_locator = (By.CSS_SELECTOR, '#cards-view li[data-origin*="%s"]' % _app_under_test.lower())
+    _close_button_locator = (By.CSS_SELECTOR, '#cards-view li[data-origin*="%s"] .close-card' % _app_under_test.lower())
+    _clock_frame_locator = (By.CSS_SELECTOR, "iframe[mozapp^='app://clock'][mozapp$='manifest.webapp']")
 
     def setUp(self):
         GaiaTestCase.setUp(self)

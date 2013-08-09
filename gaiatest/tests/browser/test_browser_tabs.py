@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import time
+from marionette.by import By
 
 from gaiatest import GaiaTestCase
 from gaiatest.apps.browser.app import Browser
@@ -10,7 +10,7 @@ from gaiatest.apps.browser.app import Browser
 
 class TestBrowserTabs(GaiaTestCase):
 
-    _page_title_locator = ('id', 'page-title')
+    _page_title_locator = (By.ID, 'page-title')
 
     def setUp(self):
         GaiaTestCase.setUp(self)

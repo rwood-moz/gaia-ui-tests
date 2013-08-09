@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from marionette.marionette import Actions
 
 from gaiatest.apps.base import Base
@@ -11,13 +12,13 @@ from gaiatest.apps.base import PageRegion
 class FmRadio(Base):
     name = 'FM Radio'
 
-    _power_button_locator = ('id', 'power-switch')
-    _favorite_list_locator = ('css selector', 'div.fav-list-item')
-    _frequency_display_locator = ('id', 'frequency')
-    _frequency_dialer_locator = ('id', 'frequency-dialer')
-    _favorite_button_locator = ('id', 'bookmark-button')
-    _next_button_locator = ('id', 'frequency-op-seekup')
-    _prev_button_locator = ('id', 'frequency-op-seekdown')
+    _power_button_locator = (By.ID, 'power-switch')
+    _favorite_list_locator = (By.CSS_SELECTOR, 'div.fav-list-item')
+    _frequency_display_locator = (By.ID, 'frequency')
+    _frequency_dialer_locator = (By.ID, 'frequency-dialer')
+    _favorite_button_locator = (By.ID, 'bookmark-button')
+    _next_button_locator = (By.ID, 'frequency-op-seekup')
+    _prev_button_locator = (By.ID, 'frequency-op-seekdown')
 
     def flick_frequency_dialer_up(self):
         dialer = self.marionette.find_element(*self._frequency_dialer_locator)
@@ -63,8 +64,8 @@ class FmRadio(Base):
         return [self.FavoriteChannel(self.marionette, channel) for channel in self.marionette.find_elements(*self._favorite_list_locator)]
 
     class FavoriteChannel(PageRegion):
-        _remove_locator = ('css selector', 'div.fav-list-remove-button')
-        _frequency_locator = ('css selector', 'div.fav-list-frequency')
+        _remove_locator = (By.CSS_SELECTOR, 'div.fav-list-remove-button')
+        _frequency_locator = (By.CSS_SELECTOR, 'div.fav-list-frequency')
 
         @property
         def text(self):

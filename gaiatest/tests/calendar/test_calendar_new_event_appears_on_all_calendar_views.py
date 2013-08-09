@@ -5,6 +5,7 @@
 import datetime
 import time
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 
 
@@ -14,17 +15,17 @@ DAYS_OF_WEEK = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY',
 
 class TestCalendar(GaiaTestCase):
 
-    _add_event_button_locator = ('xpath', "//a[@href='/event/add/']")
-    _event_title_input_locator = ('xpath', "//input[@data-l10n-id='event-title']")
-    _event_location_input_locator = ('xpath', "//input[@data-l10n-id='event-location']")
-    _event_start_time_input_locator = ('xpath', "//input[@data-l10n-id='event-start-time']")
-    _event_end_time_input_locator = ('xpath', "//input[@data-l10n-id='event-end-time']")
-    _edit_event_button_locator = ('css selector', 'button.edit')
-    _save_event_button_locator = ('css selector', 'button.save')
-    _week_display_button_locator = ('xpath', "//a[@href='/week/']")
-    _day_display_button_locator = ('xpath', "//a[@href='/day/']")
-    _day_view_locator = ('id', 'day-view')
-    _delete_event_button_locator = ('css selector', "#modify-event-view a[data-l10n-id='event-delete']")
+    _add_event_button_locator = (By.XPATH, "//a[@href='/event/add/']")
+    _event_title_input_locator = (By.XPATH, "//input[@data-l10n-id='event-title']")
+    _event_location_input_locator = (By.XPATH, "//input[@data-l10n-id='event-location']")
+    _event_start_time_input_locator = (By.XPATH, "//input[@data-l10n-id='event-start-time']")
+    _event_end_time_input_locator = (By.XPATH, "//input[@data-l10n-id='event-end-time']")
+    _edit_event_button_locator = (By.CSS_SELECTOR, 'button.edit')
+    _save_event_button_locator = (By.CSS_SELECTOR, 'button.save')
+    _week_display_button_locator = (By.XPATH, "//a[@href='/week/']")
+    _day_display_button_locator = (By.XPATH, "//a[@href='/day/']")
+    _day_view_locator = (By.ID, 'day-view')
+    _delete_event_button_locator = (By.CSS_SELECTOR, "#modify-event-view a[data-l10n-id='event-delete']")
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -59,19 +60,19 @@ class TestCalendar(GaiaTestCase):
         event_end_time = "02:00:00"
         formatted_today = self.today.strftime("%b %d")
         this_event_time_slot_locator = (
-            'css selector',
+            By.CSS_SELECTOR,
             '#event-list section.hour-1 span.display-hour')
         month_view_time_slot_all_events_locator = (
-            'css selector',
+            By.CSS_SELECTOR,
             '#event-list section.hour-1 div.events')
         week_view_time_slot_all_events_locator = (
-            'css selector',
+            By.CSS_SELECTOR,
             "#week-view section.active[data-date*='%s'] ol.hour-1" % formatted_today)
         day_view_time_slot_all_events_locator = (
-            'css selector',
+            By.CSS_SELECTOR,
             "#day-view section.active[data-date*='%s'] section.hour-1" % formatted_today)
         day_view_time_slot_individual_events_locator = (
-            'css selector',
+            By.CSS_SELECTOR,
             "#day-view section.active[data-date*='%s'] section.hour-1 div.events div.container" % formatted_today)
 
         # wait for the add event button to appear

@@ -2,18 +2,19 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 
 
 class SettingsForm(Base):
 
-    _loading_overlay_locator = ('id', 'loading-overlay')
-    _settings_close_button_locator = ('id', 'settings-close')
-    _order_by_last_name_locator = ('css selector', 'p[data-l10n-id="contactsOrderBy"]')
-    _order_by_last_name_switch_locator = ('css selector', 'input[name="order.lastname"]')
-    _import_from_sim_button_locator = ('css selector', 'button.icon-sim[data-l10n-id="importSim2"]')
-    _import_from_gmail_button_locator = ('css selector', 'button.icon-gmail[data-l10n-id="importGmail"]')
-    _import_from_windows_live_button_locator = ('css selector', 'button.icon-live[data-l10n-id="importLive"]')
+    _loading_overlay_locator = (By.ID, 'loading-overlay')
+    _settings_close_button_locator = (By.ID, 'settings-close')
+    _order_by_last_name_locator = (By.CSS_SELECTOR, 'p[data-l10n-id="contactsOrderBy"]')
+    _order_by_last_name_switch_locator = (By.CSS_SELECTOR, 'input[name="order.lastname"]')
+    _import_from_sim_button_locator = (By.CSS_SELECTOR, 'button.icon-sim[data-l10n-id="importSim2"]')
+    _import_from_gmail_button_locator = (By.CSS_SELECTOR, 'button.icon-gmail[data-l10n-id="importGmail"]')
+    _import_from_windows_live_button_locator = (By.CSS_SELECTOR, 'button.icon-live[data-l10n-id="importLive"]')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)

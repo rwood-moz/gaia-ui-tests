@@ -4,6 +4,7 @@
 
 import time
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.apps.cost_control.app import CostControl
 from gaiatest.apps.browser.app import Browser
@@ -11,13 +12,15 @@ from gaiatest.apps.browser.app import Browser
 
 class TestCostControlReset(GaiaTestCase):
 
-    _page_title_locator = ("id", "page-title")
+    _page_title_locator = (By.ID, 'page-title')
 
     def test_cost_control_reset_wifi(self):
 
         self.data_layer.connect_to_wifi()
         cost_control = CostControl(self.marionette)
         cost_control.launch()
+
+        cost_control.switch_to_ftu()
         cost_control.run_ftu_accepting_defaults()
 
         cost_control.toggle_mobile_data_tracking(False)

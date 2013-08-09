@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.apps.marketplace.app import Marketplace
 
@@ -10,16 +11,13 @@ class TestSearchMarketplaceAndInstallApp(GaiaTestCase):
 
     MARKETPLACE_DEV_NAME = 'Marketplace Dev'
 
-    APP_NAME = 'Lanyrd'
-    APP_DEVELOPER = 'Lanyrd'
     APP_INSTALLED = False
 
     # Label identifier for all homescreen apps
-    _app_icon_locator = ('xpath', "//li[@class='icon']//span[text()='%s']" % APP_NAME)
-    _homescreen_iframe_locator = ('css selector', 'div.homescreen iframe')
+    _homescreen_iframe_locator = (By.CSS_SELECTOR, 'div.homescreen iframe')
 
     # System app confirmation button to confirm installing an app
-    _yes_button_locator = ('id', 'app-install-install-button')
+    _yes_button_locator = (By.ID, 'app-install-install-button')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -30,15 +28,16 @@ class TestSearchMarketplaceAndInstallApp(GaiaTestCase):
         marketplace = Marketplace(self.marionette, self.MARKETPLACE_DEV_NAME)
         marketplace.launch()
 
-        results = marketplace.search(self.APP_NAME)
+        self.app_name = marketplace.popular_apps[0].name
+        app_author = marketplace.popular_apps[0].author
+        results = marketplace.search(self.app_name)
 
-        # validate the first result is the official lanyrd mobile app
         self.assertGreater(len(results.search_results), 0, 'No results found.')
 
         first_result = results.search_results[0]
 
-        self.assertEquals(first_result.name, self.APP_NAME, 'First app has the wrong name.')
-        self.assertEquals(first_result.author, self.APP_DEVELOPER, 'First app has the wrong author.')
+        self.assertEquals(first_result.name, self.app_name, 'First app has the wrong name.')
+        self.assertEquals(first_result.author, app_author, 'First app has the wrong author.')
 
         # Find and click the install button to the install the web app
         self.assertEquals(first_result.install_button_text, 'Free', 'Incorrect button label.')
@@ -51,7 +50,7 @@ class TestSearchMarketplaceAndInstallApp(GaiaTestCase):
         self.marionette.switch_to_frame()
         homescreen_frame = self.marionette.find_element(*self._homescreen_iframe_locator)
         self.marionette.switch_to_frame(homescreen_frame)
-        self.assertTrue(self.marionette.find_element(*self._app_icon_locator))
+        self.assertTrue(self.marionette.find_element('xpath', "//li[@class='icon']//span[text()='%s']" % self.app_name))
 
     def confirm_installation(self):
         # TODO add this to the system app object when we have one
@@ -62,6 +61,6 @@ class TestSearchMarketplaceAndInstallApp(GaiaTestCase):
     def tearDown(self):
 
         if self.APP_INSTALLED:
-            self.apps.uninstall(self.APP_NAME)
+            self.apps.uninstall(self.app_name)
 
         GaiaTestCase.tearDown(self)

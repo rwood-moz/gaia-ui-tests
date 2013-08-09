@@ -2,15 +2,16 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
-
+from marionette.by import By
 from marionette.marionette import Actions
+
+from gaiatest import GaiaTestCase
 
 
 class TestEditMode(GaiaTestCase):
 
-    _visible_apps_locator = ('css selector', 'div.page[style*="transform: translateX(0px);"] > ol > .icon')
-    _edit_mode_locator = ('css selector', 'body[data-mode="edit"]')
+    _visible_apps_locator = (By.CSS_SELECTOR, 'div.page[style*="transform: translateX(0px);"] > ol > .icon')
+    _edit_mode_locator = (By.CSS_SELECTOR, 'body[data-mode="edit"]')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -43,3 +44,5 @@ class TestEditMode(GaiaTestCase):
 
     def _go_to_next_page(self):
         self.marionette.execute_script('window.wrappedJSObject.GridManager.goToNextPage()')
+        self.wait_for_condition(lambda m: m.find_element('tag name', 'body')
+            .get_attribute('data-transitioning') != 'true')

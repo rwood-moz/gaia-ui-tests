@@ -3,33 +3,30 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import datetime
-import calendar
-import time
+from marionette.by import By
 
 from gaiatest import GaiaTestCase
 
 
-DAYS_OF_WEEK = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY',
-                'SATURDAY', 'SUNDAY']
-
-
 class TestCalendar(GaiaTestCase):
 
-    _current_month_year_locator = ('id', 'current-month-year')
-    _selected_day_title_locator = ('id', 'selected-day-title')
+    _current_month_year_locator = (By.ID, 'current-month-year')
+    _selected_day_title_locator = (By.ID, 'selected-day-title')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
 
         if self.device.is_android_build:
-            # Setting the system time to a hardcoded datetime to avoid timezone issues
-            # Jan. 1, 2013, according to http://www.epochconverter.com/
-            _seconds_since_epoch = 1357043430
-            self.today = datetime.date.fromtimestamp(_seconds_since_epoch)
 
-            # set the system date to an expected date, and timezone to UTC
-            self.data_layer.set_time(_seconds_since_epoch * 1000)
-            self.data_layer.set_setting('time.timezone', 'Atlantic/Reykjavik')
+            # Setting the time on the device back to 12:00am of the current day
+            # this way the event created will always be on this day and we can check it easily
+
+            _seconds_since_epoch = self.marionette.execute_script("return Date.now();")
+
+            self.today = datetime.datetime.fromtimestamp(_seconds_since_epoch / 1000)
+
+            # set the system date to the time
+            self.data_layer.set_time(_seconds_since_epoch)
         else:
             self.today = datetime.date.today()
 

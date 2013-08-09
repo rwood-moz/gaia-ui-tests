@@ -2,19 +2,19 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
-from gaiatest.apps.base import PageRegion
 
 
 class NewEmail(Base):
     # Write new email
 
-    _to_locator = ("css selector", "#cardContainer .card.center .cmp-to-text.cmp-addr-text")
-    _cc_locator = ("css selector", "#cardContainer .card.center .cmp-cc-text.cmp-addr-text")
-    _bcc_locator = ("css selector", "#cardContainer .card.center .cmp-bcc-text.cmp-addr-text")
-    _subject_locator = ("css selector", "#cardContainer .card.center .cmp-subject-text")
-    _body_locator = ("css selector", "#cardContainer .card.center .cmp-body-text")
-    _send_locator = ("css selector", "#cardContainer .card.center .icon.icon-send")
+    _to_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .cmp-to-text.cmp-addr-text')
+    _cc_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .cmp-cc-text.cmp-addr-text')
+    _bcc_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .cmp-bcc-text.cmp-addr-text')
+    _subject_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .cmp-subject-text')
+    _body_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .cmp-body-text')
+    _send_locator = (By.CSS_SELECTOR, '#cardContainer .card.center .icon.icon-send')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)

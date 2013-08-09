@@ -18,9 +18,6 @@ class TestEnduranceSetAlarm(GaiaEnduranceTestCase):
         self.clock = Clock(self.marionette)
         self.clock.launch()
 
-        # Delete any existing alarms
-        self.data_layer.delete_all_alarms()
-
         # Bug 864945, UI is not updating unless restart the app
         self.app_under_test = "clock"
         self.close_app()

@@ -2,13 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 
 
 class TestMusicEmpty(GaiaTestCase):
 
-    _empty_music_title_locator = ('id', 'overlay-title')
-    _empty_music_text_locator = ('id', 'overlay-text')
+    _empty_music_title_locator = (By.ID, 'overlay-title')
+    _empty_music_text_locator = (By.ID, 'overlay-text')
 
     def setUp(self):
         GaiaTestCase.setUp(self)

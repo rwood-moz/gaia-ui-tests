@@ -3,16 +3,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from gaiatest import GaiaTestCase
+from gaiatest.apps.camera.app import Camera
 
 
 class TestCamera(GaiaTestCase):
-
-    _capture_button_locator = ('id', 'capture-button')
-    _focus_ring = ('id', 'focus-ring')
-    _video_mode_locator = ('css selector', 'body.video')
-    _film_strip_image_locator = ('css selector', '#filmstrip > img.thumbnail')
-    # This is a workaround for the Bug 832045
-    _capture_button_enabled_locator = ('css selector', '#capture-button:not([disabled])')
 
     def setUp(self):
         GaiaTestCase.setUp(self)
@@ -20,24 +14,16 @@ class TestCamera(GaiaTestCase):
         # Turn off geolocation prompt
         self.apps.set_permission('Camera', 'geolocation', 'deny')
 
-        # launch the Camera app
-        self.app = self.apps.launch('camera')
-
-        self.wait_for_element_present(*self._capture_button_enabled_locator)
-
     def test_capture_a_photo(self):
         # https://moztrap.mozilla.org/manage/case/1325/
 
-        capture_button = self.marionette.find_element(*self._capture_button_locator)
-        capture_button.tap()
+        self.camera = Camera(self.marionette)
+        self.camera.launch()
 
-        # Wait to complete focusing
-        self.wait_for_condition(lambda m: m.find_element(*self._focus_ring).get_attribute('data-state') == 'focused',
-            message="Camera failed to focus")
+        self.camera.take_photo()
 
-        # Wait for image to be added in to filmstrip
-        # TODO investigate lowering this timeout in the future
-        self.wait_for_element_displayed(*self._film_strip_image_locator, timeout=20)
+        if not self.camera.is_filmstrip_visible:
+            self.camera.tap_to_display_filmstrip()
 
-        # Find the new picture in the film strip
-        self.assertTrue(self.marionette.find_element(*self._film_strip_image_locator).is_displayed())
+        image_preview = self.camera.filmstrip_images[0].tap()
+        self.assertTrue(image_preview.is_image_preview_visible)

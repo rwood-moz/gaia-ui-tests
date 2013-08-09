@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import time
+from marionette.by import By
 from gaiatest import GaiaTestCase
 from gaiatest.apps.browser.app import Browser
 from gaiatest.apps.videoplayer.regions.fullscreen_video import FullscreenVideo
@@ -12,7 +13,7 @@ class TestYouTube(GaiaTestCase):
 
     video_URL = 'http://m.youtube.com/watch?v=5MzuGWFIfio'
     # YouTube video
-    _video_container_locator = ('id', 'koya_elem_0_6')
+    _video_container_locator = (By.ID, 'koya_elem_0_6')
 
     def setUp(self):
         GaiaTestCase.setUp(self)

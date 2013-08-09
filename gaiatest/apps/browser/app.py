@@ -5,6 +5,7 @@
 import re
 import time
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 from gaiatest.apps.base import PageRegion
 
@@ -13,32 +14,34 @@ class Browser(Base):
 
     name = "Browser"
 
-    _browser_frame_locator = ('css selector', 'iframe[mozbrowser]')
+    _browser_frame_locator = (By.CSS_SELECTOR, 'iframe[mozbrowser]')
+    _main_screen_locator = (By.ID, 'main-screen')
 
     # Awesome bar/url bar
-    _awesome_bar_locator = ('id', 'url-input')
-    _url_button_locator = ('id', 'url-button')
-    _throbber_locator = ('id', 'throbber')
+    _awesome_bar_locator = (By.ID, 'url-input')
+    _url_button_locator = (By.ID, 'url-button')
+    _throbber_locator = (By.ID, 'throbber')
 
     # Tab list area
-    _tab_badge_locator = ('id', 'tabs-badge')
-    _tabs_number_locator = ('css selector', '#toolbar-start > span')
-    _new_tab_button_locator = ('id', 'new-tab-button')
-    _tabs_list_locator = ('css selector', '#tabs-list > ul li a')
+    _tray_locator = (By.ID, 'tray')
+    _tab_badge_locator = (By.ID, 'tabs-badge')
+    _tabs_number_locator = (By.CSS_SELECTOR, '#toolbar-start > span')
+    _new_tab_button_locator = (By.ID, 'new-tab-button')
+    _tabs_list_locator = (By.CSS_SELECTOR, '#tabs-list > ul li a')
 
     # Browser footer
-    _back_button_locator = ('id', 'back-button')
-    _forward_button_locator = ('id', 'forward-button')
-    _bookmark_button_locator = ('id', 'bookmark-button')
+    _back_button_locator = (By.ID, 'back-button')
+    _forward_button_locator = (By.ID, 'forward-button')
+    _bookmark_button_locator = (By.ID, 'bookmark-button')
 
     # Bookmark menu
-    _bookmark_menu_locator = ('id', 'bookmark-menu')
-    _add_bookmark_to_home_screen_choice_locator = ('id', 'bookmark-menu-add-home')
+    _bookmark_menu_locator = (By.ID, 'bookmark-menu')
+    _add_bookmark_to_home_screen_choice_locator = (By.ID, 'bookmark-menu-add-home')
 
     # System app - add bookmark to homescreen dialog
-    _add_bookmark_to_home_screen_frame_locator = ('css selector', 'iframe[src^="app://homescreen"][src$="save-bookmark.html"]')
-    _add_bookmark_to_home_screen_dialog_button_locator = ('id', 'button-bookmark-add')
-    _bookmark_title_input_locator = ('id', 'bookmark-title')
+    _add_bookmark_to_home_screen_frame_locator = (By.CSS_SELECTOR, 'iframe[src^="app://homescreen"][src$="save-bookmark.html"]')
+    _add_bookmark_to_home_screen_dialog_button_locator = (By.ID, 'button-bookmark-add')
+    _bookmark_title_input_locator = (By.ID, 'bookmark-title')
 
     def launch(self):
         Base.launch(self)
@@ -70,7 +73,7 @@ class Browser(Base):
     def tap_go_button(self):
         url_button = self.marionette.find_element(*self._url_button_locator)
         # TODO Tap one pixel above bottom edge to dodge the System update notification banner bug 876723
-        url_button.tap(y=(url_button.size['height']-1))
+        url_button.tap(y=(url_button.size['height'] - 1))
         self.wait_for_throbber_not_visible()
         self.wait_for_element_displayed(*self._bookmark_button_locator)
 
@@ -96,7 +99,8 @@ class Browser(Base):
         # Switch to System app where the add bookmark dialog resides
         self.marionette.switch_to_frame()
         self.wait_for_element_displayed(*self._add_bookmark_to_home_screen_frame_locator)
-        self.marionette.switch_to_frame(self.marionette.find_element(*self._add_bookmark_to_home_screen_frame_locator))
+        self.frame = self.marionette.find_element(*self._add_bookmark_to_home_screen_frame_locator)
+        self.marionette.switch_to_frame(self.frame)
         self.wait_for_element_displayed(*self._bookmark_title_input_locator)
 
     def tap_add_bookmark_to_home_screen_dialog_button(self):
@@ -125,19 +129,20 @@ class Browser(Base):
         self.wait_for_element_displayed(*self._tab_badge_locator)
         tab_badge_button = self.marionette.find_element(*self._tab_badge_locator)
         # TODO Tap above bottom edge to dodge the System update notification banner bug 876723
-        tab_badge_button.tap(y=(tab_badge_button.size['height']-4))
+        tab_badge_button.tap(y=(tab_badge_button.size['height'] - 4))
         #tab_badge_button.tap()
 
-        # TODO Wait for visibility when Marionette can detect the state of the tab list correctly
-        self.wait_for_condition(lambda m: self._current_screen == 'tabs-screen')
+        self.wait_for_condition(lambda m:
+                                m.find_element(*self._main_screen_locator).location['x'] ==
+                                -abs(m.find_element(*self._tray_locator).size['width']))
 
     def tap_add_new_tab_button(self):
         new_tab_button = self.marionette.find_element(*self._new_tab_button_locator)
         # TODO Tap one pixel above bottom edge to dodge the System update notification banner bug 876723
-        new_tab_button.tap(y=(new_tab_button.size['height']-1))
+        new_tab_button.tap(y=(new_tab_button.size['height'] - 1))
 
-        # TODO Wait for visibility when Marionette can detect the state of the tab list correctly
-        self.wait_for_condition(lambda m: self._current_screen == 'awesome-screen')
+        self.wait_for_condition(lambda m:
+                                m.find_element(*self._main_screen_locator).location['x'] == 0)
 
     @property
     def displayed_tabs_number(self):
@@ -152,10 +157,6 @@ class Browser(Base):
     def tabs(self):
         return [self.Tab(marionette=self.marionette, element=tab)
                 for tab in self.marionette.find_elements(*self._tabs_list_locator)]
-
-    @property
-    def _current_screen(self):
-        return self.marionette.execute_script("return window.wrappedJSObject.Browser.currentScreen;")
 
     class Tab(PageRegion):
 

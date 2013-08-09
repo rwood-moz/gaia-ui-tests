@@ -2,76 +2,78 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
-
 import re
+
+from marionette.by import By
+
+from gaiatest import GaiaTestCase
 
 
 class TestFtu(GaiaTestCase):
 
-    _activation_section_locator = ('id', 'activation')
-    _main_title_locator = ('id', 'main_title')
+    _activation_section_locator = (By.ID, 'activation')
+    _main_title_locator = (By.ID, 'main_title')
 
-    _next_button_locator = ('id', 'forward')
+    _next_button_locator = (By.ID, 'forward')
 
     # Step Languages section
-    _section_languages_locator = ('id', 'languages')
-    _listed_languages_locator = ('css selector', "#languages ul li input[name='language.current']")
+    _section_languages_locator = (By.ID, 'languages')
+    _listed_languages_locator = (By.CSS_SELECTOR, "#languages ul li input[name='language.current']")
 
     # Step Cell data section
-    _section_cell_data_locator = ('id', 'data_3g')
-    _enable_data_checkbox_locator = ('css selector', '#data_3g .pack-end')
+    _section_cell_data_locator = (By.ID, 'data_3g')
+    _enable_data_checkbox_locator = (By.CSS_SELECTOR, '#data_3g .pack-end')
 
     # Step Wifi
-    _section_wifi_locator = ('id', 'wifi')
-    _found_wifi_networks_locator = ('css selector', 'ul#networks-list li')
-    _network_state_locator = ('xpath', 'p[2]')
-    _password_input_locator = ('id', 'wifi_password')
-    _join_network_locator = ('id', 'wifi-join-button')
+    _section_wifi_locator = (By.ID, 'wifi')
+    _found_wifi_networks_locator = (By.CSS_SELECTOR, 'ul#networks-list li')
+    _network_state_locator = (By.XPATH, 'p[2]')
+    _password_input_locator = (By.ID, 'wifi_password')
+    _join_network_locator = (By.ID, 'wifi-join-button')
 
     # Step Date & Time
-    _section_date_time_locator = ('id', 'date_and_time')
-    _timezone_continent_locator = ('css selector', '#time-form li:nth-child(1) > .change.icon.icon-dialog')
-    _timezone_city_locator = ('css selector', '#time-form li:nth-child(2) > .change.icon.icon-dialog')
-    _time_zone_title_locator = ('id', 'time-zone-title')
+    _section_date_time_locator = (By.ID, 'date_and_time')
+    _timezone_continent_locator = (By.CSS_SELECTOR, '#time-form li:nth-child(1) > .change.icon.icon-dialog')
+    _timezone_city_locator = (By.CSS_SELECTOR, '#time-form li:nth-child(2) > .change.icon.icon-dialog')
+    _time_zone_title_locator = (By.ID, 'time-zone-title')
 
     # Step Geolocation
-    _section_geolocation_locator = ('id', 'geolocation')
-    _enable_geolocation_checkbox_locator = ('css selector', '#geolocation .pack-end label')
+    _section_geolocation_locator = (By.ID, 'geolocation')
+    _enable_geolocation_checkbox_locator = (By.CSS_SELECTOR, '#geolocation .pack-end label')
 
     # Section Import contacts
-    _section_import_contacts_locator = ('id', 'import_contacts')
-    _import_from_sim_locator = ('id', 'sim-import-button')
-    _sim_import_feedback_locator = ('css selector', '.ftu p')
+    _section_import_contacts_locator = (By.ID, 'import_contacts')
+    _import_from_sim_locator = (By.ID, 'sim-import-button')
+    _sim_import_feedback_locator = (By.CSS_SELECTOR, '.ftu p')
 
     # Section About Your rights
-    _section_ayr_locator = ('id', 'about-your-rights')
+    _section_ayr_locator = (By.ID, 'about-your-rights')
 
     # Section Welcome Browser
-    _section_welcome_browser_locator = ('id', 'welcome_browser')
-    _enable_statistic_checkbox_locator = ('id', 'form_share_statistics')
+    _section_welcome_browser_locator = (By.ID, 'welcome_browser')
+    _enable_statistic_checkbox_locator = (By.ID, 'form_share_statistics')
 
     # Section Privacy Choices
-    _section_browser_privacy_locator = ('id', 'browser_privacy')
-    _email_field_locator = ('css selector', 'input[type="email"]')
+    _section_browser_privacy_locator = (By.ID, 'browser_privacy')
+    _email_field_locator = (By.CSS_SELECTOR, 'input[type="email"]')
 
     # Section Finish
-    _section_finish_locator = ('id', 'finish-screen')
-    _skip_tour_button_locator = ('id', 'skip-tutorial-button')
-    _take_tour_button_locator = ('id', 'lets-go-button')
+    _section_finish_locator = (By.ID, 'finish-screen')
+    _skip_tour_button_locator = (By.ID, 'skip-tutorial-button')
+    _take_tour_button_locator = (By.ID, 'lets-go-button')
 
     # Section Tour
-    _step1_header_locator = ('id', 'step1Header')
-    _step2_header_locator = ('id', 'step2Header')
-    _step3_header_locator = ('id', 'step3Header')
-    _step4_header_locator = ('id', 'step4Header')
-    _step5_header_locator = ('id', 'step5Header')
-    _tour_next_button_locator = ('id', 'forwardTutorial')
-    _tour_back_button_locator = ('id', 'backTutorial')
+    _step1_header_locator = (By.ID, 'step1Header')
+    _step2_header_locator = (By.ID, 'step2Header')
+    _step3_header_locator = (By.ID, 'step3Header')
+    _step4_header_locator = (By.ID, 'step4Header')
+    _step5_header_locator = (By.ID, 'step5Header')
+    _tour_next_button_locator = (By.ID, 'forwardTutorial')
+    _tour_back_button_locator = (By.ID, 'backTutorial')
 
     # Section Tutorial Finish
-    _section_tutorial_finish_locator = ('id', 'tutorialFinish')
-    _lets_go_button_locator = ('id', 'tutorialFinished')
+    _section_tutorial_finish_locator = (By.ID, 'tutorialFinish')
+    _lets_go_button_locator = (By.ID, 'tutorialFinished')
 
     # Pattern for import sim contacts message
     _pattern_contacts = re.compile("^No contacts detected on SIM to import$|^Imported one contact$|^Imported [0-9]+ contacts$")
@@ -82,15 +84,13 @@ class TestFtu(GaiaTestCase):
     def setUp(self):
         GaiaTestCase.setUp(self)
 
-        # We need WiFi enabled but not connected to a network
-        self.data_layer.enable_wifi()
-        self.data_layer.forget_all_networks()
-
         # launch the First Time User app
         self.app = self.apps.launch('FTU')
 
+        self.wait_for_condition(lambda m: self.data_layer.is_wifi_enabled)
+
     def create_language_locator(self, language):
-        return ('css selector', "#languages ul li input[name='language.current'][value='%s'] ~ p" % language)
+        return (By.CSS_SELECTOR, "#languages ul li input[name='language.current'][value='%s'] ~ p" % language)
 
     def test_ftu_skip_tour(self):
         # https://moztrap.mozilla.org/manage/case/3876/
@@ -124,7 +124,7 @@ class TestFtu(GaiaTestCase):
         self.wait_for_condition(lambda m: len(m.find_elements(*self._found_wifi_networks_locator)) > 0,
                                 message="No networks listed on screen")
 
-        wifi_network = self.marionette.find_element('id', self.testvars['wifi']['ssid'])
+        wifi_network = self.marionette.find_element(By.ID, self.testvars['wifi']['ssid'])
         wifi_network.tap()
 
         # This is in the event we are using a Wifi Network that requires a password
@@ -138,7 +138,7 @@ class TestFtu(GaiaTestCase):
 
         self.wait_for_condition(
             lambda m: m.find_element(
-                'id', self.testvars['wifi']['ssid']).find_element(*self._network_state_locator).text == "Connected"
+                By.ID, self.testvars['wifi']['ssid']).find_element(*self._network_state_locator).text == "Connected"
         )
 
         self.assertTrue(self.data_layer.is_wifi_connected(self.testvars['wifi']),
@@ -228,14 +228,6 @@ class TestFtu(GaiaTestCase):
         # Switch back to top level now that FTU app is gone
         self.marionette.switch_to_frame()
 
-    def tearDown(self):
-
-        # TODO flush any settings set by the FTU app
-
-        self.data_layer.disable_wifi()
-
-        GaiaTestCase.tearDown(self)
-
     def _select(self, match_string):
         # Cheeky Select wrapper until Marionette has its own
         # Due to the way B2G wraps the app's select box we match on text
@@ -243,8 +235,8 @@ class TestFtu(GaiaTestCase):
         # Have to go back to top level to get the B2G select box wrapper
         self.marionette.switch_to_frame()
 
-        options = self.marionette.find_elements('css selector', '#value-selector-container li')
-        close_button = self.marionette.find_element('css selector', 'button.value-option-confirm')
+        options = self.marionette.find_elements(By.CSS_SELECTOR, '#value-selector-container li')
+        close_button = self.marionette.find_element(By.CSS_SELECTOR, 'button.value-option-confirm')
 
         # Loop options until we find the match
         for li in options:

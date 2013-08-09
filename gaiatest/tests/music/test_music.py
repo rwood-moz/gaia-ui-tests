@@ -2,23 +2,24 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from gaiatest import GaiaTestCase
 import time
+from marionette.by import By
+from gaiatest import GaiaTestCase
 
 
 class TestMusic(GaiaTestCase):
 
-    _body_list_mode_locator = ('css selector', 'body.list-mode')
+    _body_list_mode_locator = (By.CSS_SELECTOR, 'body.list-mode')
 
-    _album_tile_locator = ('css selector', '#views-tiles div.tile-container')
-    _album_list_locator = ('css selector', '#views-list li > a')
+    _album_tile_locator = (By.CSS_SELECTOR, '#views-tiles div.tile-container')
+    _album_list_locator = (By.CSS_SELECTOR, '#views-list li > a')
     _album_title_locator = ('class name', "list-main-title")
-    _audio_locator = ('id', 'player-audio')
-    _player_seek_elapsed_locator = ('id', 'player-seek-elapsed')
-    _player_controls_play_locator = ('id', 'player-controls-play')
-    _tab_albums_locator = ('id', 'tabs-albums')
-    _views_player_locator = ('id', 'views-player')
-    _views_sublist_controls_play_locator = ('id', 'views-sublist-controls-play')
+    _audio_locator = (By.ID, 'player-audio')
+    _player_seek_elapsed_locator = (By.ID, 'player-seek-elapsed')
+    _player_controls_play_locator = (By.ID, 'player-controls-play')
+    _tab_albums_locator = (By.ID, 'tabs-albums')
+    _views_player_locator = (By.ID, 'views-player')
+    _views_sublist_controls_play_locator = (By.ID, 'views-sublist-controls-play')
 
     def setUp(self):
         GaiaTestCase.setUp(self)

@@ -26,6 +26,7 @@ class TestContacts(GaiaTestCase):
 
         contacts = Contacts(self.marionette)
         contacts.launch()
+        contacts.wait_for_contacts()
 
         # tap on the created contact
         contact_details = contacts.contact(self.contact['givenName']).tap()

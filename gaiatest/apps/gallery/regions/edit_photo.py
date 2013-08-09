@@ -2,16 +2,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.base import Base
 from gaiatest.apps.base import PageRegion
 
 
 class EditPhoto(Base):
 
-    _edit_view_locator = ('id', 'edit-view')
-    _edit_effect_button_locator = ('id', 'edit-effect-button')
-    _effect_options_locator = ('css selector', '#edit-effect-options a')
-    _edit_save_locator = ('id', 'edit-save-button')
+    _edit_view_locator = (By.ID, 'edit-view')
+    _edit_effect_button_locator = (By.ID, 'edit-effect-button')
+    _effect_options_locator = (By.CSS_SELECTOR, '#edit-effect-options a')
+    _edit_save_locator = (By.ID, 'edit-save-button')
 
     def __init__(self, marionette):
         Base.__init__(self, marionette)

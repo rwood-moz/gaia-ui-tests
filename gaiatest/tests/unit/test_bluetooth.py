@@ -7,8 +7,8 @@ from gaiatest import GaiaTestCase
 class TestBluetooth(GaiaTestCase):
 
     def test_bt_enabled_and_disabled(self):
-        self.data_layer.bt_enable_bluetooth()
-        self.assertTrue(self.data_layer.bt_is_bluetooth_enabled)
+        self.data_layer.bluetooth_enable()
+        self.assertTrue(self.data_layer.bluetooth_is_enabled)
 
-        self.data_layer.bt_disable_bluetooth()
-        self.assertFalse(self.data_layer.bt_is_bluetooth_enabled)
+        self.data_layer.bluetooth_disable()
+        self.assertFalse(self.data_layer.bluetooth_is_enabled)

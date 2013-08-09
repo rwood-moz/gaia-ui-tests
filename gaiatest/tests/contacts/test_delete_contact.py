@@ -25,6 +25,7 @@ class TestContacts(GaiaTestCase):
 
         contacts_app = Contacts(self.marionette)
         contacts_app.launch()
+        contacts_app.wait_for_contacts()
 
         pre_contacts_count = len(contacts_app.contacts)
         self.assertEqual(pre_contacts_count, 1, "Should insert one contact before running this test.")

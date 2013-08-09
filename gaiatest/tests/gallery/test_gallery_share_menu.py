@@ -2,19 +2,20 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
 
 
 class TestGalleryShareMenu(GaiaTestCase):
 
-    _gallery_items_locator = ('css selector', 'li.thumbnail')
-    _current_image_locator = ('css selector', '#frame2 > img')
-    _photos_toolbar_locator = ('id', 'fullscreen-toolbar')
-    _share_button_locator = ('id', 'fullscreen-share-button')
-    _back_button_locator = ('id', 'fullscreen-back-button')
+    _gallery_items_locator = (By.CSS_SELECTOR, 'li.thumbnail')
+    _current_image_locator = (By.CSS_SELECTOR, '#frame2 > img')
+    _photos_toolbar_locator = (By.ID, 'fullscreen-toolbar')
+    _share_button_locator = (By.ID, 'fullscreen-share-button')
+    _back_button_locator = (By.ID, 'fullscreen-back-button')
 
-    _share_with_list_locator = ('css selector', '#list-menu-root a[role="button"]')
-    _cancel_button_locator = ('css selector', '#list-menu-root button[data-action="cancel"]')
+    _share_with_list_locator = (By.CSS_SELECTOR, '#list-menu-root a[role="button"]')
+    _cancel_button_locator = (By.CSS_SELECTOR, '#list-menu-root button[data-action="cancel"]')
 
     def setUp(self):
         GaiaTestCase.setUp(self)

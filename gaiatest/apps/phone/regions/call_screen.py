@@ -2,17 +2,18 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest.apps.phone.app import Phone
 
 
 class CallScreen(Phone):
 
-    _call_screen_locator = ('css selector', "iframe[name='call_screen0']")
+    _call_screen_locator = (By.CSS_SELECTOR, "iframe[name='call_screen0']")
 
-    _calling_contact_locator = ('css selector', 'div.number')
-    _calling_contact_information_locator = ('css selector', 'div.additionalContactInfo')
-    _outgoing_call_locator = ('css selector', 'div.direction.outgoing')
-    _hangup_bar_locator = ('id', 'callbar-hang-up-action')
+    _calling_contact_locator = (By.CSS_SELECTOR, 'div.number')
+    _calling_contact_information_locator = (By.CSS_SELECTOR, 'div.additionalContactInfo')
+    _outgoing_call_locator = (By.CSS_SELECTOR, 'div.direction.outgoing')
+    _hangup_bar_locator = (By.ID, 'callbar-hang-up-action')
 
     def __init__(self, marionette):
         Phone.__init__(self, marionette)

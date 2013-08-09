@@ -2,9 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from marionette.by import By
 from gaiatest import GaiaTestCase
-
-from marionette.errors import NoSuchElementException
 
 
 class TestCardsViewThreeApps(GaiaTestCase):
@@ -12,11 +11,11 @@ class TestCardsViewThreeApps(GaiaTestCase):
     _test_apps = ["Clock", "Gallery", "Calendar"]
 
     # Home/Cards view locators
-    _cards_view_locator = ('id', 'cards-view')
+    _cards_view_locator = (By.ID, 'cards-view')
     # Check that the origin contains the current app name, origin is in the format:
     # app://clock.gaiamobile.org
-    _app_card_locator = ('css selector', '#cards-view li.card[data-origin*="%s"]')
-    _close_button_locator = ('css selector', '#cards-view li.card[data-origin*="%s"] .close-card')
+    _app_card_locator = (By.CSS_SELECTOR, '#cards-view li.card[data-origin*="%s"]')
+    _close_button_locator = (By.CSS_SELECTOR, '#cards-view li.card[data-origin*="%s"] .close-card')
 
     def setUp(self):
         GaiaTestCase.setUp(self)

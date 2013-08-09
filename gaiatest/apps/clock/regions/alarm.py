@@ -4,24 +4,25 @@
 
 import time
 
+from marionette.by import By
 from marionette.marionette import Actions
 
 from gaiatest.apps.clock.app import Clock
-from marionette.marionette import Actions
 
 
 class NewAlarm(Clock):
 
-    _edit_alarm_fields_locator = ('id', 'edit-alarm')
-    _alarm_name_locator = ('xpath', "//input[@name='alarm.label']")
-    _repeat_menu_locator = ('id', 'repeat-menu')
-    _sound_menu_locator = ('id', 'sound-menu')
-    _snooze_menu_locator = ('id', 'snooze-menu')
-    _done_locator = ('id', 'alarm-done')
-
-    _hour_picker_locator = ('css selector', '#value-picker-hours div')
-    _minutes_picker_locator = ('css selector', '#value-picker-minutes div')
-    _hour24_picker_locator = ('css selector', '#value-picker-hour24-state div')
+    _edit_alarm_fields_locator = (By.ID, 'edit-alarm')
+    _alarm_name_locator = (By.XPATH, "//input[@placeholder='Alarm name']")
+    _repeat_menu_locator = (By.ID, 'repeat-menu')
+    _sound_menu_locator = (By.ID, 'sound-menu')
+    _snooze_menu_locator = (By.ID, 'snooze-menu')
+    _done_locator = (By.ID, 'alarm-done')
+    _close_locator = (By.ID, 'alarm-close')
+    _time_button_locator = (By.ID, 'time-menu')
+    _hour_picker_locator = (By.CSS_SELECTOR, '#value-picker-hours div')
+    _minutes_picker_locator = (By.CSS_SELECTOR, '#value-picker-minutes div')
+    _hour24_picker_locator = (By.CSS_SELECTOR, '#value-picker-hour24-state div')
 
     def type_alarm_label(self, value):
         label = self.marionette.find_element(*self._alarm_name_locator)
@@ -56,7 +57,8 @@ class NewAlarm(Clock):
         self.marionette.find_element(*self._sound_menu_locator).tap()
         self.select(value)
 
-    def wait_for_fields_to_be_visible(self):
+    def wait_for_panel_to_load(self):
+        self.wait_for_condition(lambda m: m.find_element(*self._close_locator).location['x'] == 0)
         self.wait_for_element_displayed(*self._edit_alarm_fields_locator)
 
     def tap_done(self):
@@ -108,6 +110,9 @@ class NewAlarm(Clock):
 
         time.sleep(1)
 
+    def tap_time(self):
+        self.marionette.find_element(*self._time_button_locator).tap()
+
     def _flick_menu_up(self, locator):
         self.wait_for_element_displayed(*self._current_element(*locator))
         current_element = self.marionette.find_element(*self._current_element(*locator))
@@ -141,7 +146,7 @@ class NewAlarm(Clock):
 
 class EditAlarm(NewAlarm):
 
-    _alarm_delete_button_locator = ('id', 'alarm-delete')
+    _alarm_delete_button_locator = (By.ID, 'alarm-delete')
 
     def __init__(self, marionette):
         NewAlarm.__init__(self, marionette)
